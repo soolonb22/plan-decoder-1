@@ -1,0 +1,10 @@
+# Copy to .dev.vars (never commit the real file).
+# wrangler secret put NAME   — for production
+
+VITE_AUTH_ENABLED=true
+BETTER_AUTH_URL=https://plandecoder.com
+BETTER_AUTH_SECRET=replace-with-a-long-random-string
+DATABASE_URL=postgresql://USER:PASSWORD@HOST/neondb?sslmode=require
+XAI_API_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=

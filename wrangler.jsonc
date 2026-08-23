@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "plan-decoder",
+  "compatibility_date": "2026-08-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "preview_urls": true,
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "VITE_AUTH_ENABLED": "true",
+    "BETTER_AUTH_URL": "https://plandecoder.com"
+  },
+  "routes": [
+    { "pattern": "plandecoder.com", "custom_domain": true },
+    { "pattern": "www.plandecoder.com", "custom_domain": true }
+  ]
+}
