@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# This app is a practice tool independent of the NDIA and NDIS.
