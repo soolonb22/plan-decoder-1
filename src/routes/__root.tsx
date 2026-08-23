@@ -45,7 +45,7 @@ export const Route = createRootRoute({
 
 function RootDocument() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const publicPage = pathname === "/login" || pathname === "/get-files";
+  const publicPage = pathname === "/login" || pathname === "/get-files" || pathname === "/health";
   return (
     <html lang="en-AU" className="antialiased" suppressHydrationWarning>
       <head>

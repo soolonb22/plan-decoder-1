@@ -3,6 +3,7 @@ import { Guide3D } from "@/components/guide-3d/panel";
 import { Disclaimer, PageHeader } from "@/components/layout/page";
 
 export const Route = createFileRoute("/companion")({
+  ssr: false,
   component: CompanionPage,
   head: () => ({
     meta: [
