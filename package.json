@@ -1,0 +1,22 @@
+{
+  "name": "plan-decoder",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "scripts": {
+    "build:cf": "VITE_AUTH_ENABLED=true vite build --config vite.cloudflare.config.ts",
+    "deploy:cf": "npm run build:cf && wrangler deploy",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.170.0",
+    "@tanstack/react-start": "^1.168.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.53.1",
+    "vite": "^8.2.0",
+    "wrangler": "^4.125.0"
+  }
+}
