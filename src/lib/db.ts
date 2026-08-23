@@ -11,6 +11,14 @@ function readDatabaseUrl(): string | undefined {
   return raw && raw.trim() ? raw : undefined;
 }
 
+/** Cloudflare Workers runtime (workerd). PGLite WASM must not boot here. */
+export function isCloudflareWorker(): boolean {
+  if (typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers") {
+    return true;
+  }
+  return typeof (globalThis as { WebSocketPair?: unknown }).WebSocketPair === "function";
+}
+
 const rawDatabaseUrl = readDatabaseUrl();
 const databaseUrl = rawDatabaseUrl;
 
@@ -179,7 +187,13 @@ async function createSql(): Promise<Sql> {
     );
   }
   const url = readDatabaseUrl();
-  return url ? createNeonSql(url) : createPgliteSql();
+  if (url) return createNeonSql(url);
+  if (isCloudflareWorker()) {
+    throw new Error(
+      "DATABASE_URL is not set on this Worker. Add a Neon pooled URL in Cloudflare → Settings → Variables and Secrets.",
+    );
+  }
+  return createPgliteSql();
 }
 
 /**
@@ -223,7 +237,7 @@ export async function getPglite(): Promise<import("@electric-sql/pglite").PGlite
  * module kick it off immediately (see bottom of file).
  */
 export function ensureDbReady(): Promise<void> {
-  if (readDatabaseUrl()) return Promise.resolve();
+  if (readDatabaseUrl() || isCloudflareWorker()) return Promise.resolve();
   return getSql().then(() => undefined);
 }
 
@@ -232,7 +246,7 @@ export function ensureDbReady(): Promise<void> {
 const globalBoot = globalThis as typeof globalThis & {
   __pgBootstrapPromise__?: Promise<void>;
 };
-if (typeof window === "undefined" && !readDatabaseUrl()) {
+if (typeof window === "undefined" && !readDatabaseUrl() && !isCloudflareWorker()) {
   globalBoot.__pgBootstrapPromise__ ??= ensureDbReady().catch((err) => {
     globalBoot.__pgBootstrapPromise__ = undefined;
     console.error("[db] PGLite bootstrap failed:", err);

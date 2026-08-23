@@ -35,7 +35,7 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { randomBytes } from "node:crypto";
 import { Pool } from "pg";
-import { ensureDbReady, getPglite } from "../db";
+import { ensureDbReady, getPglite, isCloudflareWorker } from "../db";
 import { emailAndPasswordEnabled } from "./email-password";
 import { GROK_PROVIDERS } from "./providers";
 import { pgliteDialect } from "./pglite-dialect";
@@ -131,23 +131,44 @@ const trustedOrigins: string[] = explicitBaseURL
 
 const databaseUrl = env("DATABASE_URL");
 
-// Static broker OAuth endpoints (skip OIDC discovery on every sign-in / callback).
-// Discovery would cost an extra network hop to the broker before the popup can
-// even redirect to Google/X — the live-preview popup felt stuck on the app for
-// that whole round-trip. These paths match the broker's discovery document.
 const issuerBase = grokIssuer.replace(/\/+$/, "");
 const grokAuthorizationUrl = `${issuerBase}/api/auth/oauth2/authorize`;
 const grokTokenUrl = `${issuerBase}/api/auth/oauth2/token`;
 const grokUserInfoUrl = `${issuerBase}/api/auth/oauth2/userinfo`;
 
+function lazyPgPool(): Pool {
+  let inner: Pool | undefined;
+  const get = () => {
+    if (!inner) {
+      const url = env("DATABASE_URL");
+      if (!url) {
+        throw new Error(
+          "DATABASE_URL is not set. In Cloudflare open this Worker → Settings → Variables and Secrets, add DATABASE_URL (Neon pooled) and BETTER_AUTH_SECRET.",
+        );
+      }
+      inner = new Pool({ connectionString: url, max: 5 });
+    }
+    return inner;
+  };
+  return new Proxy({} as Pool, {
+    get(_target, prop) {
+      const pool = get();
+      const value = Reflect.get(pool, prop, pool) as unknown;
+      return typeof value === "function" ? (value as (...a: unknown[]) => unknown).bind(pool) : value;
+    },
+  });
+}
+
 // Real Postgres when `DATABASE_URL` is set (deployed apps), else the app's
 // embedded PGLite (preview) via a Kysely dialect — so Better Auth persists to the
 // SAME DB as app data, including email/password users. Both use the Better Auth
 // schema from `migrations/auth/0001_auth.sql`, copied into `migrations/` when
-// the app turns sign-in on.
+// the app turns sign-in on. Cloudflare Workers never use PGLite.
 const database = databaseUrl
-  ? new Pool({ connectionString: databaseUrl })
-  : { dialect: pgliteDialect(() => getPglite()), type: "postgres" as const };
+  ? new Pool({ connectionString: databaseUrl, max: 5 })
+  : isCloudflareWorker()
+    ? lazyPgPool()
+    : { dialect: pgliteDialect(() => getPglite()), type: "postgres" as const };
 
 /** Session token cookie name — also read by the live-preview popup completion page. */
 export const SESSION_TOKEN_COOKIE = "__Host-grok-auth.session_token";
