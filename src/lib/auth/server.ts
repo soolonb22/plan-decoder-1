@@ -197,7 +197,20 @@ const grokOAuthPlugin = authConfigured
     })
   : null;
 
-export const auth = betterAuth({
+export const auth = new Proxy({} as ReturnType<typeof betterAuth>, {
+  get(_target, prop) {
+    const inst = getAuth();
+    const value = Reflect.get(inst, prop, inst) as unknown;
+    return typeof value === "function" ? (value as (...a: never[]) => unknown).bind(inst) : value;
+  },
+});
+
+function getAuth(): ReturnType<typeof betterAuth> {
+  const g = globalThis as typeof globalThis & {
+    __planDecoderAuth__?: ReturnType<typeof betterAuth>;
+  };
+  if (g.__planDecoderAuth__) return g.__planDecoderAuth__;
+  g.__planDecoderAuth__ = betterAuth({
   baseURL,
   // Deployed apps inject BETTER_AUTH_SECRET. Preview: process-stable secret on
   // globalThis so HMR doesn't invalidate PGLite-backed sessions (see above).
@@ -271,6 +284,8 @@ export const auth = betterAuth({
     tanstackStartCookies(),
   ],
 });
+  return g.__planDecoderAuth__;
+}
 
 export function readSessionToken(): string | null {
   return getCookie(SESSION_TOKEN_COOKIE) ?? null;
