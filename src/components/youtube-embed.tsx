@@ -40,6 +40,13 @@ export const ART_APPLY_VIDEO = {
   url: "https://www.youtube.com/watch?v=EOEaT71ZKhg",
 } as const;
 
+export const CHARTER_VIDEO = {
+  id: "LfrjyaHtTY0",
+  title: "How To - NDIS Participant Service Charter and Participant Service Improvement Plan",
+  credit: "NDIS Australia — official How To video",
+  url: "https://www.youtube.com/watch?v=LfrjyaHtTY0",
+} as const;
+
 export function YoutubeEmbed({
   id,
   title,

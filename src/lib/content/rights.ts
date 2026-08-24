@@ -275,6 +275,45 @@ You do not have to prove you are “deserving”. You need evidence of functiona
 Lists of what is and is not an NDIS support sit in the NDIS rules (section 10). Those lists can be updated. Always check the letter and ndis.gov.au, not a rumour.`,
   },
   {
+    id: "service-charter",
+    group: "plan",
+    title: "Participant Service Charter and Improvement Plan",
+    summary:
+      "The Charter is how the NDIA says it will treat you. The Improvement Plan is what they say they will change. The Guarantee is the decision clocks.",
+    easy:
+      "The Agency says it will be transparent, responsive, respectful, empowering, and connected. If that is not your experience, you can give feedback. There are also clocks on decisions.",
+    tags: ["charter", "timeframes", "service"],
+    updated: "May 2026",
+    official: [
+      { label: "Participant Service Charter", url: "https://www.ndis.gov.au/about-us/service-charter/participant-service-charter" },
+      { label: "Participant Service Improvement Plan", url: "https://www.ndis.gov.au/about-us/service-charter/participant-service-improvement-plan" },
+      { label: "Participant Service Guarantee", url: "https://www.ndis.gov.au/about-us/service-charter/participant-service-guarantee" },
+      { label: "Easy Read Charter (PDF)", url: "https://www.ndis.gov.au/media/2621/download?attachment" },
+    ],
+    youtube: {
+      id: "LfrjyaHtTY0",
+      title: "How To - NDIS Participant Service Charter and Participant Service Improvement Plan",
+      credit: "NDIS Australia — official How To video",
+    },
+    body: `Three related NDIA documents. They are not your plan.
+
+1. Participant Service Charter — how the Agency says it will engage with you. Five words: transparent, responsive, respectful, empowering, connected. The published Charter page is current as at October 2022.
+
+   • Transparent: information and decisions should be easy to access and understand.
+   • Responsive: your individual needs and circumstances.
+   • Respectful: you are the expert in your own life.
+   • Empowering: information and support to lead your life.
+   • Connected: help to reach the services and supports you need.
+
+2. Participant Service Improvement Plan — what the NDIA and partners say they will do over a two-year period so the Scheme meets people’s expectations. The website (current 19 May 2026) describes 51 commitments across 9 improvement areas. Progress is meant to appear in Quarterly Reports.
+
+3. Participant Service Guarantee — the clocks on access, plans, variations, reviews, and nominee changes. Those timeframes are reported separately.
+
+The Charter does not replace a review right. If service is late, unclear, or disrespectful, keep dates, keep letters, ask for reasons in writing, and you can give feedback (1800 800 110) or complain about Agency service.
+
+Plan Decoder is not the NDIA. The official How To video is below.`,
+  },
+  {
     id: "psg-timeframes",
     group: "plan",
     title: "How long the NDIA has to decide (Participant Service Guarantee)",

@@ -30,6 +30,7 @@ export const NAV: NavItem[] = [
   { to: "/rights", label: "Know your rights", need: "free", group: "Rights" },
   { to: "/code-of-conduct", label: "Code of Conduct", need: "free", group: "Rights" },
   { to: "/art", label: "ART / AAT review", need: "free", group: "Rights" },
+  { to: "/service-charter", label: "Service Charter", need: "free", group: "Rights" },
   { to: "/glossary", label: "Glossary", need: "free", group: "Rights" },
   { to: "/news", label: "NDIS news", need: "free", group: "Rights" },
   { to: "/clients", label: "Clients", need: "pro", group: "Professional" },

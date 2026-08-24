@@ -44,6 +44,7 @@ import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RightsRouteImport } from './routes/rights'
 import { Route as SchoolRouteImport } from './routes/school'
 import { Route as ScriptsRouteImport } from './routes/scripts'
+import { Route as ServiceCharterRouteImport } from './routes/service-charter'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as ApiReadyRouteImport } from './routes/api/ready'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
@@ -224,6 +225,11 @@ const ScriptsRoute = ScriptsRouteImport.update({
   path: '/scripts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServiceCharterRoute = ServiceCharterRouteImport.update({
+  id: '/service-charter',
+  path: '/service-charter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -281,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
+  '/service-charter': typeof ServiceCharterRoute
   '/wallet': typeof WalletRoute
   '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -322,6 +329,7 @@ export interface FileRoutesByTo {
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
+  '/service-charter': typeof ServiceCharterRoute
   '/wallet': typeof WalletRoute
   '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -364,6 +372,7 @@ export interface FileRoutesById {
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
+  '/service-charter': typeof ServiceCharterRoute
   '/wallet': typeof WalletRoute
   '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -407,6 +416,7 @@ export interface FileRouteTypes {
     | '/rights'
     | '/school'
     | '/scripts'
+    | '/service-charter'
     | '/wallet'
     | '/api/ready'
     | '/api/auth/$'
@@ -448,6 +458,7 @@ export interface FileRouteTypes {
     | '/rights'
     | '/school'
     | '/scripts'
+    | '/service-charter'
     | '/wallet'
     | '/api/ready'
     | '/api/auth/$'
@@ -489,6 +500,7 @@ export interface FileRouteTypes {
     | '/rights'
     | '/school'
     | '/scripts'
+    | '/service-charter'
     | '/wallet'
     | '/api/ready'
     | '/api/auth/$'
@@ -531,6 +543,7 @@ export interface RootRouteChildren {
   RightsRoute: typeof RightsRoute
   SchoolRoute: typeof SchoolRoute
   ScriptsRoute: typeof ScriptsRoute
+  ServiceCharterRoute: typeof ServiceCharterRoute
   WalletRoute: typeof WalletRoute
   ApiReadyRoute: typeof ApiReadyRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -784,6 +797,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScriptsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/service-charter': {
+      id: '/service-charter'
+      path: '/service-charter'
+      fullPath: '/service-charter'
+      preLoaderRoute: typeof ServiceCharterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wallet': {
       id: '/wallet'
       path: '/wallet'
@@ -851,6 +871,7 @@ const rootRouteChildren: RootRouteChildren = {
   RightsRoute: RightsRoute,
   SchoolRoute: SchoolRoute,
   ScriptsRoute: ScriptsRoute,
+  ServiceCharterRoute: ServiceCharterRoute,
   WalletRoute: WalletRoute,
   ApiReadyRoute: ApiReadyRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
