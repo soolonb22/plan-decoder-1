@@ -27,6 +27,12 @@ export function neonHttpDialect(connectionString: string): Dialect {
   };
 }
 
+function toParam(value: unknown): unknown {
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value === "bigint") return Number(value);
+  return value;
+}
+
 class NeonHttpDriver implements Driver {
   constructor(private readonly sql: NeonSql) {}
   async init(): Promise<void> {}
@@ -44,9 +50,9 @@ class NeonHttpConnection implements DatabaseConnection {
   constructor(private readonly sql: NeonSql) {}
 
   async executeQuery<O>(compiledQuery: CompiledQuery): Promise<QueryResult<O>> {
-    const rows = (await this.sql.query(compiledQuery.sql, [
-      ...compiledQuery.parameters,
-    ])) as O[];
+    const params = compiledQuery.parameters.map(toParam);
+    const raw = await this.sql.query(compiledQuery.sql, params);
+    const rows = (Array.isArray(raw) ? raw : ((raw as { rows?: O[] }).rows ?? [])) as O[];
     return { rows };
   }
 

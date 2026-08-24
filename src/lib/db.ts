@@ -81,6 +81,57 @@ const identity = (v: string) => v;
 
 type Run = <T>(text: string, params: unknown[]) => Promise<T[]>;
 
+function splitSqlStatements(sql: string): string[] {
+  const parts: string[] = [];
+  let buf = "";
+  for (const line of sql.split("\n")) {
+    buf += `${line}\n`;
+    if (line.trim().endsWith(";")) {
+      const stmt = buf.trim().replace(/;$/, "").trim();
+      const useful = stmt.split("\n").some((l) => l.trim() && !l.trim().startsWith("--"));
+      if (useful) parts.push(stmt);
+      buf = "";
+    }
+  }
+  const rest = buf.trim().replace(/;$/, "").trim();
+  if (rest.split("\n").some((l) => l.trim() && !l.trim().startsWith("--"))) parts.push(rest);
+  return parts;
+}
+
+async function migrateNeonIfNeeded(connectionString: string): Promise<void> {
+  const g = globalThis as typeof globalThis & { __neonMigrateChain__?: Promise<void> };
+  if (g.__neonMigrateChain__) return g.__neonMigrateChain__;
+  g.__neonMigrateChain__ = (async () => {
+    const { neon, neonConfig } = await import("@neondatabase/serverless");
+    neonConfig.poolQueryViaFetch = true;
+    const sql = neon(connectionString);
+    const run = async (text: string, params: unknown[] = []) => {
+      const rows = await sql.query(text, params);
+      return (Array.isArray(rows) ? rows : []) as { name?: string }[];
+    };
+    await run(
+      `create table if not exists _migrations (name text primary key, applied_at timestamptz not null default now())`,
+    );
+    const doneRows = await run("select name from _migrations");
+    const done = doneRows.map((r) => r.name).filter((n): n is string => Boolean(n));
+    const migrations = import.meta.glob("/migrations/*.sql", {
+      query: "?raw",
+      import: "default",
+      eager: true,
+    }) as Record<string, string>;
+    for (const { name, path } of pendingMigrations(Object.keys(migrations), done)) {
+      for (const stmt of splitSqlStatements(migrations[path] ?? "")) {
+        await run(stmt);
+      }
+      await run("insert into _migrations (name) values ($1) on conflict (name) do nothing", [name]);
+    }
+  })().catch((err) => {
+    g.__neonMigrateChain__ = undefined;
+    throw err;
+  });
+  return g.__neonMigrateChain__;
+}
+
 /** Wrap a query runner in the tagged-template + `.query()` `Sql` surface. */
 function toSql(run: Run): Sql {
   const sql = (async <T = Record<string, unknown>>(
@@ -99,6 +150,7 @@ function toSql(run: Run): Sql {
 
 function createNeonSql(connectionString: string): Promise<Sql> {
   globalRef.__pgSqlPromise__ ??= (async () => {
+    await migrateNeonIfNeeded(connectionString);
     if (isCloudflareWorker()) {
       const { neon, neonConfig } = await import("@neondatabase/serverless");
       neonConfig.poolQueryViaFetch = true;
@@ -240,13 +292,16 @@ export async function getPglite(): Promise<import("@electric-sql/pglite").PGlite
  *
  * - **PGLite** (preview / no `DATABASE_URL`): open the in-memory DB and apply
  *   `migrations/*.sql`. Idempotent — concurrent callers share one promise.
- * - **Neon**: no-op (pool is created lazily on first query).
+ * - **Neon**: apply `migrations/*.sql` over HTTP (idempotent) so Workers get
+ *   Better Auth tables even when DATABASE_URL is a runtime secret, not a build var.
  *
  * Vite `configureServer` awaits this at dev startup; production imports of this
  * module kick it off immediately (see bottom of file).
  */
 export function ensureDbReady(): Promise<void> {
-  if (readDatabaseUrl() || isCloudflareWorker()) return Promise.resolve();
+  const url = readDatabaseUrl();
+  if (url) return migrateNeonIfNeeded(url);
+  if (isCloudflareWorker()) return Promise.resolve();
   return getSql().then(() => undefined);
 }
 
