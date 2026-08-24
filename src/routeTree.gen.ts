@@ -35,6 +35,7 @@ import { Route as LanguageRouteImport } from './routes/language'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MeetingRouteImport } from './routes/meeting'
 import { Route as MembershipRouteImport } from './routes/membership'
+import { Route as NdisChangesRouteImport } from './routes/ndis-changes'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as PaidRouteImport } from './routes/paid'
@@ -180,6 +181,11 @@ const MembershipRoute = MembershipRouteImport.update({
   path: '/membership',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NdisChangesRoute = NdisChangesRouteImport.update({
+  id: '/ndis-changes',
+  path: '/ndis-changes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/meeting': typeof MeetingRoute
   '/membership': typeof MembershipRoute
+  '/ndis-changes': typeof NdisChangesRoute
   '/news': typeof NewsRoute
   '/ops': typeof OpsRoute
   '/paid': typeof PaidRoute
@@ -320,6 +327,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/meeting': typeof MeetingRoute
   '/membership': typeof MembershipRoute
+  '/ndis-changes': typeof NdisChangesRoute
   '/news': typeof NewsRoute
   '/ops': typeof OpsRoute
   '/paid': typeof PaidRoute
@@ -363,6 +371,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/meeting': typeof MeetingRoute
   '/membership': typeof MembershipRoute
+  '/ndis-changes': typeof NdisChangesRoute
   '/news': typeof NewsRoute
   '/ops': typeof OpsRoute
   '/paid': typeof PaidRoute
@@ -407,6 +416,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/meeting'
     | '/membership'
+    | '/ndis-changes'
     | '/news'
     | '/ops'
     | '/paid'
@@ -449,6 +459,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/meeting'
     | '/membership'
+    | '/ndis-changes'
     | '/news'
     | '/ops'
     | '/paid'
@@ -491,6 +502,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/meeting'
     | '/membership'
+    | '/ndis-changes'
     | '/news'
     | '/ops'
     | '/paid'
@@ -534,6 +546,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MeetingRoute: typeof MeetingRoute
   MembershipRoute: typeof MembershipRoute
+  NdisChangesRoute: typeof NdisChangesRoute
   NewsRoute: typeof NewsRoute
   OpsRoute: typeof OpsRoute
   PaidRoute: typeof PaidRoute
@@ -734,6 +747,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembershipRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ndis-changes': {
+      id: '/ndis-changes'
+      path: '/ndis-changes'
+      fullPath: '/ndis-changes'
+      preLoaderRoute: typeof NdisChangesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/news': {
       id: '/news'
       path: '/news'
@@ -862,6 +882,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MeetingRoute: MeetingRoute,
   MembershipRoute: MembershipRoute,
+  NdisChangesRoute: NdisChangesRoute,
   NewsRoute: NewsRoute,
   OpsRoute: OpsRoute,
   PaidRoute: PaidRoute,

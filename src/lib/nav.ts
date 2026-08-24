@@ -31,6 +31,7 @@ export const NAV: NavItem[] = [
   { to: "/code-of-conduct", label: "Code of Conduct", need: "free", group: "Rights" },
   { to: "/art", label: "ART / AAT review", need: "free", group: "Rights" },
   { to: "/service-charter", label: "Service Charter", need: "free", group: "Rights" },
+  { to: "/ndis-changes", label: "2026 changes", need: "free", group: "Rights" },
   { to: "/glossary", label: "Glossary", need: "free", group: "Rights" },
   { to: "/news", label: "NDIS news", need: "free", group: "Rights" },
   { to: "/clients", label: "Clients", need: "pro", group: "Professional" },

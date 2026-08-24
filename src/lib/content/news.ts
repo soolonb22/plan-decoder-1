@@ -38,12 +38,12 @@ export const NEWS: NewsItem[] = [
     id: "future-generations-bill",
     title: "NDIS Amendment (Securing the NDIS for Future Generations) Bill 2026",
     date: "2026-05-14",
-    source: "Parliament of Australia",
-    url: "https://www.aph.gov.au/Parliamentary_Business/Bills_Legislation/bd/bd2526/26bd065",
+    source: "Parliament / NDIA",
+    url: "https://www.ndis.gov.au/ndis-laws/securing-ndis-future-generations",
     summary:
-      "Parliament has been considering changes that include a ministerial pricing mechanism, tighter funding criteria, and shifts affecting some participation and daily living supports. Debate is ongoing and details can change.",
+      "Introduced 14 May 2026, passed 19 August 2026, signed 20 August 2026. First changes from 27 August 2026, with later dates for claims, new-framework planning, and access assessments. NDIA: keep using your current plan as usual unless they tell you otherwise.",
     whyItMatters:
-      "Do not assume your current plan has already changed. Read letters from the NDIA. If a new decision arrives, diary the date — review clocks start from when you receive it.",
+      "Do not assume your current plan has already changed. Read letters. If a new decision arrives, diary the date — review clocks start from when you receive it.",
     tags: ["legislation", "reviews"],
   },
   {

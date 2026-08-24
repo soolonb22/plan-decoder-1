@@ -476,29 +476,45 @@ Plan Decoder’s practice assessment is a rehearsal inspired by functional quest
   {
     id: "future-generations",
     group: "change",
-    title: "2026 law changes — what to watch",
-    summary: "A 2026 Amendment Bill passed Parliament in August 2026. Many parts start later. Your current plan stays until a start date applies to you.",
-    easy: "New laws are coming in stages. Read your letter. Do not panic on rumours.",
-    tags: ["law", "2026"],
+    title: "NDIS changes summary (from May 2026)",
+    summary:
+      "Bill introduced 14 May 2026, passed 19 August 2026, signed 20 August 2026. First changes from 27 August 2026. Many participant changes start later. Keep using your current plan until a letter says otherwise.",
+    easy:
+      "New NDIS laws were announced in May 2026 and passed in August. Most people keep using their current plan. Read letters. Do not panic on rumours.",
+    tags: ["law", "2026", "may"],
     updated: "August 2026",
     official: [
-      { label: "About the changes to the NDIS (Health)", url: "https://www.health.gov.au/our-work/ndis-legislation-changes/amendments/ndis-amendment-securing-the-ndis-for-future-generations-bill-2026/about-the-changes-to-the-ndis?language=en" },
+      { label: "Securing the NDIS for future generations (NDIA)", url: "https://www.ndis.gov.au/ndis-laws/securing-ndis-future-generations" },
+      { label: "Federal Budget and NDIS laws update (14 May 2026)", url: "https://www.ndis.gov.au/news/11545-federal-budget-and-ndis-laws-update" },
+      { label: "About the changes (Health)", url: "https://www.health.gov.au/our-work/ndis-legislation-changes/amendments/ndis-amendment-securing-the-ndis-for-future-generations-bill-2026/about-the-changes-to-the-ndis?language=en" },
+      { label: "Changes to the NDIS", url: "https://www.ndis.gov.au/changes-ndis" },
     ],
-    body: `The NDIS Amendment (Securing the NDIS for Future Generations) Bill 2026 passed Parliament on 19 August 2026 and was awaiting Royal Assent. Parts start on different days. This is a map, not legal advice.
+    youtube: {
+      id: "6-JUE6GjiIU",
+      title: "NDIS Changes Summary May 2026",
+      credit: "Independent summary of May 2026 announcements — not NDIA",
+    },
+    body: `May 2026 is when the Government introduced the National Disability Insurance Scheme Amendment (Securing the NDIS for Future Generations) Bill 2026 (14 May) and published a Federal Budget / NDIS laws update.
 
-Published government material describes staged changes such as:
+What official pages said in May: nothing changes for now; keep using your current plan; a new law had been introduced; eligibility would be made clearer with standardised functional-capacity assessments; new-framework planning was described from April 2027; Thriving Kids was described for children 8 and under with developmental delay and/or autism and low to moderate support needs.
 
-• tighter rules for unscheduled plan reassessments, with a 90-day decision clock — if no decision, it can be treated as refused so review rights open
-• only the participant, plan nominee, or guardian requesting some unscheduled reassessments
-• new-framework planning and support needs assessments from 2027
-• access and eligibility reassessments described from 1 January 2028, with current participants keeping supports under existing rules until they are reassessed
-• some participation and capacity-building budget settings changing for new or reassessed plans
-• claims closer to the date of service
-• more registered-provider rules for higher-risk supports later in the decade
+What happened after May (NDIA page current 21 August 2026):
 
-Review rights for access and plan decisions are described as remaining. Automated decisions are described as still having human review.
+• Parliament passed the Bill on 19 August 2026
+• The Governor-General signed it on 20 August 2026
+• Changes start from Thursday 27 August 2026 — in stages, not all at once
+• NDIA: “Right now, you can continue using your plan and supports as usual.” If a change affects you, they say they will tell you
 
-If a planner quotes a 2026 Bill at you, ask which start date applies to your plan, in writing. Until then, the decision letter you already have is the one to review.`,
+Staged items described on government sites (always check the current page):
+
+• Claims closer to the date of service — 90 days from 1 December 2026
+• Some participation and daily-activity budget settings for new or reassessed plans — from 1 October 2026
+• New-framework planning / support needs assessments — from 1 April 2027
+• Access based on standardised functional capacity — described from 1 January 2028 for new access; current participants reassessed over following years
+
+The May video below is an independent summary of announcements at that time. It is not the NDIA. Law and start dates moved after May. Read ndis.gov.au and the letter in your hand.
+
+Plan Decoder does not decide access or funding. This is not legal advice.`,
   },
   {
     id: "privacy",

@@ -47,6 +47,13 @@ export const CHARTER_VIDEO = {
   url: "https://www.youtube.com/watch?v=LfrjyaHtTY0",
 } as const;
 
+export const MAY_2026_CHANGES_VIDEO = {
+  id: "6-JUE6GjiIU",
+  title: "NDIS Changes Summary May 2026",
+  credit: "Independent summary of May 2026 announcements — not NDIA. Check ndis.gov.au for current law.",
+  url: "https://www.youtube.com/watch?v=6-JUE6GjiIU",
+} as const;
+
 export function YoutubeEmbed({
   id,
   title,
