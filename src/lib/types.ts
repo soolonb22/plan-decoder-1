@@ -208,6 +208,7 @@ export type AppState = {
   whodas: WhodasRecord[];
   drafts: GuidedDraft[];
   lastGuide: string;
+  planRead: import("./plan-reader").PlanRead | null;
   assessments: AssessmentDraft[];
   a11y: A11yPrefs;
   activeAssessmentId: string;

@@ -18,7 +18,8 @@ import { Card } from "@/components/ui/card";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Disclaimer, EmptyState, MembershipGate, PageHeader } from "@/components/layout/page";
-import { StoryStrip } from "@/components/story";
+import { PlanExplainer, PlanUploadHero } from "@/components/plan-explainer";
+import { fileToPlanText, parseNdisPlan, planSlipBody, guessEvidenceTypeFromPlan } from "@/lib/plan-reader";
 import type { EvidenceItem, EvidenceType, WhodasDomain } from "@/lib/types";
 
 export const Route = createFileRoute("/wallet")({
@@ -79,6 +80,8 @@ function WalletPage() {
   const add = useOllie((s) => s.addEvidence);
   const update = useOllie((s) => s.updateEvidence);
   const remove = useOllie((s) => s.removeEvidence);
+  const planRead = useOllie((s) => s.planRead);
+  const setPlanRead = useOllie((s) => s.setPlanRead);
   const items = useClientList("evidence");
 
   const [open, setOpen] = useState(false);
@@ -100,6 +103,8 @@ function WalletPage() {
   const uploadRef = useRef<HTMLInputElement>(null);
   const loadRef = useRef<HTMLInputElement>(null);
   const slipUploadRef = useRef<HTMLInputElement>(null);
+  const planRef = useRef<HTMLInputElement>(null);
+  const [readingPlan, setReadingPlan] = useState(false);
 
   function resetForm() {
     setEditing(null);
@@ -241,6 +246,32 @@ function WalletPage() {
     }
   }
 
+  async function readPlanFile(file: File) {
+    setReadingPlan(true);
+    setFileNote(null);
+    try {
+      const text = await fileToPlanText(file);
+      const read = parseNdisPlan(text, file.name);
+      setPlanRead(read);
+      const id = add({
+        title: `NDIS plan — ${file.name}`,
+        body: planSlipBody(read),
+        type: guessEvidenceTypeFromPlan(),
+        domain: "",
+        tags: ["plan", "self-manage"],
+        date: todayISO(),
+        source: "Uploaded plan (read on this device)",
+        files: [],
+      });
+      await attachToItem(id, [file]);
+      setFileNote("Plan read on this device. Scroll to the pieces below. Not sent to the NDIA.");
+    } catch {
+      setFileNote("Could not read that file. Try a PDF with selectable text, or a .txt copy.");
+    } finally {
+      setReadingPlan(false);
+    }
+  }
+
   async function downloadFile(id: string, name: string) {
     const blob = await getLocalFile(id);
     if (!blob) {
@@ -318,6 +349,17 @@ function WalletPage() {
           if (file) void loadPocket(file);
         }}
       />
+      <input
+        ref={planRef}
+        type="file"
+        className="sr-only"
+        accept=".pdf,.txt,.md,application/pdf,text/plain"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = "";
+          if (file) void readPlanFile(file);
+        }}
+      />
       <PageHeader
         title="Evidence Wallet"
         lede="A pocket for short, dated notes about everyday function. One slip per situation. It stays on this device."
@@ -353,6 +395,27 @@ function WalletPage() {
           </div>
         }
       />
+
+      <PlanUploadHero
+        busy={readingPlan}
+        onPick={() => planRef.current?.click()}
+        onPaste={(text) => {
+          const read = parseNdisPlan(text, "pasted-plan.txt");
+          setPlanRead(read);
+          add({
+            title: "NDIS plan (pasted text)",
+            body: planSlipBody(read),
+            type: guessEvidenceTypeFromPlan(),
+            domain: "",
+            tags: ["plan", "self-manage"],
+            date: todayISO(),
+            source: "Pasted on this device",
+            files: [],
+          });
+          setFileNote("Pasted text explained on this device. Not sent to the NDIA.");
+        }}
+      />
+      {planRead ? <PlanExplainer read={planRead} onClear={() => setPlanRead(null)} /> : null}
 
       <StoryStrip
         heading="How the wallet works"

@@ -25,6 +25,7 @@ import type {
   AssessmentDraft,
 } from "./types";
 import { makeSampleAssessment } from "./assessment/sample";
+import type { PlanRead } from "./plan-reader";
 
 const DEFAULT_CLIENT_ID = "self";
 
@@ -64,6 +65,7 @@ const initial: AppState = {
   whodas: [],
   drafts: [],
   lastGuide: "",
+  planRead: null,
   assessments: [],
   a11y: { fontScale: "md", easyRead: false, hide3d: false },
   activeAssessmentId: "",
@@ -113,6 +115,7 @@ type Actions = {
   setActiveAssessment: (id: string) => void;
   loadSample: () => void;
   resetAll: () => void;
+  setPlanRead: (p: PlanRead | null) => void;
 };
 
 function withClient<T extends { clientId?: string }>(state: AppState, item: T) {
@@ -487,6 +490,7 @@ export const useOllie = create<AppState & Actions>()(
         }));
       },
       resetAll: () => set({ ...initial, clients: [defaultClient()] }),
+      setPlanRead: (planRead) => set({ planRead }),
     }),
     {
       name: "ollie-ndis-v1",
@@ -501,6 +505,7 @@ export const useOllie = create<AppState & Actions>()(
           activeAssessmentId: p.activeAssessmentId ?? "",
           credits: p.credits ?? current.credits ?? 0,
           subscriptionStatus: p.subscriptionStatus ?? current.subscriptionStatus ?? "none",
+          planRead: p.planRead ?? current.planRead ?? null,
         };
       },
       storage: createJSONStorage(() => {
