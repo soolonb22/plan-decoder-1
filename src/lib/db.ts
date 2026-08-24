@@ -99,6 +99,15 @@ function toSql(run: Run): Sql {
 
 function createNeonSql(connectionString: string): Promise<Sql> {
   globalRef.__pgSqlPromise__ ??= (async () => {
+    if (isCloudflareWorker()) {
+      const { neon, neonConfig } = await import("@neondatabase/serverless");
+      neonConfig.poolQueryViaFetch = true;
+      const sqlHttp = neon(connectionString);
+      return toSql(async <T>(text: string, params: unknown[]) => {
+        const rows = await sqlHttp.query(text, params);
+        return rows as T[];
+      });
+    }
     const { Pool, types } = await import("pg");
     types.setTypeParser(OID_INT8, Number);
     types.setTypeParser(OID_DATE, identity);

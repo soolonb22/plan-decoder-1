@@ -21,14 +21,20 @@ function GetFiles() {
         Download the full app folder (zip). Unzip it, then deploy to plandecoder.com with Wrangler.
       </p>
       <Button className="mt-6 min-h-12" asChild>
-        <a href="/Plan-Decoder-1.zip" download="Plan Decoder 1.zip">
+        <a
+          href="https://github.com/soolonb22/plan-decoder-1/archive/refs/heads/main.zip"
+          download="Plan Decoder 1.zip"
+        >
           Download Plan Decoder 1.zip
         </a>
       </Button>
       <p className="mt-4 text-sm text-muted">
         Direct file:{" "}
-        <a className="text-primary underline-offset-4 hover:underline" href="/Plan-Decoder-1.zip">
-          /Plan-Decoder-1.zip
+        <a
+          className="text-primary underline-offset-4 hover:underline"
+          href="https://github.com/soolonb22/plan-decoder-1/archive/refs/heads/main.zip"
+        >
+          GitHub zip
         </a>
       </p>
     </main>

@@ -6,6 +6,7 @@
   "main": "@tanstack/react-start/server-entry",
   "preview_urls": true,
   "workers_dev": true,
+  "placement": { "mode": "smart" },
   "observability": {
     "enabled": true,
     "logs": {

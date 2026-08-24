@@ -158,13 +158,13 @@ function MembershipPage() {
         </p>
         {message ? <p className="mt-3 text-sm text-primary-deep">{message}</p> : null}
         <p className="mt-3 text-xs text-muted">
-          Pay on Stripe. Come back here and activate so this account receives membership or credits.
+          Pay on Stripe. Membership and credits land on this account after Stripe confirms (webhook). Tap refresh if the page still looks old.
         </p>
         {pending ? (
           <div className="mt-4 flex flex-wrap gap-2">
             {pending === "core" ? (
               <Button disabled={Boolean(busy)} onClick={() => void activate("core")}>
-                {busy?.startsWith("activate-core") ? "Activating…" : "I’ve paid — activate Core"}
+                {busy?.startsWith("activate-core") ? "Checking…" : "I’ve paid — refresh Core"}
               </Button>
             ) : (
               <Button

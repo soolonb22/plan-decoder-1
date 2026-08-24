@@ -144,47 +144,12 @@ export const createCheckout = createServerFn({ method: "POST" })
 export const confirmPaid = createServerFn({ method: "POST" })
   .validator((input: { kind: "core" | "credits"; credits?: number }) => input)
   .middleware([authMiddleware])
-  .handler(async ({ context, data }): Promise<BillingSnapshot> => {
+  .handler(async ({ context }): Promise<BillingSnapshot> => {
     await ensureProfile(context.userId);
-    const sql = await getSql();
-    const pendingReason =
-      data.kind === "core"
-        ? "pending:core"
-        : `pending:credits:${creditPack(data.credits).credits}`;
-    const pending = await sql<{ id: number; reason: string }>`
-      select id, reason from credit_ledger
-      where user_id = ${context.userId}
-        and reason = ${pendingReason}
-      order by id desc
-      limit 1
-    `;
-    if (!pending.length) {
-      throw new Error("Start checkout first, then tap this after Stripe shows payment successful.");
-    }
-    if (data.kind === "core") {
-      await sql`
-        update profiles
-        set membership = 'core', subscription_status = 'active', updated_at = now()
-        where user_id = ${context.userId}
-      `;
-      await sql`
-        insert into credit_ledger (user_id, delta, reason)
-        values (${context.userId}, 0, 'paid-link:core')
-      `;
-    } else {
-      const n = creditPack(data.credits).credits;
-      await sql`
-        update profiles
-        set credits = credits + ${n}, updated_at = now()
-        where user_id = ${context.userId}
-      `;
-      await sql`
-        insert into credit_ledger (user_id, delta, reason)
-        values (${context.userId}, ${n}, ${`paid-link:credits:${n}`})
-      `;
-    }
+    // Never grant membership/credits from a client tap. Stripe webhooks
+    // (and confirmCheckout with a session id) write entitlements.
     const row = await readProfile(context.userId);
-    return { ...snap(row), stripeConfigured: true };
+    return { ...snap(row), stripeConfigured: stripeConfigured() };
   });
 
 export const confirmCheckout = createServerFn({ method: "POST" })

@@ -256,7 +256,10 @@ function Login() {
           <p className="font-semibold text-primary-deep">Need the files on your computer?</p>
           <p className="mt-1 text-sm text-muted">Plan Decoder 1 — full app zip for Cloudflare / Wrangler.</p>
           <Button className="mt-3 w-full min-h-12" asChild>
-            <a href="/Plan-Decoder-1.zip" download="Plan Decoder 1.zip">
+            <a
+              href="https://github.com/soolonb22/plan-decoder-1/archive/refs/heads/main.zip"
+              download="Plan Decoder 1.zip"
+            >
               Download Plan Decoder 1.zip
             </a>
           </Button>
