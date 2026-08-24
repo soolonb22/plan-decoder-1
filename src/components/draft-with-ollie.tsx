@@ -7,21 +7,6 @@ import { useOllie } from "@/lib/store";
 import { downloadText } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { OutcomeKind } from "@/lib/billing";
-
-const KIND_MAP: Record<string, OutcomeKind> = {
-  language: "language_draft",
-  "functional-language": "language_draft",
-  impact: "impact_statement",
-  scripts: "advocacy_script",
-  meeting: "meeting_brief",
-  appointment: "appointment_brief",
-  clinical: "clinical_draft",
-  "clinical-language": "clinical_draft",
-  report: "covering_letter",
-  letter: "covering_letter",
-  guide: "guided_letter",
-};
 
 export function DraftWithOllie({
   kind,
@@ -36,21 +21,24 @@ export function DraftWithOllie({
   const [error, setError] = useState<string | null>(null);
   const [text, setText] = useState("");
   const addReport = useOllie((s) => s.addReport);
-  const outcome = KIND_MAP[kind] ?? "language_draft";
   const pay = useSpendOutcome();
 
   async function run() {
     setBusy(true);
     setError(null);
     try {
-      const paid = await pay.spend(outcome);
-      if (!paid) {
-        setError(pay.error || "A credit is needed for this draft.");
+      const res = await draftWithOllie({ data: { kind, prompt, notes } });
+      if (!res.ok) {
+        setError(res.error);
+        if ("credits" in res && typeof res.credits === "number") {
+          useOllie.getState().setBilling({ credits: res.credits });
+        }
         return;
       }
-      const res = await draftWithOllie({ data: { kind, prompt, notes } });
-      if (!res.ok) setError(res.error);
-      else setText(res.text);
+      setText(res.text);
+      if ("credits" in res && typeof res.credits === "number") {
+        useOllie.getState().setBilling({ credits: res.credits });
+      }
     } catch {
       setError("Plan Decoder could not draft just now. Your structured notes are still saved.");
     } finally {

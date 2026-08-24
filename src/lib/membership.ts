@@ -92,7 +92,7 @@ export const ONE_OFF = {
   name: "Practice report",
   price: "$5",
   cadence: "1 credit per outcome",
-  blurb: "Questions are free once you have Core. Each finished practice report or polished Core draft uses 1 credit ($5).",
+  blurb: "Questions are included with Core. Each finished practice report uses 1 credit ($5).",
   features: [
     "Full clinical-style practice report for this rehearsal",
     "Results table, plots, interpretation, and answer grid",
@@ -101,6 +101,6 @@ export const ONE_OFF = {
   ],
 };
 
-export function canViewFullReport(_have: Membership, draftUnlocked?: boolean) {
-  return Boolean(draftUnlocked);
+export function canViewFullReport(have: Membership, draftUnlocked?: boolean) {
+  return canAccess(have, "core") && Boolean(draftUnlocked);
 }

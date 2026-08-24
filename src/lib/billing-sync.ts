@@ -6,6 +6,7 @@ import {
   CREDIT_PACKS,
   CREDIT_PRICE_AUD,
   OUTCOME_CREDITS,
+  hasPaidSeat,
   type BillingSnapshot,
   type OutcomeKind,
   type SubscriptionStatus,
@@ -241,33 +242,101 @@ export const redeemComplimentary = createServerFn({ method: "POST" })
   });
 
 export const spendCredit = createServerFn({ method: "POST" })
-  .validator((input: { kind: OutcomeKind }) => input)
+  .validator((input: { kind: OutcomeKind; subjectId?: string }) => input)
   .middleware([authMiddleware])
   .handler(async ({ context, data }) => {
-    await ensureProfile(context.userId);
-    const row = await readProfile(context.userId);
-    const membership = (row?.membership as Membership) || "free";
-    const status = (row?.subscription_status as SubscriptionStatus) || "none";
-    if (membership === "free" && status === "none") {
-      return { ok: false as const, error: "Core membership ($12 / month) is needed first.", credits: Number(row?.credits ?? 0) };
-    }
-    const sql = await getSql();
-    const updated = await sql<{ credits: number | string }>`
-      update profiles
-      set credits = credits - ${OUTCOME_CREDITS}, updated_at = now()
-      where user_id = ${context.userId} and credits >= ${OUTCOME_CREDITS}
-      returning credits
-    `;
-    if (!updated[0]) {
-      return {
-        ok: false as const,
-        error: `This outcome uses ${OUTCOME_CREDITS} credit ($${CREDIT_PRICE_AUD}). Buy credits first.`,
-        credits: Number(row?.credits ?? 0),
-      };
-    }
-    await sql`
-      insert into credit_ledger (user_id, delta, reason, outcome_kind)
-      values (${context.userId}, ${-OUTCOME_CREDITS}, 'spend', ${data.kind})
-    `;
-    return { ok: true as const, credits: Number(updated[0].credits) };
+    return consumeOutcome(context.userId, data.kind, data.subjectId);
   });
+
+export type ConsumeResult =
+  | { ok: true; credits: number; already: boolean }
+  | { ok: false; error: string; credits: number };
+
+export async function consumeOutcome(
+  userId: string,
+  kind: OutcomeKind,
+  subjectId?: string,
+): Promise<ConsumeResult> {
+  await ensureProfile(userId);
+  const row = await readProfile(userId);
+  const membership = (row?.membership as Membership) || "free";
+  const status = (row?.subscription_status as SubscriptionStatus) || "none";
+  const current = Number(row?.credits ?? 0);
+  if (!hasPaidSeat(membership, status)) {
+    return {
+      ok: false,
+      error: "Core membership ($12 / month) is needed before credits can be used.",
+      credits: current,
+    };
+  }
+
+  const sql = await getSql();
+  const subject = (subjectId || "").trim().slice(0, 180) || null;
+  if (subject) {
+    const existing = await sql<{ id: number }>`
+      select id from credit_ledger
+      where user_id = ${userId}
+        and reason = 'spend'
+        and outcome_kind = ${kind}
+        and subject_id = ${subject}
+      limit 1
+    `;
+    if (existing.length) {
+      return { ok: true, credits: current, already: true };
+    }
+  }
+
+  const updated = await sql<{ credits: number | string }>`
+    update profiles
+    set credits = credits - ${OUTCOME_CREDITS}, updated_at = now()
+    where user_id = ${userId} and credits >= ${OUTCOME_CREDITS}
+    returning credits
+  `;
+  if (!updated[0]) {
+    return {
+      ok: false,
+      error: `This outcome uses ${OUTCOME_CREDITS} credit ($${CREDIT_PRICE_AUD}). Buy credits first.`,
+      credits: current,
+    };
+  }
+
+  try {
+    await sql`
+      insert into credit_ledger (user_id, delta, reason, outcome_kind, subject_id)
+      values (${userId}, ${-OUTCOME_CREDITS}, 'spend', ${kind}, ${subject})
+    `;
+  } catch {
+    await sql`
+      update profiles
+      set credits = credits + ${OUTCOME_CREDITS}, updated_at = now()
+      where user_id = ${userId}
+    `;
+    const again = await readProfile(userId);
+    return { ok: true, credits: Number(again?.credits ?? current), already: true };
+  }
+
+  return { ok: true, credits: Number(updated[0].credits), already: false };
+}
+
+export async function refundOutcome(userId: string, kind: OutcomeKind, subjectId: string) {
+  const sql = await getSql();
+  const subject = subjectId.trim().slice(0, 180);
+  const gone = await sql<{ id: number }>`
+    delete from credit_ledger
+    where user_id = ${userId}
+      and reason = 'spend'
+      and outcome_kind = ${kind}
+      and subject_id = ${subject}
+    returning id
+  `;
+  if (!gone.length) return;
+  await sql`
+    update profiles
+    set credits = credits + ${OUTCOME_CREDITS}, updated_at = now()
+    where user_id = ${userId}
+  `;
+  await sql`
+    insert into credit_ledger (user_id, delta, reason, outcome_kind, subject_id)
+    values (${userId}, ${OUTCOME_CREDITS}, 'refund', ${kind}, ${subject})
+  `;
+}

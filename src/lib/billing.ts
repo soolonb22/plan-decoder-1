@@ -5,7 +5,16 @@ export const MEMBERSHIP_PRICE_AUD = {
   pro: 49,
 } as const;
 
-/** One finished outcome (report, polished draft, PDF pack) costs this many credits. */
+/**
+ * Credit rules (server is the source of truth):
+ * - Core or Professional membership is required before any credit can be spent.
+ * - Filling practice questions, diaries, wallet notes, and core worksheets is
+ *   included in membership (0 credits).
+ * - Each finished *outcome* costs OUTCOME_CREDITS (1 credit = $5):
+ *   practice report / PDF, or a polished AI draft from a core tool.
+ * - The same person + outcome kind + subject is charged once.
+ * - If an AI draft fails, that credit is returned.
+ */
 export const OUTCOME_CREDITS = 1;
 export const CREDIT_PRICE_AUD = 5;
 
@@ -65,4 +74,9 @@ export type BillingSnapshot = {
 export function hasPaidSeat(membership: Membership, status: SubscriptionStatus) {
   if (membership === "core" || membership === "pro") return true;
   return status === "active" || status === "preview" || status === "complimentary";
+}
+
+export function creditSubject(kind: OutcomeKind, raw: string) {
+  const text = `${kind}:${raw}`.slice(0, 180);
+  return text.replace(/\s+/g, " ").trim();
 }

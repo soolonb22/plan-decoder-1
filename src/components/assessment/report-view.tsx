@@ -24,6 +24,7 @@ export function ReportView({
   onDelete: () => void;
 }) {
   const membership = useOllie((s) => s.membership);
+  const setBilling = useOllie((s) => s.setBilling);
   const upsert = useOllie((s) => s.upsertAssessment);
   const assessments = useOllie((s) => s.assessments);
   const client = useActiveClient();
@@ -45,10 +46,15 @@ export function ReportView({
     setError(null);
     try {
       const res = await writeAiPracticeReport({
-        data: { digest: digestForAi(draft, score) },
+        data: { digest: digestForAi(draft, score), assessmentId: draft.id },
       });
       if (!res.ok) setError(res.error);
-      else upsert({ id: draft.id, reportAi: res.text, status: "complete", score, unlocked: true });
+      else {
+        upsert({ id: draft.id, reportAi: res.text, status: "complete", score, unlocked: true });
+        if ("credits" in res && typeof res.credits === "number") {
+          setBilling({ credits: res.credits });
+        }
+      }
     } catch {
       setError("Plan Decoder could not polish just now. Your structured report is still here.");
     } finally {
@@ -95,7 +101,7 @@ export function ReportView({
             </div>
           </div>
           <p className="mt-2 text-sm text-muted">
-            You can keep a simple scorecard for free. The full clinical-style report and PDF uses 1 credit ($5) after Core membership.
+          You can keep a simple scorecard for free with Core. The full clinical-style report and PDF uses 1 credit ($5).
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <div className="rounded-xl bg-paper-2 px-4 py-3">
@@ -117,8 +123,9 @@ export function ReportView({
         </Card>
         <OutcomeUnlock
           kind="practice_report"
+          subjectId={draft.id}
           title={`Practice report — 1 credit (${ONE_OFF.price})`}
-          body="Unlocks the results table, plots, interpretation, answer grid, and PDF for this rehearsal."
+          body="Unlocks the results table, plots, interpretation, answer grid, and PDF for this rehearsal. Answering the questions is included with Core."
           onUnlock={unlockThisReport}
         />
         <Card>

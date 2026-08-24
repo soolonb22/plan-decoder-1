@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { authMiddleware } from "@/lib/auth/middleware";
 import { OLLIE_ASSESS_SYSTEM, REPORT_SYSTEM } from "./assessment/disclaimers";
 
 async function chat(apiKey: string, system: string, user: string, maxTokens: number) {
@@ -55,19 +56,31 @@ export const askOllieGuide = createServerFn({ method: "POST" })
   });
 
 export const writeAiPracticeReport = createServerFn({ method: "POST" })
-  .validator((input: { digest: string }) => ({
+  .validator((input: { digest: string; assessmentId?: string }) => ({
     digest: String(input.digest || "").slice(0, 10000),
+    assessmentId: String(input.assessmentId || "").slice(0, 80),
   }))
-  .handler(async ({ data }) => {
+  .middleware([authMiddleware])
+  .handler(async ({ data, context }) => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false as const, error: "Plan Decoder drafting is not available in this environment." };
-    return chat(
+    const { consumeOutcome, refundOutcome } = await import("@/lib/billing-sync");
+    const subject = `ai:${data.assessmentId || "practice"}`;
+    const paid = await consumeOutcome(context.userId, "practice_report", subject);
+    if (!paid.ok) return { ok: false as const, error: paid.error };
+    const result = await chat(
       apiKey,
       REPORT_SYSTEM,
       `Write the practice report from this digest. Keep every number exactly as given. Australian English.\n\n${data.digest}`,
       1800,
     );
+    if (!result.ok) {
+      await refundOutcome(context.userId, "practice_report", subject);
+      return result;
+    }
+    return { ...result, credits: paid.credits };
   });
+
 
 export const speakOllie = createServerFn({ method: "POST" })
   .validator((input: { text: string }) => ({

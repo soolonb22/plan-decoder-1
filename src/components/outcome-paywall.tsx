@@ -16,11 +16,11 @@ export function useSpendOutcome() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function spend(kind: OutcomeKind) {
+  async function spend(kind: OutcomeKind, subjectId?: string) {
     setBusy(true);
     setError(null);
     try {
-      const res = await spendCredit({ data: { kind } });
+      const res = await spendCredit({ data: { kind, subjectId } });
       if (!res.ok) {
         setError(res.error);
         setBilling({ credits: res.credits });
@@ -43,11 +43,13 @@ export function OutcomeUnlock({
   kind,
   title,
   body,
+  subjectId,
   onUnlock,
 }: {
   kind: OutcomeKind;
   title?: string;
   body?: string;
+  subjectId?: string;
   onUnlock: () => void | Promise<void>;
 }) {
   const { seated, credits, busy, error, spend } = useSpendOutcome();
@@ -81,7 +83,7 @@ export function OutcomeUnlock({
           className="mt-4"
           disabled={busy}
           onClick={() => {
-            void spend(kind).then((ok) => {
+            void spend(kind, subjectId).then((ok) => {
               if (ok) void onUnlock();
             });
           }}
