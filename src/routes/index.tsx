@@ -94,7 +94,7 @@ function Home() {
             icon: FolderOpen,
             image: "/brand/story-wallet.jpg",
             title: "Evidence Wallet",
-            body: "Keep notes and reports together, in your words.",
+            body: "A pocket of dated slips: what happened, how often, what changes without support.",
           },
           {
             to: "/rights",
