@@ -49,6 +49,7 @@ import { Route as ServiceCharterRouteImport } from './routes/service-charter'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as ApiReadyRouteImport } from './routes/api/ready'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiOpsReclaimEmailRouteImport } from './routes/api/ops/reclaim-email'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -251,6 +252,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOpsReclaimEmailRoute = ApiOpsReclaimEmailRouteImport.update({
+  id: '/api/ops/reclaim-email',
+  path: '/api/ops/reclaim-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
   id: '/api/stripe/webhook',
   path: '/api/stripe/webhook',
@@ -298,6 +304,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof WalletRoute
   '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/ops/reclaim-email': typeof ApiOpsReclaimEmailRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -341,6 +348,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof WalletRoute
   '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/ops/reclaim-email': typeof ApiOpsReclaimEmailRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRoutesById {
@@ -385,6 +393,7 @@ export interface FileRoutesById {
   '/wallet': typeof WalletRoute
   '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/ops/reclaim-email': typeof ApiOpsReclaimEmailRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
 export interface FileRouteTypes {
@@ -430,6 +439,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/api/ready'
     | '/api/auth/$'
+    | '/api/ops/reclaim-email'
     | '/api/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -473,6 +483,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/api/ready'
     | '/api/auth/$'
+    | '/api/ops/reclaim-email'
     | '/api/stripe/webhook'
   id:
     | '__root__'
@@ -516,6 +527,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/api/ready'
     | '/api/auth/$'
+    | '/api/ops/reclaim-email'
     | '/api/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -560,6 +572,7 @@ export interface RootRouteChildren {
   WalletRoute: typeof WalletRoute
   ApiReadyRoute: typeof ApiReadyRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiOpsReclaimEmailRoute: typeof ApiOpsReclaimEmailRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
 }
 
@@ -845,6 +858,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ops/reclaim-email': {
+      id: '/api/ops/reclaim-email'
+      path: '/api/ops/reclaim-email'
+      fullPath: '/api/ops/reclaim-email'
+      preLoaderRoute: typeof ApiOpsReclaimEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/stripe/webhook': {
       id: '/api/stripe/webhook'
       path: '/api/stripe/webhook'
@@ -896,6 +916,7 @@ const rootRouteChildren: RootRouteChildren = {
   WalletRoute: WalletRoute,
   ApiReadyRoute: ApiReadyRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiOpsReclaimEmailRoute: ApiOpsReclaimEmailRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport

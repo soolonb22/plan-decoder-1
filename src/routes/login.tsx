@@ -68,20 +68,36 @@ function Login() {
       setError("Check the email and password and try again.");
       return;
     }
+    const emailNorm = email.trim().toLowerCase();
     setBusy(true);
     setError(null);
     try {
       if (mode === "up") {
         const { error: err } = await authClient.signUp.email({
-          email,
+          email: emailNorm,
           password,
-          name: name.trim() || email.split("@")[0],
+          name: name.trim() || emailNorm.split("@")[0],
           callbackURL: "/",
         });
-        if (err) throw new Error(err.message);
+        if (err) {
+          if (/already|exist/i.test(err.message ?? "")) {
+            const retry = await authClient.signIn.email({
+              email: emailNorm,
+              password,
+              callbackURL: "/",
+            });
+            if (retry.error) {
+              throw new Error(
+                "This email already has an account, and that password did not match. Use Sign in with the password you set last time. If you never got in, ask to reset this email.",
+              );
+            }
+          } else {
+            throw new Error(err.message);
+          }
+        }
       } else {
         const { error: err } = await authClient.signIn.email({
-          email,
+          email: emailNorm,
           password,
           callbackURL: "/",
         });
@@ -96,9 +112,7 @@ function Login() {
         );
       } else if (mode === "up") {
         setError(
-          /already|exist|unique/i.test(raw)
-            ? "That email already has an account. Use Sign in, or try a different email."
-            : raw || "Could not create the account. Try a different email, or Sign in if you already have one.",
+          raw || "Could not create the account. Try a different email, or Sign in if you already have one.",
         );
       } else {
         setError(

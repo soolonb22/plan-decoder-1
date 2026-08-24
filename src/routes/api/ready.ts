@@ -31,6 +31,7 @@ export const Route = createFileRoute("/api/ready")({
           secret: hasSecret,
           ping,
           tables,
+          fix: "reclaim",
         });
       },
     },
