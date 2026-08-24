@@ -122,7 +122,7 @@ export type FluctuationPoint = {
 export type BudgetLine = {
   id: string;
   clientId: string;
-  category: "core" | "capacity" | "capital";
+  category: "core" | "capacity" | "capital" | "recurring";
   name: string;
   allocated: number;
   spent: number;

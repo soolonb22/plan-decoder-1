@@ -12,6 +12,13 @@ export const IMPLEMENTATION_VIDEO = {
   url: "https://www.youtube.com/watch?v=vr_uQES8TdI",
 } as const;
 
+export const FUNDING_VIDEO = {
+  id: "WzgWN9s4p3g",
+  title: "NDIS Budget Categories Explained: Core, Capacity Building & Capital",
+  credit: "Affective Care on YouTube — independent explainer, not NDIA",
+  url: "https://www.youtube.com/watch?v=WzgWN9s4p3g",
+} as const;
+
 export function YoutubeEmbed({
   id,
   title,

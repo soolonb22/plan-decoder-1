@@ -90,6 +90,54 @@ Read the Participant service charter on ndis.gov.au to see how the Agency says i
 This Plan Decoder article is a calm restatement for practice and understanding. It is not legal advice and it does not decide access, plans, or funding.`,
   },
   {
+    id: "funding-categories",
+    group: "plan",
+    title: "What your plan covers — funding categories",
+    summary:
+      "Current NDIA pages list four support budgets: Core, Capacity Building, Capital, and Recurring. Money does not move between budgets.",
+    easy:
+      "A plan can have up to four money pots. Core is everyday. Capacity building is skills. Capital is equipment or home changes. Recurring is regular things like transport. You cannot pour one pot into another.",
+    tags: ["plan", "funding", "core", "capital"],
+    updated: "June 2026",
+    official: [
+      {
+        label: "Guide to NDIS support budgets",
+        url: "https://www.ndis.gov.au/participants/using-your-funding/ndis-support-budgets/guide-ndis-support-budgets",
+      },
+      {
+        label: "What are NDIS supports",
+        url: "https://www.ndis.gov.au/participants/using-your-funding/understanding-your-ndis-funding/what-are-ndis-supports",
+      },
+    ],
+    youtube: {
+      id: "WzgWN9s4p3g",
+      title: "NDIS Budget Categories Explained: Core, Capacity Building & Capital",
+      credit: "Affective Care on YouTube — independent explainer, not NDIA",
+    },
+    body: `The NDIA’s “Guide to NDIS support budgets” (current 9 June 2026) says every plan has four support budgets:
+
+• Core supports
+• Capacity building supports
+• Capital supports
+• Recurring supports
+
+Not every person has money in every budget. The plan only lists the budgets you need.
+
+Under those budgets there are 21 support categories (for example assistance with daily life, or social and community participation). Under categories there are hundreds of support items, each with a code and a price limit.
+
+Flexible funding: you can often choose which NDIS supports to buy inside that budget, and use the total across flexible categories in the same budget. The plan will say “This is a flexible support.”
+
+Stated funding: you can only buy the NDIS support named in the plan, within that category. You can still choose the provider and how many of that support you buy, within the budget. The plan will say “This is a stated support.”
+
+You cannot move money from one support budget to another. You cannot spend more than the total for that budget.
+
+Example from the NDIA guide: Core daily life and Core community participation can often share one Core total if both are flexible. Speech pathology in Capacity Building that is stated cannot be used to buy a different support. Transport in Recurring cannot be topped up from Core.
+
+Funding still has to be an NDIS support, related to your disability, and in line with your plan.
+
+This is a calm restatement for practice. Official balances live in the my NDIS app and your plan, not in Plan Decoder.`,
+  },
+  {
     id: "choice-control",
     group: "plan",
     title: "Choice and control",
