@@ -59,6 +59,13 @@ const globalAuthRef = globalThis as typeof globalThis & {
   __grokAuthPreviewSecret__?: string;
 };
 function previewAuthSecret(): string {
+  if (isCloudflareWorker()) {
+    const fromEnv = env("BETTER_AUTH_SECRET");
+    if (fromEnv) return fromEnv;
+    throw new Error(
+      "BETTER_AUTH_SECRET is not set. Add it in Cloudflare → Settings → Variables and Secrets so sign-in can stay signed in.",
+    );
+  }
   globalAuthRef.__grokAuthPreviewSecret__ ??= randomBytes(32).toString("hex");
   return globalAuthRef.__grokAuthPreviewSecret__;
 }
