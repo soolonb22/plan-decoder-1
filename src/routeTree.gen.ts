@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppointmentRouteImport } from './routes/appointment'
+import { Route as ArtRouteImport } from './routes/art'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as BudgetRouteImport } from './routes/budget'
 import { Route as CarerRouteImport } from './routes/carer'
@@ -56,6 +57,11 @@ const IndexRoute = IndexRouteImport.update({
 const AppointmentRoute = AppointmentRouteImport.update({
   id: '/appointment',
   path: '/appointment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtRoute = ArtRouteImport.update({
+  id: '/art',
+  path: '/art',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AssessmentRoute = AssessmentRouteImport.update({
@@ -242,6 +248,7 @@ const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/appointment': typeof AppointmentRoute
+  '/art': typeof ArtRoute
   '/assessment': typeof AssessmentRoute
   '/budget': typeof BudgetRoute
   '/carer': typeof CarerRoute
@@ -282,6 +289,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/appointment': typeof AppointmentRoute
+  '/art': typeof ArtRoute
   '/assessment': typeof AssessmentRoute
   '/budget': typeof BudgetRoute
   '/carer': typeof CarerRoute
@@ -323,6 +331,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/appointment': typeof AppointmentRoute
+  '/art': typeof ArtRoute
   '/assessment': typeof AssessmentRoute
   '/budget': typeof BudgetRoute
   '/carer': typeof CarerRoute
@@ -365,6 +374,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/appointment'
+    | '/art'
     | '/assessment'
     | '/budget'
     | '/carer'
@@ -405,6 +415,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/appointment'
+    | '/art'
     | '/assessment'
     | '/budget'
     | '/carer'
@@ -445,6 +456,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/appointment'
+    | '/art'
     | '/assessment'
     | '/budget'
     | '/carer'
@@ -486,6 +498,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppointmentRoute: typeof AppointmentRoute
+  ArtRoute: typeof ArtRoute
   AssessmentRoute: typeof AssessmentRoute
   BudgetRoute: typeof BudgetRoute
   CarerRoute: typeof CarerRoute
@@ -538,6 +551,13 @@ declare module '@tanstack/react-router' {
       path: '/appointment'
       fullPath: '/appointment'
       preLoaderRoute: typeof AppointmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/art': {
+      id: '/art'
+      path: '/art'
+      fullPath: '/art'
+      preLoaderRoute: typeof ArtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/assessment': {
@@ -798,6 +818,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppointmentRoute: AppointmentRoute,
+  ArtRoute: ArtRoute,
   AssessmentRoute: AssessmentRoute,
   BudgetRoute: BudgetRoute,
   CarerRoute: CarerRoute,

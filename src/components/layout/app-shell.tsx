@@ -64,6 +64,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   "/checklist": ListChecks,
   "/rights": Scale,
   "/code-of-conduct": Shield,
+  "/art": Scale,
   "/glossary": BookMarked,
   "/news": Newspaper,
   "/clients": UserRound,

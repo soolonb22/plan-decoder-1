@@ -340,24 +340,48 @@ This is general information, not legal advice.`,
   {
     id: "art-review",
     group: "review",
-    title: "External review (Administrative Review Tribunal)",
-    summary: "After internal review, you usually have 28 days to apply to the ART (the old AAT).",
-    easy: "If internal review is not enough, you can go to an independent tribunal. Dates are strict.",
-    tags: ["review", "appeals", "ART"],
+    title: "External review (ART — the old AAT)",
+    summary:
+      "After internal review you usually have 28 days to apply to the Administrative Review Tribunal. It replaced the AAT on 14 October 2024. No application fee.",
+    easy:
+      "If the NDIA looks again and you still disagree, you can ask an independent tribunal. It used to be called the AAT. It is now the ART. Dates are strict.",
+    tags: ["review", "appeals", "ART", "AAT"],
     updated: "August 2026",
     official: [
-      { label: "Guide to decision reviews", url: "https://www.ndis.gov.au/participants/changing-your-plan/decision-reviews/guide-decision-reviews" },
-      { label: "Administrative Review Tribunal", url: "https://www.art.gov.au" },
+      { label: "ART — NDIS reviews", url: "https://www.art.gov.au/applying-review/national-disability-insurance-scheme" },
+      { label: "Apply online (NDIS)", url: "https://online.aat.gov.au/Home/InstructionsNdis" },
+      { label: "NDIS Appeals Program", url: "https://www.health.gov.au/our-work/ndis-appeals-program" },
+      { label: "NDIA — introducing the ART", url: "https://www.ndis.gov.au/news/10435-introducing-new-administrative-review-tribunal" },
     ],
-    body: `If you are not happy with the internal review, you can usually apply to the Administrative Review Tribunal (ART). It replaced the AAT.
+    youtube: {
+      id: "QOizkbyHD-4",
+      title: "Navigating the Administrative Appeals Tribunal for your NDIS",
+      credit: "Queensland Advocacy for Inclusion — independent. The AAT is now the ART.",
+    },
+    body: `On 14 October 2024 the Administrative Appeals Tribunal (AAT) was replaced by the Administrative Review Tribunal (ART). You do not start again if you already had an AAT case — those files moved across.
 
-The NDIA says you must usually apply within 28 days of the internal review decision. The ART can allow more time in some circumstances — check the letter and the ART website.
+Usually you need an NDIA internal review first. Then you have 28 days from receiving that internal review decision to apply to the ART. The Tribunal can allow more time if you ask in writing and explain why.
 
-You generally need the internal review first. The ART is independent of the NDIA. Hearings are less formal than a court, but they are still a legal process.
+If the NDIA has not finished the internal review within 90 days of you asking, the ART may be able to look at it without waiting.
 
-Free disability advocacy and Legal Aid may be able to help. Plan Decoder can help you sort evidence. It cannot represent you or predict a result.
+There is no application fee for NDIS reviews.
 
-If the ART makes orders, the Participant Service Guarantee allows 28 days for the Agency to put those orders into place (PSG 18).`,
+The ART can review many internal review decisions, including access, the statement of supports in a plan, and some nominee or child decisions. It cannot investigate a complaint about the NDIA’s service, and it cannot change the law.
+
+Apply:
+
+• online (easiest): online.aat.gov.au NDIS instructions
+• phone 1800 228 333
+• email reviews@art.gov.au
+• letter, or a Tribunal office
+
+You will need the decision, the date you got it, why you say it is wrong, and any extra evidence. Interpreters: TIS 131 450.
+
+Free help: the NDIS Appeals Program can connect you with a disability advocate for ART matters (health.gov.au). Legal Aid and community legal centres may also help.
+
+If the ART makes orders, the Participant Service Guarantee allows 28 days for the Agency to put those orders in place (PSG 18).
+
+Plan Decoder can help you sort evidence. It cannot represent you or predict a result. This is not legal advice.`,
   },
   {
     id: "change-circumstances",

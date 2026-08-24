@@ -26,6 +26,20 @@ export const CODE_OF_CONDUCT_VIDEO = {
   url: "https://www.youtube.com/watch?v=nFIeHFazBuI",
 } as const;
 
+export const AAT_VIDEO = {
+  id: "QOizkbyHD-4",
+  title: "Navigating the Administrative Appeals Tribunal for your NDIS",
+  credit: "Queensland Advocacy for Inclusion — independent explainer. The AAT is now the ART.",
+  url: "https://www.youtube.com/watch?v=QOizkbyHD-4",
+} as const;
+
+export const ART_APPLY_VIDEO = {
+  id: "EOEaT71ZKhg",
+  title: "How to apply for a review by the Administrative Review Tribunal",
+  credit: "Administrative Review Tribunal — official",
+  url: "https://www.youtube.com/watch?v=EOEaT71ZKhg",
+} as const;
+
 export function YoutubeEmbed({
   id,
   title,

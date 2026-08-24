@@ -6,7 +6,8 @@ export type GlossaryEntry = {
 
 export const GLOSSARY: GlossaryEntry[] = [
   { term: "Access request", plain: "The process of asking to become an NDIS participant. You provide evidence of disability, identity, and residence." },
-  { term: "ART", plain: "Administrative Review Tribunal. Independent body that can review some NDIS decisions after internal review. Replaced the AAT." },
+  { term: "ART", plain: "Administrative Review Tribunal. Independent body that can review some NDIS decisions after internal review. Replaced the AAT on 14 October 2024. Usually 28 days to apply. No fee for NDIS reviews." },
+  { term: "AAT", plain: "Administrative Appeals Tribunal — the old name. From 14 October 2024 NDIS external reviews go to the ART. Existing AAT cases moved across; you did not have to start again." },
   { term: "Capacity building", plain: "Plan funding meant to build skills and independence — for example therapy, support coordination, or finding and keeping a job." },
   { term: "Capital", plain: "Plan funding for higher-cost items such as some assistive technology or home modifications." },
   { term: "Carer", plain: "A family member or friend who provides unpaid support. Carer impact is relevant evidence, not a test of love." },
