@@ -165,6 +165,8 @@ function Login() {
           <p className="mt-1 text-sm text-muted">
             {mode === "in"
               ? "Sign in to open your Plan Decoder workspace."
+              : "You need an account to use Plan Decoder. Practice answers still stay on this device."}
+          </p>
           {dbReady === false ? (
             <p className="mt-4 rounded-2xl border border-alert/30 bg-alert/10 p-3 text-sm text-ink" role="status">
               Sign-in is not connected yet. In Cloudflare open <strong>plan-decoder-1</strong> → Settings →
