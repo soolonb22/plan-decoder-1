@@ -7,6 +7,7 @@ import {
   Scale,
 } from "lucide-react";
 import { useOllie, useActiveClient, useClientList } from "@/lib/store";
+import { canAccess } from "@/lib/membership";
 import { daysUntil, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/")({ component: Home });
 function Home() {
   const client = useActiveClient();
   const loadSample = useOllie((s) => s.loadSample);
+  const membership = useOllie((s) => s.membership);
   const evidence = useClientList("evidence");
   const logs = useClientList("logs");
   const until = daysUntil(client?.planEnd);
@@ -48,7 +50,9 @@ function Home() {
 
       <div className="mt-5 flex flex-wrap gap-2">
         <Button asChild>
-          <Link to="/assessment">Start a practice assessment</Link>
+          <Link to={canAccess(membership, "core") ? "/assessment" : "/membership"}>
+            {canAccess(membership, "core") ? "Start a practice assessment" : "Start Core to practise"}
+          </Link>
         </Button>
         <Button variant="secondary" onClick={() => loadSample()}>
           Load a sample person

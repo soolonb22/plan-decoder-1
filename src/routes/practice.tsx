@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AssessmentWizard } from "@/components/assessment/wizard";
-import { PageHeader } from "@/components/layout/page";
+import { MembershipGate, PageHeader } from "@/components/layout/page";
 
 export const Route = createFileRoute("/practice")({
   component: PracticePage,
@@ -24,9 +24,11 @@ function PracticePage() {
     <div>
       <PageHeader
         title="Practice assessment"
-        lede="Go slowly. Skip anything that does not apply. Delete anytime."
+        lede="Core membership opens this rehearsal. Go slowly. Skip anything that does not apply. Delete anytime."
       />
-      <AssessmentWizard />
+      <MembershipGate need="core">
+        <AssessmentWizard />
+      </MembershipGate>
     </div>
   );
 }

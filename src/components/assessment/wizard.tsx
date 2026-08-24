@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Pause, Trash2 } from "lucide-react";
 import { SHORT_DISCLAIMER } from "@/lib/assessment/disclaimers";
 import { localReport } from "@/lib/assessment/report";
@@ -7,13 +7,11 @@ import { scaleOptions, visibleScreens } from "@/lib/assessment/screens";
 import { scoreAssessment } from "@/lib/assessment/scoring";
 import type { AnswerVal, AssessmentDraft, Field, Respondent } from "@/lib/assessment/types";
 import { fill } from "@/lib/assessment/voice";
-import { canAccess } from "@/lib/membership";
 import { useOllie } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer } from "@/components/layout/page";
-import { CodeWordUnlock } from "@/components/code-word";
 import { ReportView } from "./report-view";
 
 const MODULE_PIC: Record<string, string> = {
@@ -154,7 +152,6 @@ function FieldControl({
 
 export function AssessmentWizard() {
   const navigate = useNavigate();
-  const membership = useOllie((s) => s.membership);
   const a11y = useOllie((s) => s.a11y);
   const setA11y = useOllie((s) => s.setA11y);
   const assessments = useOllie((s) => s.assessments);
@@ -267,30 +264,8 @@ export function AssessmentWizard() {
     navigate({ to: "/assessment" });
   }
 
-  const freeSavesFull = !canAccess(membership, "core") && assessments.length >= 1 && !draft;
   if (!hydrated || !draft) {
     return <p className="text-sm text-muted">Loading a saved practice from this device…</p>;
-  }
-  if (freeSavesFull) {
-    return (
-      <Card>
-        <p className="font-semibold">Free keeps one practice on this device</p>
-        <p className="mt-2 text-sm text-muted">
-          Delete the saved rehearsal, or use the Core code word for unlimited local saves.
-        </p>
-        <div className="mt-4 rounded-xl bg-paper-2 px-4 py-4">
-          <CodeWordUnlock need="core" compact />
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button asChild>
-            <Link to="/assessment">Saved rehearsals</Link>
-          </Button>
-          <Button variant="secondary" asChild>
-            <Link to="/membership">See membership</Link>
-          </Button>
-        </div>
-      </Card>
-    );
   }
 
   if (showReport && draft.score) {

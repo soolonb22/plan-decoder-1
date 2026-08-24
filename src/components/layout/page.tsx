@@ -68,10 +68,10 @@ export function MembershipGate({
   const name = need === "pro" ? "Professional" : "Core";
   return (
     <Card className="max-w-xl">
-      <p className="text-sm font-medium text-primary">Preview this space</p>
+      <p className="text-sm font-medium text-primary">Membership needed</p>
       <h2 className="mt-1 text-xl font-semibold">This is part of {name}</h2>
       <p className="mt-2 text-sm text-muted">
-        Free includes rights, glossary, news, a basic diary, and the plan checklist.
+        Free includes rights, glossary, news, a basic diary, and the plan checklist. Practice assessments are part of Core.
         {need === "pro"
           ? " Professional is $49 a month for coordinators, coaches, clinicians, and schools."
           : " Core is $12 a month. Finished reports and polished drafts then use 1 credit ($5) each."}

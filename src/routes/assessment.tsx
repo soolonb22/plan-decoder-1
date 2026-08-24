@@ -6,7 +6,7 @@ import { useOllie } from "@/lib/store";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Disclaimer, PageHeader } from "@/components/layout/page";
+import { Disclaimer, MembershipGate, PageHeader } from "@/components/layout/page";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 
 const TITLE =
@@ -77,7 +77,7 @@ function AssessmentLanding() {
     name: "Plan Decoder practice assessment",
     applicationCategory: "HealthApplication",
     operatingSystem: "Web",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
+    offers: { "@type": "Offer", price: "12", priceCurrency: "AUD" },
     description: DESC,
     audience: { "@type": "Audience", geographicArea: { "@type": "Country", name: "Australia" } },
   };
@@ -91,6 +91,7 @@ function AssessmentLanding() {
         lede="A calm, private rehearsal of functional questions, environment, permanency, and mainstream supports. Independent of the NDIA."
         picture="/brand/story-sit.jpg"
         actions={
+          canAccess(membership, "core") ? (
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Button asChild>
               <Link to="/practice">Continue practice</Link>
@@ -98,7 +99,6 @@ function AssessmentLanding() {
             <Button
               variant="secondary"
               onClick={() => {
-                if (!canAccess(membership, "core") && assessments.length >= 1) return;
                 const id = upsert({
                   clientId,
                   respondent: "participant",
@@ -113,13 +113,20 @@ function AssessmentLanding() {
               <Link to="/practice">Start a new rehearsal</Link>
             </Button>
           </div>
+          ) : (
+            <Button asChild>
+              <Link to="/membership">Start Core to practise · $12 / month</Link>
+            </Button>
+          )
         }
       />
       <Disclaimer>{SHORT_DISCLAIMER} You can stop or delete everything on this device at any time.</Disclaimer>
       <StoryStrip heading="The rehearsal in four pictures" steps={HOW_OLLIE_WORKS} />
       <div className="mt-4 sm:hidden">
         <Button className="w-full" asChild>
-          <Link to="/practice">Start practice with Plan Decoder</Link>
+          <Link to={canAccess(membership, "core") ? "/practice" : "/membership"}>
+            {canAccess(membership, "core") ? "Start practice with Plan Decoder" : "Start Core to practise"}
+          </Link>
         </Button>
       </div>
 
@@ -185,7 +192,7 @@ function AssessmentLanding() {
                       onClick={() => setActive(a.id)}
                       asChild
                     >
-                      <Link to="/practice">Open</Link>
+                      <Link to={canAccess(membership, "core") ? "/practice" : "/membership"}>Open</Link>
                     </Button>
                     <Button size="sm" variant="danger" onClick={() => remove(a.id)}>
                       <Trash2 className="size-4" /> Delete
@@ -247,18 +254,19 @@ function AssessmentLanding() {
 
       <section className="mt-8" aria-labelledby="price-heading">
         <h2 id="price-heading" className="text-xl font-semibold">
-          What is free, and what is Core
+          Practice assessments are part of Core
         </h2>
         <p className="mt-2 text-sm text-muted">
-          Completing the rehearsal and a simple scorecard is free (one save on this device). Core is $12 a month. Each finished practice report or polished Core draft then uses 1 credit ($5). Professional is $49 a month for coordinators and clinicians working with more than one person.
+          You can read what the rehearsal covers here. Starting or continuing a practice assessment needs Core membership ($12 a month after a 3-day trial). Each finished practice report or polished draft then uses 1 credit ($5). Professional is $49 a month for coordinators and clinicians working with more than one person.
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button asChild>
-            <Link to="/practice">Start a rehearsal</Link>
-          </Button>
-          <Button variant="secondary" asChild>
-            <Link to="/membership">Pricing</Link>
-          </Button>
+        <div className="mt-4">
+          <MembershipGate need="core">
+            <div className="flex flex-wrap gap-2">
+              <Button asChild>
+                <Link to="/practice">Start a rehearsal</Link>
+              </Button>
+            </div>
+          </MembershipGate>
         </div>
       </section>
     </div>
