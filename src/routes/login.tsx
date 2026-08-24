@@ -34,12 +34,18 @@ function Login() {
   const [busy, setBusy] = useState(false);
   const [oauthBusy, setOauthBusy] = useState<string | null>(null);
   const [dbReady, setDbReady] = useState<boolean | null>(null);
+  const showOauth =
+    typeof window !== "undefined" && window.location.hostname.endsWith(".grok-sandbox.com");
 
-  useEffect(() => {
+  function checkReady() {
     void fetch("/api/ready")
       .then((r) => r.json() as Promise<{ database?: boolean }>)
       .then((d) => setDbReady(Boolean(d.database)))
       .catch(() => setDbReady(null));
+  }
+
+  useEffect(() => {
+    checkReady();
   }, []);
 
   if (isPending) return <AuthSplash />;
@@ -168,14 +174,29 @@ function Login() {
               : "You need an account to use Plan Decoder. Practice answers still stay on this device."}
           </p>
           {dbReady === false ? (
-            <p className="mt-4 rounded-2xl border border-alert/30 bg-alert/10 p-3 text-sm text-ink" role="status">
-              Sign-in is not connected yet. In Cloudflare open <strong>plan-decoder-1</strong> → Settings →
-              Variables and Secrets (not Build). Add a Secret named <strong>DATABASE_URL</strong> with your Neon
-              postgresql:// line, then refresh. No new build is needed.
-            </p>
+            <div className="mt-4 rounded-2xl border border-alert/30 bg-alert/10 p-3 text-sm text-ink" role="status">
+              <p>
+                Sign-in is not connected yet. Your email and password are not the problem. The Worker is missing the
+                Neon database secret.
+              </p>
+              <p className="mt-2">
+                In Cloudflare open Worker <strong>plan-decoder-1</strong> → Settings → Variables and Secrets
+                (the Worker, <strong>not</strong> Build variables). Add a Secret named{" "}
+                <strong>DATABASE_URL</strong>. Paste the Neon pooled connection string that starts with{" "}
+                <code>postgresql://</code> and includes <code>-pooler</code>. Encrypt it. Then come back here and tap
+                Check again. No new build is needed.
+              </p>
+              <button
+                type="button"
+                className="mt-3 min-h-11 rounded-lg border border-line bg-card px-3 text-sm"
+                onClick={() => checkReady()}
+              >
+                Check again
+              </button>
+            </div>
           ) : null}
 
-          {authEnabled ? (
+          {authEnabled && showOauth ? (
             <div className="mt-5 space-y-2">
               {GROK_PROVIDERS.map((p) => (
                 <Button
@@ -190,15 +211,17 @@ function Login() {
                 </Button>
               ))}
             </div>
-          ) : (
-            <p className="mt-4 text-sm text-muted">Sign-in is not available in this environment.</p>
-          )}
+          ) : null}
 
+          {authEnabled && showOauth ? (
           <div className="my-5 flex items-center gap-3 text-xs uppercase tracking-wider text-subtle">
             <span className="h-px flex-1 bg-line" />
             or email
             <span className="h-px flex-1 bg-line" />
           </div>
+          ) : (
+            <div className="mt-5" />
+          )}
 
           <form className="space-y-3" onSubmit={(e) => void onEmail(e)}>
             {mode === "up" ? (
