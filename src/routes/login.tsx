@@ -87,21 +87,22 @@ function Login() {
         });
         if (err) throw new Error(err.message);
       }
-      setPassword("");
-      setConfirm("");
-      window.location.href = "/";
-    } catch {
-      setPassword("");
-      setConfirm("");
+      window.location.assign("/");
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : "";
       if (dbReady === false) {
         setError(
-          "Sign-in is not connected to the database yet. In Cloudflare open Worker plan-decoder-1 → Settings → Variables and Secrets (not Build variables). Add a Secret named DATABASE_URL with your Neon postgresql:// line. Then refresh this page. No new build is needed.",
+          "Sign-in is not connected to the database yet. Add DATABASE_URL on the Worker, then tap Check again.",
+        );
+      } else if (mode === "up") {
+        setError(
+          /already|exist|unique/i.test(raw)
+            ? "That email already has an account. Use Sign in, or try a different email."
+            : raw || "Could not create the account. Try a different email, or Sign in if you already have one.",
         );
       } else {
         setError(
-          mode === "up"
-            ? "Could not create the account. That email may already be in use."
-            : "Check the email and password and try again.",
+          "No account for that email yet, or the password is different. If this is your first time, tap Create account. Use 8 or more characters with a letter and a number.",
         );
       }
     } finally {
@@ -259,13 +260,13 @@ function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={mode === "up" ? 10 : 8}
+                minLength={8}
               />
-              {mode === "up" ? (
-                <p className="mt-1 text-xs text-muted">
-                  At least 10 characters, with a letter and a number. It is hashed on the server (scrypt, unique salt) and never stored in the clear.
-                </p>
-              ) : null}
+              <p className="mt-1 text-xs text-muted">
+                {mode === "up"
+                  ? "At least 8 characters, with a letter and a number. Hashed on the server — never stored in the clear."
+                  : "First visit? Use Create account. Sign-in only works after that."}
+              </p>
             </div>
             {mode === "up" ? (
               <div>

@@ -16,7 +16,7 @@ const COMMON = new Set([
 ]);
 
 export function passwordIssue(password: string, extras: { email?: string; name?: string } = {}) {
-  if (password.length < 10) return "Use at least 10 characters.";
+  if (password.length < 8) return "Use at least 8 characters.";
   if (password.length > 200) return "That password is too long.";
   if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
     return "Include at least one letter and one number.";
