@@ -5,6 +5,13 @@ export const ELIGIBILITY_VIDEO = {
   url: "https://www.youtube.com/watch?v=C9Gka3EQetY",
 } as const;
 
+export const IMPLEMENTATION_VIDEO = {
+  id: "vr_uQES8TdI",
+  title: "NDIS Plan Implementation Checklist: What to Do After Your Plan is Approved",
+  credit: "Affective Care on YouTube — independent explainer, not NDIA",
+  url: "https://www.youtube.com/watch?v=vr_uQES8TdI",
+} as const;
+
 export function YoutubeEmbed({
   id,
   title,

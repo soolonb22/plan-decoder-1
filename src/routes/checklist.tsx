@@ -3,8 +3,21 @@ import { PLAN_CHECKLIST } from "@/lib/content/checklist";
 import { useOllie, useClientList } from "@/lib/store";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page";
+import { IMPLEMENTATION_VIDEO, YoutubeEmbed } from "@/components/youtube-embed";
 
-export const Route = createFileRoute("/checklist")({ component: ChecklistPage });
+export const Route = createFileRoute("/checklist")({
+  component: ChecklistPage,
+  head: () => ({
+    meta: [
+      { title: "NDIS plan implementation checklist · Plan Decoder" },
+      {
+        name: "description",
+        content:
+          "What to do after an NDIS plan is approved: read the plan, optional implementation meeting, providers, agreements, and tracking. Practice tool — not the NDIA.",
+      },
+    ],
+  }),
+});
 
 function ChecklistPage() {
   const rows = useClientList("checklist");
@@ -17,10 +30,30 @@ function ChecklistPage() {
   return (
     <div>
       <PageHeader
-        title="Plan understanding checklist"
-        lede="Not a test. Tick what you already know. The rest is a to-ask list."
+        title="Plan implementation checklist"
+        lede="What to do after a plan is approved. Not a test. Tick what you already know. The rest is a to-ask list."
+        picture="/brand/story-path.jpg"
       />
-      <p className="mb-4 text-sm text-muted tabular-nums">
+      <YoutubeEmbed
+        id={IMPLEMENTATION_VIDEO.id}
+        title={IMPLEMENTATION_VIDEO.title}
+        credit={IMPLEMENTATION_VIDEO.credit}
+      />
+      <Card className="mt-4 text-sm text-muted">
+        <p>
+          Official NDIA page (current 9 June 2026): a plan implementation meeting is optional. They aim to make a time
+          within 7 days if you want one. Skipping it does not stop your plan or funding.{" "}
+          <a
+            className="text-primary underline-offset-4 hover:underline"
+            href="https://www.ndis.gov.au/participants/using-your-funding/plan-implementation-meeting/what-plan-implementation-meeting"
+            target="_blank"
+            rel="noreferrer"
+          >
+            What is a plan implementation meeting
+          </a>
+        </p>
+      </Card>
+      <p className="mb-4 mt-4 text-sm text-muted tabular-nums">
         {doneCount} of {total} understood
       </p>
       <div className="space-y-4">

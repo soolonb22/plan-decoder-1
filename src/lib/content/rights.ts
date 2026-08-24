@@ -112,6 +112,55 @@ Choice and control does not mean you must manage everything yourself. You can as
 If a decision was made about you without you, ask for reasons in writing and the date you can request a review. Keep a copy.`,
   },
   {
+    id: "plan-implementation",
+    group: "plan",
+    title: "After your plan is approved",
+    summary:
+      "Read the plan, decide about the optional implementation meeting, choose providers, and start tracking. Access to funding is not lost if you skip the meeting.",
+    easy:
+      "When a plan is approved: read it, decide if you want a start-up meeting, find providers, and keep simple notes. You can say no to the meeting and still use the plan.",
+    tags: ["plan", "implementation", "checklist"],
+    updated: "June 2026",
+    official: [
+      {
+        label: "What is a plan implementation meeting",
+        url: "https://www.ndis.gov.au/participants/using-your-funding/plan-implementation-meeting/what-plan-implementation-meeting",
+      },
+      { label: "Using your plan", url: "https://www.ndis.gov.au/participants/using-your-plan" },
+    ],
+    youtube: {
+      id: "vr_uQES8TdI",
+      title: "NDIS Plan Implementation Checklist: What to Do After Your Plan is Approved",
+      credit: "Affective Care on YouTube — independent explainer, not NDIA",
+    },
+    body: `The NDIA’s public page (current 9 June 2026) says a plan implementation meeting is for you and your my NDIS contact. It is a way to get started with the approved plan.
+
+They offer it once the plan is approved, including first plans and later plans. If you want to meet, they aim to make a time within 7 days. Meetings are usually about an hour, and they should take as long as you need.
+
+In the meeting they may:
+
+• talk you through using the plan
+• talk you through which NDIS supports you can buy
+• help find providers that fit your goals
+• show the my NDIS participant portal and app
+• answer questions
+
+The meeting is optional. You might already feel comfortable, or a support coordinator or recovery coach may be helping. Access to the approved plan and funding is not affected if you do not have the meeting.
+
+After an implementation meeting they usually arrange a check-in at least once a year. You can still contact your my NDIS person sooner if you need help.
+
+A calm order of first steps:
+
+1. Read the plan — dates, goals, budgets, stated supports, how money is managed.
+2. Open the portal or app, or ask someone to sit with you.
+3. Decide about the implementation meeting.
+4. Choose providers. NDIA-managed funding usually needs registered providers.
+5. Read service agreements before you sign.
+6. Keep a simple spend record and short notes of what works.
+
+Plan Decoder’s checklist is a rehearsal list. It is not an NDIA form.`,
+  },
+  {
     id: "access-requirements",
     group: "access",
     title: "Who can access the NDIS",

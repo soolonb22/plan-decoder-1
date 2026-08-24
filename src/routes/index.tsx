@@ -161,7 +161,7 @@ function Home() {
 
       <div className="mt-6 flex flex-wrap gap-2">
         <Button variant="secondary" asChild>
-          <Link to="/checklist">Plan understanding checklist</Link>
+          <Link to="/checklist">Plan implementation checklist</Link>
         </Button>
         <Button variant="ghost" asChild>
           <Link to="/glossary">Open the glossary</Link>

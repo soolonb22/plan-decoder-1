@@ -9,12 +9,27 @@ export const PLAN_CHECKLIST = [
     ],
   },
   {
+    group: "After the plan is approved",
+    items: [
+      { key: "read-plan", label: "I have read the approved plan: goals, dates, budgets, stated supports, and contacts." },
+      { key: "portal", label: "I can open the my NDIS participant portal or app, or I have asked someone to help." },
+      { key: "impl-offer", label: "I know a plan implementation meeting is offered (optional). The NDIA aims to book within 7 days if I want one." },
+      { key: "impl-meet", label: "I have decided whether I want that meeting, or a support coordinator / recovery coach will help me start." },
+      { key: "categories", label: "I know what is in Core, Capacity Building, and Capital, and what each is for in my life." },
+      { key: "providers", label: "I know I can choose providers. If NDIA-managed, they usually need to be registered." },
+      { key: "agreements", label: "I will read service agreements before signing (hours, cost, cancellation, how to stop)." },
+      { key: "spend-track", label: "I have a simple way to track spending from week one, so the budget is not a surprise later." },
+      { key: "notes-start", label: "I will keep short notes of what works, what does not, and any change in need." },
+      { key: "next-review", label: "I know a check-in is usually offered at least once a year, and I can contact my NDIS person sooner." },
+    ],
+  },
+  {
     group: "Money and supports",
     items: [
       { key: "core", label: "I know what is in Core, and what it is for in my life." },
       { key: "capacity", label: "I know what is in Capacity Building." },
       { key: "capital", label: "I know if there is Capital / assistive technology funding." },
-      { key: "stated", label: "I know if any supports are stated (must be used a certain way)." },
+      { key: "stated", label: "I know if any supports are stated (must be used in a certain way)." },
       { key: "sc", label: "I know if there is support coordination or a recovery coach, and who they are." },
     ],
   },
