@@ -227,6 +227,7 @@ function AssessmentLanding() {
           Modules in this practice pack
         </h2>
         <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-muted">
+          <li>What is the NDIS — official-scheme explainer, then confirm this is only practice.</li>
           <li>Who is answering — participant, parent, carer, nominee, or professional.</li>
           <li>About the person — living situation, NDIS status, and the six NDIS-style function areas.</li>
           <li>WHODAS-inspired function (12 or 36 items) plus how many days life was interrupted.</li>

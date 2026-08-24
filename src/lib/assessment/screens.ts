@@ -274,14 +274,14 @@ export function buildScreens(r: Respondent): Screen[] {
     {
       id: "welcome",
       module: "intro",
-      title: "This is practice",
-      lede: "Plan Decoder will walk {who} through a rehearsal of functional questions, environment, permanency, and mainstream supports. Nothing here is sent to the NDIA.".replace(
-        "{who}",
-        r === "participant" ? "you" : "you and the person",
-      ),
+      title: "What is the NDIS — then we practise",
+      lede:
+        r === "participant"
+          ? "The NDIS can fund eligible people with disability, and it can connect anyone with disability to local services. This rehearsal is not the NDIS. Nothing here is sent to the NDIA."
+          : "The NDIS can fund eligible people with disability, and it can connect anyone with disability to local services. This rehearsal is not the NDIS. Nothing here is sent to the NDIA.",
       ollie:
-        "I am a practice guide, not a government assessor. You can stop, save, or delete everything on this device whenever you want. I will not tell you what to tick.",
-      need: "free",
+        "Official words, in short: the NDIS funds eligible people so they can have more time with family, more independence, skills, work or volunteering, and a better quality of life. It also points anyone with disability toward doctors, groups, clubs, libraries and schools. I am a practice guide, not a government assessor. You can stop, save, or delete everything on this device.",
+      need: "core",
       fields: [
         {
           id: "accept-practice",

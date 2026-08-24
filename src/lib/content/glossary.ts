@@ -19,7 +19,7 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: "Informal supports", plain: "Help from family, friends and community that is not paid. The NDIS considers what is reasonable — it should not assume unlimited unpaid labour." },
   { term: "LAC", plain: "Local Area Coordinator. A partner who can help with access, planning, and connecting to community, depending on your pathway." },
   { term: "NDIA", plain: "National Disability Insurance Agency — the agency that runs the NDIS." },
-  { term: "NDIS", plain: "National Disability Insurance Scheme — Australia’s disability support scheme." },
+  { term: "NDIS", plain: "National Disability Insurance Scheme. Official page (May 2026): funding for eligible people with disability, and connections to community services for anyone with disability. Run by the NDIA. Plan Decoder is not the NDIS." },
   { term: "Nominee", plain: "A person appointed to make NDIS decisions for or with a participant." },
   { term: "PACE", plain: "The NDIA’s computer system for plans and payments. It changed how plans appear and how some things are claimed." },
   { term: "Plan manager", plain: "A person or organisation that pays invoices from your plan and helps you track budget. Different from a support coordinator." },

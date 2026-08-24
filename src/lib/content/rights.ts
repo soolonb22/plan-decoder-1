@@ -42,6 +42,47 @@ export const RIGHTS_CONTACTS = [
 
 export const RIGHTS: RightArticle[] = [
   {
+    id: "what-is-ndis",
+    group: "access",
+    title: "What is the NDIS",
+    summary:
+      "The NDIS funds eligible people with disability and also connects anyone with disability to community services. It is run by the NDIA. Plan Decoder is not the NDIS.",
+    easy:
+      "The NDIS can pay for some disability supports if you are eligible. It can also help anyone with disability find local services. This app is only practice.",
+    tags: ["access", "everyday", "what is the ndis"],
+    updated: "May 2026",
+    official: [
+      { label: "What is the NDIS (ndis.gov.au)", url: "https://www.ndis.gov.au/understanding-ndis/about-ndis/what-ndis" },
+      { label: "About the NDIS", url: "https://www.ndis.gov.au/understanding-ndis/about-ndis" },
+      { label: "Participant service charter", url: "https://www.ndis.gov.au/about-us/service-charter/participant-service-charter" },
+      { label: "How the NDIS works", url: "https://www.ndis.gov.au/understanding-ndis/about-ndis/how-ndis-works" },
+    ],
+    body: `This page restates the NDIA’s public explainer “What is the NDIS”, current on ndis.gov.au as of 7 May 2026. Plan Decoder is not the NDIA. Always check the official page if a decision depends on it.
+
+The NDIS (National Disability Insurance Scheme) provides funding to eligible people with disability to:
+
+• gain more time with family and friends
+• have greater independence
+• access new skills, jobs, or volunteering in their community
+• work towards an improved quality of life
+
+The NDIS also connects anyone with disability to services in their community. That includes doctors, community groups, sporting clubs, support groups, libraries and schools, and information about what each state and territory government already provides.
+
+You do not have to be an NDIS participant to use those community connections. The Scheme is meant to help people find ordinary, local support as well as funded NDIS supports.
+
+The NDIA (National Disability Insurance Agency) is the organisation that runs the NDIS. The NDIS is the scheme. The Agency is the people and systems that administer it.
+
+The NDIA’s public page (May 2026) says the NDIS now supports over 500,000 Australians with disability. That includes supporting approximately 80,000 children with developmental delay, so they can receive supports early.
+
+The NDIS is Australia’s first national scheme that can provide funding directly to eligible individuals. It does not replace health, education, housing, or income support. Those systems still have their own jobs.
+
+If you are a participant, funded items must be NDIS supports that meet the legal tests. If you are not a participant, you can still ask for information and community connections.
+
+Read the Participant service charter on ndis.gov.au to see how the Agency says it will treat you.
+
+This Plan Decoder article is a calm restatement for practice and understanding. It is not legal advice and it does not decide access, plans, or funding.`,
+  },
+  {
     id: "choice-control",
     group: "plan",
     title: "Choice and control",
