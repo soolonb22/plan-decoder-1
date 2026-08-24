@@ -35,10 +35,10 @@ import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { getCookie } from "@tanstack/react-start/server";
 import { randomBytes } from "node:crypto";
 import { ensureDbReady, getPglite, isCloudflareWorker } from "../db";
-import { createNeonPool } from "../pg-pool";
 import { emailAndPasswordEnabled } from "./email-password";
 import { GROK_PROVIDERS } from "./providers";
 import { pgliteDialect } from "./pglite-dialect";
+import { neonHttpDialect } from "./neon-http-dialect";
 import {
   GROK_ISSUER_DEFAULT,
   PREVIEW_ALLOWED_HOSTS,
@@ -188,7 +188,7 @@ function getAuth(): ReturnType<typeof betterAuth> {
     );
   }
   const database = url
-    ? createNeonPool(url)
+    ? { dialect: neonHttpDialect(url), type: "postgres" as const }
     : { dialect: pgliteDialect(() => getPglite()), type: "postgres" as const };
   g.__planDecoderAuth__ = betterAuth({
   baseURL,
