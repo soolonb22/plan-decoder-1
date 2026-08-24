@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer, MembershipGate, PageHeader } from "@/components/layout/page";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
-import { YoutubeEmbed } from "@/components/youtube-embed";
+import { YoutubeEmbed, ELIGIBILITY_VIDEO } from "@/components/youtube-embed";
 
 const TITLE =
   "NDIS practice assessment (WHODAS-inspired) — prepare for support needs conversations | Plan Decoder";
@@ -231,9 +231,9 @@ function AssessmentLanding() {
           Module 1 starts with what the NDIS is, including a short independent video about eligibility and how to apply. It is not from the NDIA.
         </p>
         <YoutubeEmbed
-          id="C9Gka3EQetY"
-          title="NDIS Eligibility Criteria How to Apply for the NDIS"
-          credit="Dana G on YouTube — independent explainer, not NDIA"
+          id={ELIGIBILITY_VIDEO.id}
+          title={ELIGIBILITY_VIDEO.title}
+          credit={ELIGIBILITY_VIDEO.credit}
         />
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-muted">
           <li>What is the NDIS — official-scheme explainer, then confirm this is only practice.</li>

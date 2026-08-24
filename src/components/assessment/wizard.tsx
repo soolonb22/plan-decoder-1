@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer } from "@/components/layout/page";
+import { YoutubeEmbed } from "@/components/youtube-embed";
 import { ReportView } from "./report-view";
 
 const MODULE_PIC: Record<string, string> = {
@@ -342,6 +343,9 @@ export function AssessmentWizard() {
               <p className="mt-2 text-sm text-muted">{fill(screen.lede, respondent)}</p>
             </div>
           </div>
+          {screen.youtube ? (
+            <YoutubeEmbed id={screen.youtube.id} title={screen.youtube.title} credit={screen.youtube.credit} />
+          ) : null}
           <div className="mt-5 space-y-6">
             {screen.fields.map((field) => (
               <FieldControl

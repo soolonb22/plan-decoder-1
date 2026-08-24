@@ -1,3 +1,10 @@
+export const ELIGIBILITY_VIDEO = {
+  id: "C9Gka3EQetY",
+  title: "NDIS Eligibility Criteria How to Apply for the NDIS",
+  credit: "Dana G on YouTube — independent explainer, not NDIA",
+  url: "https://www.youtube.com/watch?v=C9Gka3EQetY",
+} as const;
+
 export function YoutubeEmbed({
   id,
   title,
@@ -7,6 +14,7 @@ export function YoutubeEmbed({
   title: string;
   credit?: string;
 }) {
+  const href = `https://www.youtube.com/watch?v=${id}`;
   return (
     <figure className="mt-4 overflow-hidden rounded-2xl border border-line bg-paper">
       <div className="relative aspect-video w-full bg-ink/10">
@@ -20,8 +28,13 @@ export function YoutubeEmbed({
           referrerPolicy="strict-origin-when-cross-origin"
         />
       </div>
-      <figcaption className="px-3 py-2 text-xs text-muted">
-        {credit ?? title}. This is not an NDIA video. Check ndis.gov.au for official steps.
+      <figcaption className="space-y-1 px-3 py-3 text-xs text-muted">
+        <a className="block text-sm font-medium text-primary underline-offset-4 hover:underline" href={href} target="_blank" rel="noreferrer">
+          Watch on YouTube: {title}
+        </a>
+        <p>
+          {credit ?? title}. Link: {href}. This is not an NDIA video. Check ndis.gov.au for official steps.
+        </p>
       </figcaption>
     </figure>
   );

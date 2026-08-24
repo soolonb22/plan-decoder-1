@@ -35,6 +35,7 @@ export type Screen = {
   ollie: string;
   fields: Field[];
   need: "free" | "core" | "pro";
+  youtube?: { id: string; title: string; credit: string };
 };
 
 export type NeedDomainId =

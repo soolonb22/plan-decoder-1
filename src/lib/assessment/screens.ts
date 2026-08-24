@@ -280,8 +280,13 @@ export function buildScreens(r: Respondent): Screen[] {
           ? "The NDIS can fund eligible people with disability, and it can connect anyone with disability to local services. This rehearsal is not the NDIS. Nothing here is sent to the NDIA."
           : "The NDIS can fund eligible people with disability, and it can connect anyone with disability to local services. This rehearsal is not the NDIS. Nothing here is sent to the NDIA.",
       ollie:
-        "Official words, in short: the NDIS funds eligible people so they can have more time with family, more independence, skills, work or volunteering, and a better quality of life. It also points anyone with disability toward doctors, groups, clubs, libraries and schools. I am a practice guide, not a government assessor. You can stop, save, or delete everything on this device.",
+        "Official words, in short: the NDIS funds eligible people so they can have more time with family, more independence, skills, work or volunteering, and a better quality of life. It also points anyone with disability toward doctors, groups, clubs, libraries and schools. You can watch the eligibility video below, or open it on YouTube. I am a practice guide, not a government assessor.",
       need: "core",
+      youtube: {
+        id: "C9Gka3EQetY",
+        title: "NDIS Eligibility Criteria How to Apply for the NDIS",
+        credit: "Dana G on YouTube — independent explainer, not NDIA",
+      },
       fields: [
         {
           id: "accept-practice",
