@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer, MembershipGate, PageHeader } from "@/components/layout/page";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
+import { YoutubeEmbed } from "@/components/youtube-embed";
 
 const TITLE =
   "NDIS practice assessment (WHODAS-inspired) — prepare for support needs conversations | Plan Decoder";
@@ -226,7 +227,15 @@ function AssessmentLanding() {
         <h2 id="modules-heading" className="text-xl font-semibold">
           Modules in this practice pack
         </h2>
-        <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-muted">
+        <p className="mt-2 text-sm text-muted">
+          Module 1 starts with what the NDIS is, including a short independent video about eligibility and how to apply. It is not from the NDIA.
+        </p>
+        <YoutubeEmbed
+          id="C9Gka3EQetY"
+          title="NDIS Eligibility Criteria How to Apply for the NDIS"
+          credit="Dana G on YouTube — independent explainer, not NDIA"
+        />
+        <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-muted">
           <li>What is the NDIS — official-scheme explainer, then confirm this is only practice.</li>
           <li>Who is answering — participant, parent, carer, nominee, or professional.</li>
           <li>About the person — living situation, NDIS status, and the six NDIS-style function areas.</li>

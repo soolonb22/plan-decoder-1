@@ -5,6 +5,7 @@ import { useOllie } from "@/lib/store";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Disclaimer, PageHeader } from "@/components/layout/page";
+import { YoutubeEmbed } from "@/components/youtube-embed";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/rights")({
@@ -123,6 +124,9 @@ function RightsPage() {
                 {isOpen ? (
                   <div className="border-t border-line px-5 py-4">
                     <p className="whitespace-pre-wrap text-sm leading-relaxed">{easy ? r.easy + "\n\n" + r.body : r.body}</p>
+                    {r.youtube ? (
+                      <YoutubeEmbed id={r.youtube.id} title={r.youtube.title} credit={r.youtube.credit} />
+                    ) : null}
                     <p className="mt-3 text-xs text-muted">Checked against official pages · {r.updated}</p>
                     {r.official.length ? (
                       <ul className="mt-3 space-y-1 text-sm">

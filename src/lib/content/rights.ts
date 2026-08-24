@@ -10,6 +10,7 @@ export type RightArticle = {
   tags: string[];
   updated: string;
   official: RightLink[];
+  youtube?: { id: string; title: string; credit: string };
 };
 
 export const RIGHTS_GROUPS: { id: RightArticle["group"]; label: string }[] = [
@@ -56,7 +57,13 @@ export const RIGHTS: RightArticle[] = [
       { label: "About the NDIS", url: "https://www.ndis.gov.au/understanding-ndis/about-ndis" },
       { label: "Participant service charter", url: "https://www.ndis.gov.au/about-us/service-charter/participant-service-charter" },
       { label: "How the NDIS works", url: "https://www.ndis.gov.au/understanding-ndis/about-ndis/how-ndis-works" },
+      { label: "How to apply (ndis.gov.au)", url: "https://www.ndis.gov.au/applying/application-process/how-apply" },
     ],
+    youtube: {
+      id: "C9Gka3EQetY",
+      title: "NDIS Eligibility Criteria How to Apply for the NDIS",
+      credit: "Dana G on YouTube — independent explainer, not NDIA",
+    },
     body: `This page restates the NDIA’s public explainer “What is the NDIS”, current on ndis.gov.au as of 7 May 2026. Plan Decoder is not the NDIA. Always check the official page if a decision depends on it.
 
 The NDIS (National Disability Insurance Scheme) provides funding to eligible people with disability to:
@@ -115,7 +122,13 @@ If a decision was made about you without you, ask for reasons in writing and the
     official: [
       { label: "Eligibility requirements", url: "https://www.ndis.gov.au/applying/eligibility-requirements" },
       { label: "Disability requirements", url: "https://www.ndis.gov.au/applying/eligibility-requirements/what-are-ndis-disability-requirements" },
+      { label: "How to apply", url: "https://www.ndis.gov.au/applying/application-process/how-apply" },
     ],
+    youtube: {
+      id: "C9Gka3EQetY",
+      title: "NDIS Eligibility Criteria How to Apply for the NDIS",
+      credit: "Dana G on YouTube — independent explainer, not NDIA",
+    },
     body: `To become a participant you generally need to meet:
 
 1. Age — under 65 when you apply.
