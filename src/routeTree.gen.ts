@@ -17,6 +17,7 @@ import { Route as CarerRouteImport } from './routes/carer'
 import { Route as ChecklistRouteImport } from './routes/checklist'
 import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as ClinicalRouteImport } from './routes/clinical'
+import { Route as CodeOfConductRouteImport } from './routes/code-of-conduct'
 import { Route as CompanionRouteImport } from './routes/companion'
 import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as FlagsRouteImport } from './routes/flags'
@@ -85,6 +86,11 @@ const ClientsRoute = ClientsRouteImport.update({
 const ClinicalRoute = ClinicalRouteImport.update({
   id: '/clinical',
   path: '/clinical',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CodeOfConductRoute = CodeOfConductRouteImport.update({
+  id: '/code-of-conduct',
+  path: '/code-of-conduct',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompanionRoute = CompanionRouteImport.update({
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/checklist': typeof ChecklistRoute
   '/clients': typeof ClientsRoute
   '/clinical': typeof ClinicalRoute
+  '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
@@ -281,6 +288,7 @@ export interface FileRoutesByTo {
   '/checklist': typeof ChecklistRoute
   '/clients': typeof ClientsRoute
   '/clinical': typeof ClinicalRoute
+  '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
@@ -321,6 +329,7 @@ export interface FileRoutesById {
   '/checklist': typeof ChecklistRoute
   '/clients': typeof ClientsRoute
   '/clinical': typeof ClinicalRoute
+  '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
@@ -362,6 +371,7 @@ export interface FileRouteTypes {
     | '/checklist'
     | '/clients'
     | '/clinical'
+    | '/code-of-conduct'
     | '/companion'
     | '/diary'
     | '/flags'
@@ -401,6 +411,7 @@ export interface FileRouteTypes {
     | '/checklist'
     | '/clients'
     | '/clinical'
+    | '/code-of-conduct'
     | '/companion'
     | '/diary'
     | '/flags'
@@ -440,6 +451,7 @@ export interface FileRouteTypes {
     | '/checklist'
     | '/clients'
     | '/clinical'
+    | '/code-of-conduct'
     | '/companion'
     | '/diary'
     | '/flags'
@@ -480,6 +492,7 @@ export interface RootRouteChildren {
   ChecklistRoute: typeof ChecklistRoute
   ClientsRoute: typeof ClientsRoute
   ClinicalRoute: typeof ClinicalRoute
+  CodeOfConductRoute: typeof CodeOfConductRoute
   CompanionRoute: typeof CompanionRoute
   DiaryRoute: typeof DiaryRoute
   FlagsRoute: typeof FlagsRoute
@@ -567,6 +580,13 @@ declare module '@tanstack/react-router' {
       path: '/clinical'
       fullPath: '/clinical'
       preLoaderRoute: typeof ClinicalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/code-of-conduct': {
+      id: '/code-of-conduct'
+      path: '/code-of-conduct'
+      fullPath: '/code-of-conduct'
+      preLoaderRoute: typeof CodeOfConductRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/companion': {
@@ -784,6 +804,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChecklistRoute: ChecklistRoute,
   ClientsRoute: ClientsRoute,
   ClinicalRoute: ClinicalRoute,
+  CodeOfConductRoute: CodeOfConductRoute,
   CompanionRoute: CompanionRoute,
   DiaryRoute: DiaryRoute,
   FlagsRoute: FlagsRoute,

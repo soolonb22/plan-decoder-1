@@ -19,6 +19,13 @@ export const FUNDING_VIDEO = {
   url: "https://www.youtube.com/watch?v=WzgWN9s4p3g",
 } as const;
 
+export const CODE_OF_CONDUCT_VIDEO = {
+  id: "nFIeHFazBuI",
+  title: "NDIS Code of Conduct [ENGLISH]",
+  credit: "NDIS Quality and Safeguards Commission — official English overview",
+  url: "https://www.youtube.com/watch?v=nFIeHFazBuI",
+} as const;
+
 export function YoutubeEmbed({
   id,
   title,

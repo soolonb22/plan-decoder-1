@@ -166,6 +166,9 @@ function Home() {
         <Button variant="secondary" asChild>
           <Link to="/checklist">Plan implementation checklist</Link>
         </Button>
+        <Button variant="secondary" asChild>
+          <Link to="/code-of-conduct">NDIS Code of Conduct</Link>
+        </Button>
         <Button variant="ghost" asChild>
           <Link to="/glossary">Open the glossary</Link>
         </Button>

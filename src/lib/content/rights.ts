@@ -486,26 +486,44 @@ If you are in immediate danger, call 000. Then tell the Commission when you are 
   {
     id: "code-conduct",
     group: "safety",
-    title: "Your rights with providers (Code of Conduct)",
-    summary: "Every NDIS worker and provider must follow the NDIS Code of Conduct. You can say no.",
-    easy: "Workers must treat you with respect. You can say no. You can change providers.",
-    tags: ["providers", "safety"],
-    updated: "August 2026",
+    title: "NDIS Code of Conduct",
+    summary: "The Commission’s rules for every NDIS provider and worker — registered or not. Official English video is below.",
+    easy: "Workers must treat you with respect, keep you safe, and not overcharge. You can complain to the Commission. If you are unsafe, call 000.",
+    tags: ["providers", "safety", "code of conduct"],
+    updated: "May 2026",
     official: [
-      { label: "NDIS Code of Conduct", url: "https://www.ndiscommission.gov.au/rules-and-standards/ndis-code-conduct" },
+      { label: "NDIS Code of Conduct (Commission)", url: "https://www.ndiscommission.gov.au/rules-and-standards/ndis-code-conduct" },
+      { label: "Easy Read: NDIS Code of Conduct", url: "https://ndiscommission.easyread.com.au/ndis-code-conduct/" },
+      { label: "Report a provider or worker", url: "https://www.ndiscommission.gov.au/complaints/report" },
+      { label: "Code of Conduct videos (other languages and Auslan)", url: "https://www.ndiscommission.gov.au/code-of-conduct-videos" },
     ],
-    body: `The NDIS Code of Conduct applies to registered and unregistered providers and workers. In plain terms they must:
+    youtube: {
+      id: "nFIeHFazBuI",
+      title: "NDIS Code of Conduct [ENGLISH]",
+      credit: "NDIS Quality and Safeguards Commission — official English overview",
+    },
+    body: `The NDIS Code of Conduct is made by the NDIS Quality and Safeguards Commission, not the NDIA. It is in section 6 of the National Disability Insurance Scheme (Code of Conduct) Rules 2018.
 
-• act with respect and integrity
-• keep you safe from harm, including violence, neglect, and exploitation
-• provide supports in a safe and competent way
-• respect your privacy
-• not use unfair marketing or pressure
-• take complaints seriously
+It applies to registered and unregistered providers, their key personnel, and workers. It also applies to some ILC and Continuity of Support services.
 
-You can refuse a support worker. You can ask for a female or male worker if that is a safety need. You can have a support person in the home. You can end a service agreement — check notice periods, but safety comes first.
+The Code requires people who deliver NDIS supports to:
 
-Restrictive practices (locking doors, certain medications, seclusion, physical restraint) have extra rules. They are not a casual “house rule”. Ask for the behaviour support plan and who authorised it. Report misuse to the Commission.`,
+1. Act with respect for individual rights to freedom of expression, self-determination, and decision-making, in line with relevant laws and conventions.
+2. Respect the privacy of people with disability.
+3. Provide supports and services in a safe and competent manner, with care and skill.
+4. Act with integrity, honesty, and transparency.
+5. Promptly take steps to raise and act on concerns about quality and safety.
+6. Take all reasonable steps to prevent and respond to all forms of violence, exploitation, neglect, and abuse of people with disability.
+7. Take all reasonable steps to prevent and respond to sexual misconduct.
+8. Not charge or represent higher prices for goods for NDIS participants without a reasonable justification.
+
+You can refuse a support worker. You can ask for a worker of a particular gender if that is a safety need. You can have a support person in the home. You can end a service agreement — check notice periods, but safety comes first.
+
+Providers must not threaten you for raising a concern. If something feels unsafe, you can tell the provider and you can tell the Commission (1800 035 544). If you are in immediate danger, call 000.
+
+Restrictive practices (locking doors, certain medications, seclusion, physical restraint) have extra rules. They are not a casual “house rule”. Ask for the behaviour support plan and who authorised it.
+
+Plan Decoder is not the Commission. This is a calm restatement plus the official English overview video.`,
   },
   {
     id: "nominees",
