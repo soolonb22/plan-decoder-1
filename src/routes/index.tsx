@@ -161,6 +161,9 @@ function Home() {
 
       <div className="mt-6 flex flex-wrap gap-2">
         <Button variant="secondary" asChild>
+          <Link to="/funding">Funding categories explained</Link>
+        </Button>
+        <Button variant="secondary" asChild>
           <Link to="/checklist">Plan implementation checklist</Link>
         </Button>
         <Button variant="ghost" asChild>

@@ -22,10 +22,12 @@ import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as FlagsRouteImport } from './routes/flags'
 import { Route as FluctuationRouteImport } from './routes/fluctuation'
 import { Route as FunctionRouteImport } from './routes/function'
+import { Route as FundingRouteImport } from './routes/funding'
 import { Route as GetFilesRouteImport } from './routes/get-files'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GoalsRouteImport } from './routes/goals'
 import { Route as GuideRouteImport } from './routes/guide'
+import { Route as HealthRouteImport } from './routes/health'
 import { Route as ImpactRouteImport } from './routes/impact'
 import { Route as LanguageRouteImport } from './routes/language'
 import { Route as LoginRouteImport } from './routes/login'
@@ -41,6 +43,7 @@ import { Route as RightsRouteImport } from './routes/rights'
 import { Route as SchoolRouteImport } from './routes/school'
 import { Route as ScriptsRouteImport } from './routes/scripts'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as ApiReadyRouteImport } from './routes/api/ready'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 
@@ -109,6 +112,11 @@ const FunctionRoute = FunctionRouteImport.update({
   path: '/function',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FundingRoute = FundingRouteImport.update({
+  id: '/funding',
+  path: '/funding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GetFilesRoute = GetFilesRouteImport.update({
   id: '/get-files',
   path: '/get-files',
@@ -127,6 +135,11 @@ const GoalsRoute = GoalsRouteImport.update({
 const GuideRoute = GuideRouteImport.update({
   id: '/guide',
   path: '/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthRoute = HealthRouteImport.update({
+  id: '/health',
+  path: '/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImpactRoute = ImpactRouteImport.update({
@@ -204,6 +217,11 @@ const WalletRoute = WalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReadyRoute = ApiReadyRouteImport.update({
+  id: '/api/ready',
+  path: '/api/ready',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -229,10 +247,12 @@ export interface FileRoutesByFullPath {
   '/flags': typeof FlagsRoute
   '/fluctuation': typeof FluctuationRoute
   '/function': typeof FunctionRoute
+  '/funding': typeof FundingRoute
   '/get-files': typeof GetFilesRoute
   '/glossary': typeof GlossaryRoute
   '/goals': typeof GoalsRoute
   '/guide': typeof GuideRoute
+  '/health': typeof HealthRoute
   '/impact': typeof ImpactRoute
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
@@ -248,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/wallet': typeof WalletRoute
+  '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
@@ -265,10 +286,12 @@ export interface FileRoutesByTo {
   '/flags': typeof FlagsRoute
   '/fluctuation': typeof FluctuationRoute
   '/function': typeof FunctionRoute
+  '/funding': typeof FundingRoute
   '/get-files': typeof GetFilesRoute
   '/glossary': typeof GlossaryRoute
   '/goals': typeof GoalsRoute
   '/guide': typeof GuideRoute
+  '/health': typeof HealthRoute
   '/impact': typeof ImpactRoute
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
@@ -284,6 +307,7 @@ export interface FileRoutesByTo {
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/wallet': typeof WalletRoute
+  '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
@@ -302,10 +326,12 @@ export interface FileRoutesById {
   '/flags': typeof FlagsRoute
   '/fluctuation': typeof FluctuationRoute
   '/function': typeof FunctionRoute
+  '/funding': typeof FundingRoute
   '/get-files': typeof GetFilesRoute
   '/glossary': typeof GlossaryRoute
   '/goals': typeof GoalsRoute
   '/guide': typeof GuideRoute
+  '/health': typeof HealthRoute
   '/impact': typeof ImpactRoute
   '/language': typeof LanguageRoute
   '/login': typeof LoginRoute
@@ -321,6 +347,7 @@ export interface FileRoutesById {
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/wallet': typeof WalletRoute
+  '/api/ready': typeof ApiReadyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
 }
@@ -340,10 +367,12 @@ export interface FileRouteTypes {
     | '/flags'
     | '/fluctuation'
     | '/function'
+    | '/funding'
     | '/get-files'
     | '/glossary'
     | '/goals'
     | '/guide'
+    | '/health'
     | '/impact'
     | '/language'
     | '/login'
@@ -359,6 +388,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/scripts'
     | '/wallet'
+    | '/api/ready'
     | '/api/auth/$'
     | '/api/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -376,10 +406,12 @@ export interface FileRouteTypes {
     | '/flags'
     | '/fluctuation'
     | '/function'
+    | '/funding'
     | '/get-files'
     | '/glossary'
     | '/goals'
     | '/guide'
+    | '/health'
     | '/impact'
     | '/language'
     | '/login'
@@ -395,6 +427,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/scripts'
     | '/wallet'
+    | '/api/ready'
     | '/api/auth/$'
     | '/api/stripe/webhook'
   id:
@@ -412,10 +445,12 @@ export interface FileRouteTypes {
     | '/flags'
     | '/fluctuation'
     | '/function'
+    | '/funding'
     | '/get-files'
     | '/glossary'
     | '/goals'
     | '/guide'
+    | '/health'
     | '/impact'
     | '/language'
     | '/login'
@@ -431,6 +466,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/scripts'
     | '/wallet'
+    | '/api/ready'
     | '/api/auth/$'
     | '/api/stripe/webhook'
   fileRoutesById: FileRoutesById
@@ -449,10 +485,12 @@ export interface RootRouteChildren {
   FlagsRoute: typeof FlagsRoute
   FluctuationRoute: typeof FluctuationRoute
   FunctionRoute: typeof FunctionRoute
+  FundingRoute: typeof FundingRoute
   GetFilesRoute: typeof GetFilesRoute
   GlossaryRoute: typeof GlossaryRoute
   GoalsRoute: typeof GoalsRoute
   GuideRoute: typeof GuideRoute
+  HealthRoute: typeof HealthRoute
   ImpactRoute: typeof ImpactRoute
   LanguageRoute: typeof LanguageRoute
   LoginRoute: typeof LoginRoute
@@ -468,6 +506,7 @@ export interface RootRouteChildren {
   SchoolRoute: typeof SchoolRoute
   ScriptsRoute: typeof ScriptsRoute
   WalletRoute: typeof WalletRoute
+  ApiReadyRoute: typeof ApiReadyRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
 }
@@ -565,6 +604,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FunctionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/funding': {
+      id: '/funding'
+      path: '/funding'
+      fullPath: '/funding'
+      preLoaderRoute: typeof FundingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/get-files': {
       id: '/get-files'
       path: '/get-files'
@@ -591,6 +637,13 @@ declare module '@tanstack/react-router' {
       path: '/guide'
       fullPath: '/guide'
       preLoaderRoute: typeof GuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health': {
+      id: '/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof HealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/impact': {
@@ -698,6 +751,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WalletRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ready': {
+      id: '/api/ready'
+      path: '/api/ready'
+      fullPath: '/api/ready'
+      preLoaderRoute: typeof ApiReadyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -729,10 +789,12 @@ const rootRouteChildren: RootRouteChildren = {
   FlagsRoute: FlagsRoute,
   FluctuationRoute: FluctuationRoute,
   FunctionRoute: FunctionRoute,
+  FundingRoute: FundingRoute,
   GetFilesRoute: GetFilesRoute,
   GlossaryRoute: GlossaryRoute,
   GoalsRoute: GoalsRoute,
   GuideRoute: GuideRoute,
+  HealthRoute: HealthRoute,
   ImpactRoute: ImpactRoute,
   LanguageRoute: LanguageRoute,
   LoginRoute: LoginRoute,
@@ -748,6 +810,7 @@ const rootRouteChildren: RootRouteChildren = {
   SchoolRoute: SchoolRoute,
   ScriptsRoute: ScriptsRoute,
   WalletRoute: WalletRoute,
+  ApiReadyRoute: ApiReadyRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
 }
@@ -756,10 +819,11 @@ export const routeTree = rootRouteImport
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { FUNDING_BUDGETS } from "@/lib/content/funding";
 import { useOllie, useClientList } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -51,8 +51,12 @@ function BudgetPage() {
         picture="/brand/story-wallet.jpg"
       />
       <YoutubeEmbed id={FUNDING_VIDEO.id} title={FUNDING_VIDEO.title} credit={FUNDING_VIDEO.credit} />
-      <p className="mt-3 text-sm text-muted">
-        Official guide:{" "}
+      <p className="mt-3 text-sm">
+        Full explainer:{" "}
+        <Link className="text-primary underline-offset-4 hover:underline" to="/funding">
+          NDIS funding categories — what your plan covers and how to use it
+        </Link>
+        . Official guide:{" "}
         <a
           className="text-primary underline-offset-4 hover:underline"
           href="https://www.ndis.gov.au/participants/using-your-funding/ndis-support-budgets/guide-ndis-support-budgets"

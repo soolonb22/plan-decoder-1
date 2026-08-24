@@ -59,6 +59,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   "/impact": FileText,
   "/scripts": FileText,
   "/budget": PiggyBank,
+  "/funding": PiggyBank,
   "/goals": Target,
   "/checklist": ListChecks,
   "/rights": Scale,

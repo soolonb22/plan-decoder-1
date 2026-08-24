@@ -24,6 +24,7 @@ export const NAV: NavItem[] = [
   { to: "/impact", label: "Impact statements", need: "core", group: "Language" },
   { to: "/scripts", label: "Advocacy scripts", need: "core", group: "Language" },
   { to: "/budget", label: "Budget helper", need: "core", group: "Planning" },
+  { to: "/funding", label: "Funding categories", need: "free", group: "Planning" },
   { to: "/goals", label: "Goals and wish list", need: "core", group: "Planning" },
   { to: "/checklist", label: "Plan checklist", need: "free", group: "Planning" },
   { to: "/rights", label: "Know your rights", need: "free", group: "Rights" },
