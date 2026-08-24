@@ -56,6 +56,7 @@ export type EvidenceItem = {
   date: string;
   source: string;
   createdAt: string;
+  files?: { id: string; name: string; type: string; size: number }[];
 };
 
 export type LogKind = "carer" | "support" | "diary";

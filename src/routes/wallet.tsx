@@ -1,9 +1,18 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Copy, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Copy, Download, HardDrive, Pencil, Plus, Search, Trash2, Upload } from "lucide-react";
 import { DOMAINS } from "@/lib/content/language";
 import { useOllie, useClientList } from "@/lib/store";
 import { cn, formatDate, todayISO } from "@/lib/utils";
+import {
+  blobToDataUrl,
+  dataUrlToBlob,
+  deleteLocalFiles,
+  downloadBlob,
+  fileKindAllowed,
+  getLocalFile,
+  putLocalFile,
+} from "@/lib/local-files";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field, Input, Textarea } from "@/components/ui/input";
@@ -86,6 +95,11 @@ function WalletPage() {
   const [q, setQ] = useState("");
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [fileNote, setFileNote] = useState<string | null>(null);
+  const uploadRef = useRef<HTMLInputElement>(null);
+  const loadRef = useRef<HTMLInputElement>(null);
+  const slipUploadRef = useRef<HTMLInputElement>(null);
 
   function resetForm() {
     setEditing(null);
@@ -97,6 +111,7 @@ function WalletPage() {
     setDomain("");
     setDate(todayISO());
     setSource("");
+    setPendingFiles([]);
   }
 
   function composeBody() {
@@ -121,7 +136,26 @@ function WalletPage() {
     setSource(item.source);
   }
 
-  function save() {
+  async function attachToItem(itemId: string, files: File[]) {
+    const meta = [];
+    for (const file of files) {
+      if (!fileKindAllowed(file)) {
+        setFileNote("Use a PDF, photo, or Word/text file. Nothing executable.");
+        continue;
+      }
+      try {
+        meta.push(await putLocalFile(file, file.name, file.type));
+      } catch (err) {
+        setFileNote(err instanceof Error ? err.message : "Could not save that file on this device.");
+      }
+    }
+    if (!meta.length) return;
+    const item = useOllie.getState().evidence.find((x) => x.id === itemId);
+    update(itemId, { files: [...(item?.files ?? []), ...meta] });
+    setFileNote(`Saved ${meta.length} file${meta.length === 1 ? "" : "s"} on this device.`);
+  }
+
+  async function save() {
     const body = composeBody();
     if (!title.trim() || !body) return;
     const payload = {
@@ -133,10 +167,94 @@ function WalletPage() {
       date,
       source: source.trim(),
     };
+    const id = editing ?? add({ ...payload, files: [] });
     if (editing) update(editing, payload);
-    else add(payload);
+    if (pendingFiles.length) await attachToItem(id, pendingFiles);
     resetForm();
     setOpen(false);
+  }
+
+  async function savePocket() {
+    try {
+      const packFiles = [];
+      for (const item of items) {
+        for (const f of item.files ?? []) {
+          const blob = await getLocalFile(f.id);
+          if (!blob) continue;
+          packFiles.push({
+            id: f.id,
+            name: f.name,
+            type: f.type,
+            dataUrl: await blobToDataUrl(blob),
+          });
+        }
+      }
+      const pack = {
+        kind: "plan-decoder-wallet",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        evidence: items,
+        files: packFiles,
+      };
+      downloadBlob(
+        new Blob([JSON.stringify(pack)], { type: "application/json" }),
+        `plan-decoder-wallet-${todayISO()}.json`,
+      );
+      setFileNote("Pocket copy downloaded. Keep it somewhere you trust.");
+    } catch {
+      setFileNote("Could not build a copy. Try again, or download as text.");
+    }
+  }
+
+  async function loadPocket(file: File) {
+    try {
+      const pack = JSON.parse(await file.text()) as {
+        kind?: string;
+        evidence?: EvidenceItem[];
+        files?: { id: string; name: string; type: string; dataUrl: string }[];
+      };
+      if (pack.kind !== "plan-decoder-wallet" || !Array.isArray(pack.evidence)) {
+        setFileNote("That file is not a Plan Decoder pocket copy.");
+        return;
+      }
+      const remap = new Map<string, { id: string; name: string; type: string; size: number }>();
+      for (const f of pack.files ?? []) {
+        const blob = await dataUrlToBlob(f.dataUrl);
+        const meta = await putLocalFile(blob, f.name, f.type || blob.type);
+        remap.set(f.id, meta);
+      }
+      for (const item of pack.evidence) {
+        add({
+          title: item.title,
+          body: item.body,
+          type: item.type,
+          domain: item.domain,
+          tags: item.tags ?? [],
+          date: item.date,
+          source: item.source,
+          files: (item.files ?? []).map((f) => remap.get(f.id)).filter((x): x is NonNullable<typeof x> => Boolean(x)),
+        });
+      }
+      setFileNote("Loaded onto this device. Nothing was sent away.");
+    } catch {
+      setFileNote("Could not read that copy.");
+    }
+  }
+
+  async function downloadFile(id: string, name: string) {
+    const blob = await getLocalFile(id);
+    if (!blob) {
+      setFileNote("That file is not on this browser any more.");
+      return;
+    }
+    downloadBlob(blob, name);
+  }
+
+  async function removeSlip(id: string) {
+    const item = items.find((x) => x.id === id);
+    await deleteLocalFiles((item?.files ?? []).map((f) => f.id));
+    remove(id);
+    setConfirmId(null);
   }
 
   const filtered = useMemo(() => {
@@ -162,22 +280,77 @@ function WalletPage() {
 
   return (
     <MembershipGate need="core">
+      <input
+        ref={uploadRef}
+        type="file"
+        className="sr-only"
+        accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.doc,.docx,.rtf,.csv,image/*,application/pdf"
+        onChange={(e) => {
+          const list = [...(e.target.files ?? [])];
+          e.target.value = "";
+          if (!list.length) return;
+          void (async () => {
+            for (const file of list) {
+              const kind: EvidenceType = file.type.startsWith("image/") ? "photo-note" : "letter";
+              const id = add({
+                title: file.name.replace(/\.[^.]+$/, "") || "Uploaded file",
+                body: "File stored on this device. Add a few lines about what it shows when you can.",
+                type: kind,
+                domain: "",
+                tags: [],
+                date: todayISO(),
+                source: "",
+                files: [],
+              });
+              await attachToItem(id, [file]);
+            }
+          })();
+        }}
+      />
+      <input
+        ref={loadRef}
+        type="file"
+        className="sr-only"
+        accept="application/json,.json"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = "";
+          if (file) void loadPocket(file);
+        }}
+      />
       <PageHeader
         title="Evidence Wallet"
         lede="A pocket for short, dated notes about everyday function. One slip per situation. It stays on this device."
         picture="/brand/story-wallet.jpg"
         actions={
-          <Button
-            onClick={() => {
-              if (open) {
-                resetForm();
-                setOpen(false);
-              } else setOpen(true);
-            }}
-          >
-            <Plus />
-            {open ? "Close slip" : "Add a slip"}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => uploadRef.current?.click()}
+            >
+              <Upload />
+              Upload a file
+            </Button>
+            <Button variant="secondary" onClick={() => void savePocket()}>
+              <HardDrive />
+              Save local copy
+            </Button>
+            <Button variant="ghost" onClick={() => loadRef.current?.click()}>
+              <Download />
+              Load a copy
+            </Button>
+            <Button
+              onClick={() => {
+                if (open) {
+                  resetForm();
+                  setOpen(false);
+                } else setOpen(true);
+              }}
+            >
+              <Plus />
+              {open ? "Close slip" : "Add a slip"}
+            </Button>
+          </div>
         }
       />
 
@@ -203,9 +376,14 @@ function WalletPage() {
       />
 
       <Disclaimer>
-        Keep originals of clinical reports. This wallet is your working file on this device — not an official NDIS
-        record, and not sent to the NDIA.
+        Keep originals of clinical reports. Uploads and copies stay in this browser — they are not sent to Plan Decoder
+        or the NDIA. Each file can be up to 8 MB.
       </Disclaimer>
+      {fileNote ? (
+        <p className="mt-3 rounded-xl bg-ok-soft px-4 py-3 text-sm text-ok" role="status">
+          {fileNote}
+        </p>
+      ) : null}
 
       <div className="mt-5 grid gap-3 sm:grid-cols-3">
         <Card>
@@ -319,6 +497,33 @@ function WalletPage() {
               <Input value={source} onChange={(e) => setSource(e.target.value)} placeholder="Carer / OT / school / me" />
             </Field>
           </div>
+          <div>
+            <p className="mb-2 text-sm font-medium">Attach a file (stays on this device)</p>
+            <input
+              ref={slipUploadRef}
+              type="file"
+              className="sr-only"
+              accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.doc,.docx,.rtf,.csv,image/*,application/pdf"
+              onChange={(e) => {
+                const list = [...(e.target.files ?? [])];
+                e.target.value = "";
+                setPendingFiles((cur) => [...cur, ...list]);
+              }}
+            />
+            <Button type="button" variant="secondary" onClick={() => slipUploadRef.current?.click()}>
+              <Upload />
+              Upload from this device
+            </Button>
+            {pendingFiles.length ? (
+              <ul className="mt-2 space-y-1 text-sm text-muted">
+                {pendingFiles.map((f) => (
+                  <li key={f.name + f.size}>{f.name}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-xs text-muted">PDF, photo, or Word. Max 8 MB. Not sent anywhere.</p>
+            )}
+          </div>
           <div className="flex flex-wrap gap-2">
             <Button onClick={save}>{editing ? "Save changes" : "Save on this device"}</Button>
             <Button
@@ -350,18 +555,17 @@ function WalletPage() {
             variant="secondary"
             onClick={() => {
               const text = items.map(asLetter).join("\n\n———\n\n");
-              const blob = new Blob([text], { type: "text/plain" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `plan-decoder-wallet-${todayISO()}.txt`;
-              a.click();
-              URL.revokeObjectURL(url);
+              downloadBlob(new Blob([text], { type: "text/plain" }), `plan-decoder-wallet-${todayISO()}.txt`);
             }}
           >
+            <Download />
             Download all as text
           </Button>
         ) : null}
+        <Button variant="secondary" onClick={() => void savePocket()}>
+          <HardDrive />
+          Save local copy
+        </Button>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label="Filter by kind">
@@ -442,7 +646,43 @@ function WalletPage() {
                       <Badge tone="primary">{item.domain ? domainTitle(item.domain) : "Unfiled"}</Badge>
                     </div>
                     <p className="mt-3 whitespace-pre-wrap pl-2 text-sm leading-relaxed">{item.body}</p>
+                    {(item.files ?? []).length ? (
+                      <ul className="mt-3 space-y-2 pl-2">
+                        {(item.files ?? []).map((f) => (
+                          <li key={f.id} className="flex flex-wrap items-center gap-2 text-sm">
+                            <span className="text-muted">{f.name}</span>
+                            <Button size="sm" variant="secondary" onClick={() => void downloadFile(f.id, f.name)}>
+                              <Download />
+                              Download
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                void deleteLocalFiles([f.id]);
+                                update(item.id, { files: (item.files ?? []).filter((x) => x.id !== f.id) });
+                              }}
+                            >
+                              Remove file
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
                     <div className="mt-3 flex flex-wrap gap-2 pl-2">
+                      <Button size="sm" variant="secondary" onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = ".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.doc,.docx,image/*,application/pdf";
+                        input.onchange = () => {
+                          const list = [...(input.files ?? [])];
+                          if (list.length) void attachToItem(item.id, list);
+                        };
+                        input.click();
+                      }}>
+                        <Upload />
+                        Upload
+                      </Button>
                       <Button
                         size="sm"
                         variant="secondary"
@@ -465,7 +705,7 @@ function WalletPage() {
                       </Button>
                       {confirmId === item.id ? (
                         <>
-                          <Button size="sm" variant="danger" onClick={() => remove(item.id)}>
+                          <Button size="sm" variant="danger" onClick={() => void removeSlip(item.id)}>
                             Yes, remove
                           </Button>
                           <Button size="sm" variant="ghost" onClick={() => setConfirmId(null)}>
