@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { GROK_PROVIDERS, authClient, authEnabled, signIn } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
@@ -33,6 +33,14 @@ function Login() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [oauthBusy, setOauthBusy] = useState<string | null>(null);
+  const [dbReady, setDbReady] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    void fetch("/api/ready")
+      .then((r) => r.json() as Promise<{ database?: boolean }>)
+      .then((d) => setDbReady(Boolean(d.database)))
+      .catch(() => setDbReady(null));
+  }, []);
 
   if (isPending) return <AuthSplash />;
   if (user) return <Navigate to="/" />;
@@ -79,11 +87,17 @@ function Login() {
     } catch {
       setPassword("");
       setConfirm("");
-      setError(
-        mode === "up"
-          ? "Could not create the account. That email may already be in use."
-          : "Check the email and password and try again.",
-      );
+      if (dbReady === false) {
+        setError(
+          "Sign-in is not connected to the database yet. In Cloudflare open Worker plan-decoder-1 → Settings → Variables and Secrets (not Build variables). Add a Secret named DATABASE_URL with your Neon postgresql:// line. Then refresh this page. No new build is needed.",
+        );
+      } else {
+        setError(
+          mode === "up"
+            ? "Could not create the account. That email may already be in use."
+            : "Check the email and password and try again.",
+        );
+      }
     } finally {
       setBusy(false);
     }
@@ -151,8 +165,13 @@ function Login() {
           <p className="mt-1 text-sm text-muted">
             {mode === "in"
               ? "Sign in to open your Plan Decoder workspace."
-              : "You need an account to use Plan Decoder. Practice answers still stay on this device."}
-          </p>
+          {dbReady === false ? (
+            <p className="mt-4 rounded-2xl border border-alert/30 bg-alert/10 p-3 text-sm text-ink" role="status">
+              Sign-in is not connected yet. In Cloudflare open <strong>plan-decoder-1</strong> → Settings →
+              Variables and Secrets (not Build). Add a Secret named <strong>DATABASE_URL</strong> with your Neon
+              postgresql:// line, then refresh. No new build is needed.
+            </p>
+          ) : null}
 
           {authEnabled ? (
             <div className="mt-5 space-y-2">
