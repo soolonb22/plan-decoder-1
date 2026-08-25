@@ -22,19 +22,25 @@ export function PublicShell({ children }: { children: ReactNode }) {
             <span className="font-semibold">Plan Decoder</span>
           </Link>
           <nav className="flex min-w-0 flex-1 flex-wrap gap-1" aria-label="Public">
-            {PUBLIC_NAV.filter((i) => i.to !== "/").map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                search={item.to === "/assessment" ? { tab: "about" } : undefined}
-                className={cn(
-                  "inline-flex min-h-10 items-center rounded-lg px-3 text-sm",
-                  pathname === item.to ? "bg-primary text-primary-fg" : "hover:bg-primary-soft",
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {PUBLIC_NAV.filter((i) => i.to !== "/").map((item) => {
+              const active = pathname === item.to;
+              const className = cn(
+                "inline-flex min-h-10 items-center rounded-lg px-3 text-sm",
+                active ? "bg-primary text-primary-fg" : "hover:bg-primary-soft",
+              );
+              if (item.to === "/assessment") {
+                return (
+                  <Link key={item.to} to="/assessment" search={{ tab: "about" }} className={className}>
+                    {item.label}
+                  </Link>
+                );
+              }
+              return (
+                <Link key={item.to} to={item.to} className={className}>
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
           <Button size="sm" asChild>
             <Link to="/login">Sign in</Link>

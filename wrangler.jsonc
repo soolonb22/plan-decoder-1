@@ -23,8 +23,5 @@
   "routes": [
     { "pattern": "plandecoder.com", "custom_domain": true },
     { "pattern": "www.plandecoder.com", "custom_domain": true }
-  ],
-  "triggers": {
-    "crons": ["20 7,13,19,23 * * *"]
   }
 }

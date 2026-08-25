@@ -39,15 +39,22 @@ import { Route as NdisChangesRouteImport } from './routes/ndis-changes'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as OpsRouteImport } from './routes/ops'
 import { Route as PaidRouteImport } from './routes/paid'
+import { Route as PlanRouteImport } from './routes/plan'
 import { Route as PracticeRouteImport } from './routes/practice'
+import { Route as PrepRouteImport } from './routes/prep'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RightsRouteImport } from './routes/rights'
 import { Route as SchoolRouteImport } from './routes/school'
 import { Route as ScriptsRouteImport } from './routes/scripts'
 import { Route as ServiceCharterRouteImport } from './routes/service-charter'
 import { Route as WalletRouteImport } from './routes/wallet'
+import { Route as WordsRouteImport } from './routes/words'
+import { Route as ApiNewsRouteImport } from './routes/api/news'
 import { Route as ApiReadyRouteImport } from './routes/api/ready'
+import { Route as ApiSyncRouteImport } from './routes/api/sync'
+import { Route as ApiAccountDeleteRouteImport } from './routes/api/account/delete'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiOpsReclaimEmailRouteImport } from './routes/api/ops/reclaim-email'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
@@ -202,9 +209,19 @@ const PaidRoute = PaidRouteImport.update({
   path: '/paid',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlanRoute = PlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PracticeRoute = PracticeRouteImport.update({
   id: '/practice',
   path: '/practice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrepRoute = PrepRouteImport.update({
+  id: '/prep',
+  path: '/prep',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -215,6 +232,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RightsRoute = RightsRouteImport.update({
@@ -242,9 +264,29 @@ const WalletRoute = WalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WordsRoute = WordsRouteImport.update({
+  id: '/words',
+  path: '/words',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNewsRoute = ApiNewsRouteImport.update({
+  id: '/api/news',
+  path: '/api/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiReadyRoute = ApiReadyRouteImport.update({
   id: '/api/ready',
   path: '/api/ready',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSyncRoute = ApiSyncRouteImport.update({
+  id: '/api/sync',
+  path: '/api/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccountDeleteRoute = ApiAccountDeleteRouteImport.update({
+  id: '/api/account/delete',
+  path: '/api/account/delete',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -294,15 +336,22 @@ export interface FileRoutesByFullPath {
   '/news': typeof NewsRoute
   '/ops': typeof OpsRoute
   '/paid': typeof PaidRoute
+  '/plan': typeof PlanRoute
   '/practice': typeof PracticeRoute
+  '/prep': typeof PrepRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
   '/wallet': typeof WalletRoute
+  '/words': typeof WordsRoute
+  '/api/news': typeof ApiNewsRoute
   '/api/ready': typeof ApiReadyRoute
+  '/api/sync': typeof ApiSyncRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/ops/reclaim-email': typeof ApiOpsReclaimEmailRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -338,15 +387,22 @@ export interface FileRoutesByTo {
   '/news': typeof NewsRoute
   '/ops': typeof OpsRoute
   '/paid': typeof PaidRoute
+  '/plan': typeof PlanRoute
   '/practice': typeof PracticeRoute
+  '/prep': typeof PrepRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
   '/wallet': typeof WalletRoute
+  '/words': typeof WordsRoute
+  '/api/news': typeof ApiNewsRoute
   '/api/ready': typeof ApiReadyRoute
+  '/api/sync': typeof ApiSyncRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/ops/reclaim-email': typeof ApiOpsReclaimEmailRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -383,15 +439,22 @@ export interface FileRoutesById {
   '/news': typeof NewsRoute
   '/ops': typeof OpsRoute
   '/paid': typeof PaidRoute
+  '/plan': typeof PlanRoute
   '/practice': typeof PracticeRoute
+  '/prep': typeof PrepRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
   '/wallet': typeof WalletRoute
+  '/words': typeof WordsRoute
+  '/api/news': typeof ApiNewsRoute
   '/api/ready': typeof ApiReadyRoute
+  '/api/sync': typeof ApiSyncRoute
+  '/api/account/delete': typeof ApiAccountDeleteRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/ops/reclaim-email': typeof ApiOpsReclaimEmailRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
@@ -429,15 +492,22 @@ export interface FileRouteTypes {
     | '/news'
     | '/ops'
     | '/paid'
+    | '/plan'
     | '/practice'
+    | '/prep'
     | '/privacy'
     | '/reports'
+    | '/reset-password'
     | '/rights'
     | '/school'
     | '/scripts'
     | '/service-charter'
     | '/wallet'
+    | '/words'
+    | '/api/news'
     | '/api/ready'
+    | '/api/sync'
+    | '/api/account/delete'
     | '/api/auth/$'
     | '/api/ops/reclaim-email'
     | '/api/stripe/webhook'
@@ -473,15 +543,22 @@ export interface FileRouteTypes {
     | '/news'
     | '/ops'
     | '/paid'
+    | '/plan'
     | '/practice'
+    | '/prep'
     | '/privacy'
     | '/reports'
+    | '/reset-password'
     | '/rights'
     | '/school'
     | '/scripts'
     | '/service-charter'
     | '/wallet'
+    | '/words'
+    | '/api/news'
     | '/api/ready'
+    | '/api/sync'
+    | '/api/account/delete'
     | '/api/auth/$'
     | '/api/ops/reclaim-email'
     | '/api/stripe/webhook'
@@ -517,15 +594,22 @@ export interface FileRouteTypes {
     | '/news'
     | '/ops'
     | '/paid'
+    | '/plan'
     | '/practice'
+    | '/prep'
     | '/privacy'
     | '/reports'
+    | '/reset-password'
     | '/rights'
     | '/school'
     | '/scripts'
     | '/service-charter'
     | '/wallet'
+    | '/words'
+    | '/api/news'
     | '/api/ready'
+    | '/api/sync'
+    | '/api/account/delete'
     | '/api/auth/$'
     | '/api/ops/reclaim-email'
     | '/api/stripe/webhook'
@@ -562,15 +646,22 @@ export interface RootRouteChildren {
   NewsRoute: typeof NewsRoute
   OpsRoute: typeof OpsRoute
   PaidRoute: typeof PaidRoute
+  PlanRoute: typeof PlanRoute
   PracticeRoute: typeof PracticeRoute
+  PrepRoute: typeof PrepRoute
   PrivacyRoute: typeof PrivacyRoute
   ReportsRoute: typeof ReportsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   RightsRoute: typeof RightsRoute
   SchoolRoute: typeof SchoolRoute
   ScriptsRoute: typeof ScriptsRoute
   ServiceCharterRoute: typeof ServiceCharterRoute
   WalletRoute: typeof WalletRoute
+  WordsRoute: typeof WordsRoute
+  ApiNewsRoute: typeof ApiNewsRoute
   ApiReadyRoute: typeof ApiReadyRoute
+  ApiSyncRoute: typeof ApiSyncRoute
+  ApiAccountDeleteRoute: typeof ApiAccountDeleteRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiOpsReclaimEmailRoute: typeof ApiOpsReclaimEmailRoute
   ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
@@ -788,11 +879,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaidRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/plan': {
+      id: '/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof PlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/practice': {
       id: '/practice'
       path: '/practice'
       fullPath: '/practice'
       preLoaderRoute: typeof PracticeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prep': {
+      id: '/prep'
+      path: '/prep'
+      fullPath: '/prep'
+      preLoaderRoute: typeof PrepRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -807,6 +912,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rights': {
@@ -844,11 +956,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WalletRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/words': {
+      id: '/words'
+      path: '/words'
+      fullPath: '/words'
+      preLoaderRoute: typeof WordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/news': {
+      id: '/api/news'
+      path: '/api/news'
+      fullPath: '/api/news'
+      preLoaderRoute: typeof ApiNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/ready': {
       id: '/api/ready'
       path: '/api/ready'
       fullPath: '/api/ready'
       preLoaderRoute: typeof ApiReadyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sync': {
+      id: '/api/sync'
+      path: '/api/sync'
+      fullPath: '/api/sync'
+      preLoaderRoute: typeof ApiSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account/delete': {
+      id: '/api/account/delete'
+      path: '/api/account/delete'
+      fullPath: '/api/account/delete'
+      preLoaderRoute: typeof ApiAccountDeleteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -906,15 +1046,22 @@ const rootRouteChildren: RootRouteChildren = {
   NewsRoute: NewsRoute,
   OpsRoute: OpsRoute,
   PaidRoute: PaidRoute,
+  PlanRoute: PlanRoute,
   PracticeRoute: PracticeRoute,
+  PrepRoute: PrepRoute,
   PrivacyRoute: PrivacyRoute,
   ReportsRoute: ReportsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   RightsRoute: RightsRoute,
   SchoolRoute: SchoolRoute,
   ScriptsRoute: ScriptsRoute,
   ServiceCharterRoute: ServiceCharterRoute,
   WalletRoute: WalletRoute,
+  WordsRoute: WordsRoute,
+  ApiNewsRoute: ApiNewsRoute,
   ApiReadyRoute: ApiReadyRoute,
+  ApiSyncRoute: ApiSyncRoute,
+  ApiAccountDeleteRoute: ApiAccountDeleteRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiOpsReclaimEmailRoute: ApiOpsReclaimEmailRoute,
   ApiStripeWebhookRoute: ApiStripeWebhookRoute,
