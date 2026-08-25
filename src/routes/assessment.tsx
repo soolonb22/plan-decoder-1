@@ -3,12 +3,14 @@ import { ClipboardList, Lock, Shield, Trash2 } from "lucide-react";
 import { canAccess } from "@/lib/membership";
 import { SHORT_DISCLAIMER } from "@/lib/assessment/disclaimers";
 import { useOllie } from "@/lib/store";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer, MembershipGate, PageHeader } from "@/components/layout/page";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 import { YoutubeEmbed, ELIGIBILITY_VIDEO } from "@/components/youtube-embed";
+import { AssessmentWizard } from "@/components/assessment/wizard";
+import { FunctionPanel } from "@/components/pocket/function-panel";
 
 const TITLE =
   "NDIS practice assessment (WHODAS-inspired) — prepare for support needs conversations | Plan Decoder";
@@ -16,6 +18,11 @@ const DESC =
   "Free, private practice questionnaire to rehearse NDIS-style functional questions, environment, permanency and mainstream supports. Inspired by WHODAS 2.0 life areas and publicly described 2026 support-needs assessment themes. Not the NDIA. Not I-CAN. Not a diagnosis.";
 
 export const Route = createFileRoute("/assessment")({
+  validateSearch: (raw: Record<string, unknown>): { tab: "about" | "practice" | "function" } => {
+    const tab = String(raw.tab ?? "");
+    if (tab === "practice" || tab === "function") return { tab };
+    return { tab: "about" };
+  },
   component: AssessmentLanding,
   head: () => ({
     meta: [
@@ -55,6 +62,7 @@ const FAQ = [
 ];
 
 function AssessmentLanding() {
+  const { tab } = Route.useSearch();
   const assessments = useOllie((s) => s.assessments);
   const setActive = useOllie((s) => s.setActiveAssessment);
   const remove = useOllie((s) => s.removeAssessment);
@@ -95,7 +103,7 @@ function AssessmentLanding() {
           canAccess(membership, "core") ? (
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Button asChild>
-              <Link to="/practice">Continue practice</Link>
+              <Link to="/assessment" search={{ tab: "practice" }}>Continue practice</Link>
             </Button>
             <Button
               variant="secondary"
@@ -111,7 +119,7 @@ function AssessmentLanding() {
               }}
               asChild
             >
-              <Link to="/practice">Start a new rehearsal</Link>
+              <Link to="/assessment" search={{ tab: "practice" }}>Start a new rehearsal</Link>
             </Button>
           </div>
           ) : (
@@ -121,11 +129,46 @@ function AssessmentLanding() {
           )
         }
       />
+      <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Practice assessment">
+        {(
+          [
+            ["about", "About"],
+            ["practice", "Rehearsal"],
+            ["function", "Function snapshot"],
+          ] as const
+        ).map(([id, label]) => (
+          <Link
+            key={id}
+            to="/assessment"
+            search={{ tab: id }}
+            role="tab"
+            aria-selected={tab === id}
+            className={cn(
+              "inline-flex min-h-11 items-center rounded-full border px-3 text-sm",
+              tab === id ? "border-primary bg-primary-soft" : "border-line bg-card",
+            )}
+          >
+            {label}
+          </Link>
+        ))}
+      </div>
+      {tab === "practice" ? (
+        <MembershipGate need="core">
+          <AssessmentWizard />
+        </MembershipGate>
+      ) : null}
+      {tab === "function" ? (
+        <MembershipGate need="core">
+          <FunctionPanel />
+        </MembershipGate>
+      ) : null}
+      {tab === "about" ? (
+        <>
       <Disclaimer>{SHORT_DISCLAIMER} You can stop or delete everything on this device at any time.</Disclaimer>
       <StoryStrip heading="The rehearsal in four pictures" steps={HOW_OLLIE_WORKS} />
       <div className="mt-4 sm:hidden">
         <Button className="w-full" asChild>
-          <Link to={canAccess(membership, "core") ? "/practice" : "/membership"}>
+          <Link to={canAccess(membership, "core") ? "/assessment" : "/membership"} search={canAccess(membership, "core") ? { tab: "practice" } : undefined}>
             {canAccess(membership, "core") ? "Start practice with Plan Decoder" : "Start Core to practise"}
           </Link>
         </Button>
@@ -193,7 +236,7 @@ function AssessmentLanding() {
                       onClick={() => setActive(a.id)}
                       asChild
                     >
-                      <Link to={canAccess(membership, "core") ? "/practice" : "/membership"}>Open</Link>
+                      <Link to="/assessment" search={{ tab: "practice" }}>Open</Link>
                     </Button>
                     <Button size="sm" variant="danger" onClick={() => remove(a.id)}>
                       <Trash2 className="size-4" /> Delete
@@ -273,12 +316,14 @@ function AssessmentLanding() {
           <MembershipGate need="core">
             <div className="flex flex-wrap gap-2">
               <Button asChild>
-                <Link to="/practice">Start a rehearsal</Link>
+                <Link to="/assessment" search={{ tab: "practice" }}>Start a rehearsal</Link>
               </Button>
             </div>
           </MembershipGate>
         </div>
       </section>
+        </>
+      ) : null}
     </div>
   );
 }

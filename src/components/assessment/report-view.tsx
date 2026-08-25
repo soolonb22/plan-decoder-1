@@ -80,7 +80,7 @@ export function ReportView({
       <Card>
         <p className="font-medium">No scores yet</p>
         <Button className="mt-3" asChild>
-          <Link to="/practice">Back to practice</Link>
+          <Link to="/assessment" search={{ tab: "practice" }}>Back to practice</Link>
         </Button>
       </Card>
     );

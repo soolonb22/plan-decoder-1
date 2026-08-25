@@ -93,8 +93,8 @@ function Home() {
             to: "/wallet",
             icon: FolderOpen,
             image: "/brand/story-wallet.jpg",
-            title: "Evidence Wallet",
-            body: "A pocket of dated slips: what happened, how often, what changes without support.",
+            title: "Evidence pocket",
+            body: "Slips, diary, carer notes, flags, and a weekly chart — on this device.",
           },
           {
             to: "/rights",
@@ -134,7 +134,7 @@ function Home() {
           <p className="mt-3 text-3xl font-semibold tabular-nums">{logs.length}</p>
           <p className="text-sm text-muted">diary and carer logs</p>
           <Button className="mt-4" variant="secondary" size="sm" asChild>
-            <Link to="/diary">Add a diary note</Link>
+            <Link to="/wallet" search={{ tab: "diary" }}>Add a diary note</Link>
           </Button>
         </Card>
         <Card>

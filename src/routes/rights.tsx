@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { RIGHTS, RIGHTS_CONTACTS, RIGHTS_DISCLAIMER, RIGHTS_GROUPS } from "@/lib/content/rights";
 import { useOllie } from "@/lib/store";
 import { Card } from "@/components/ui/card";
@@ -45,6 +45,26 @@ function RightsPage() {
         picture="/brand/story-rights.jpg"
       />
       <Disclaimer>{RIGHTS_DISCLAIMER}</Disclaimer>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {[
+          { to: "/glossary" as const, label: "Glossary" },
+          { to: "/news" as const, label: "NDIS news" },
+          { to: "/code-of-conduct" as const, label: "Code of Conduct" },
+          { to: "/art" as const, label: "ART / review" },
+          { to: "/service-charter" as const, label: "Service Charter" },
+          { to: "/ndis-changes" as const, label: "2026 changes" },
+          { to: "/funding" as const, label: "Funding categories" },
+        ].map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-card px-3 text-sm hover:border-primary"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
 
       <Card className="mt-5">
         <p className="text-sm font-medium text-primary">Help now</p>

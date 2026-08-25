@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { Copy, Download, HardDrive, Pencil, Plus, Search, Trash2, Upload } from "lucide-react";
 import { DOMAINS } from "@/lib/content/language";
+import { canAccess } from "@/lib/membership";
 import { useOllie, useClientList } from "@/lib/store";
 import { cn, formatDate, todayISO } from "@/lib/utils";
 import {
@@ -18,19 +19,40 @@ import { Card } from "@/components/ui/card";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Disclaimer, EmptyState, MembershipGate, PageHeader } from "@/components/layout/page";
+import { StoryStrip } from "@/components/story";
 import { PlanExplainer, PlanUploadHero } from "@/components/plan-explainer";
 import { fileToPlanText, parseNdisPlan, planSlipBody, guessEvidenceTypeFromPlan } from "@/lib/plan-reader";
+import { DiaryPanel } from "@/components/pocket/diary-panel";
+import { CarerPanel } from "@/components/pocket/carer-panel";
+import { FlagsPanel } from "@/components/pocket/flags-panel";
+import { ChartPanel } from "@/components/pocket/chart-panel";
 import type { EvidenceItem, EvidenceType, WhodasDomain } from "@/lib/types";
 
+const WALLET_TABS = [
+  { id: "slips", label: "Slips" },
+  { id: "diary", label: "Diary" },
+  { id: "carer", label: "Carer" },
+  { id: "flags", label: "Flags" },
+  { id: "chart", label: "Chart" },
+] as const;
+type WalletTab = (typeof WALLET_TABS)[number]["id"];
+
 export const Route = createFileRoute("/wallet")({
+  validateSearch: (raw: Record<string, unknown>): { tab: WalletTab } => {
+    const tab = String(raw.tab ?? "");
+    if (tab === "diary" || tab === "carer" || tab === "flags" || tab === "chart" || tab === "slips") {
+      return { tab };
+    }
+    return { tab: "slips" };
+  },
   component: WalletPage,
   head: () => ({
     meta: [
-      { title: "Evidence Wallet · Plan Decoder" },
+      { title: "Evidence pocket · Plan Decoder" },
       {
         name: "description",
         content:
-          "A calm pocket for NDIS-style function notes. Dated, local, and in your words. Not an official NDIS record.",
+          "A calm pocket for NDIS-style function notes: slips, diary, carer log, flags, and a weekly chart. Dated and local. Not an official NDIS record.",
       },
     ],
   }),
@@ -77,6 +99,8 @@ function asLetter(item: EvidenceItem) {
 }
 
 function WalletPage() {
+  const { tab } = Route.useSearch();
+  const membership = useOllie((s) => s.membership);
   const add = useOllie((s) => s.addEvidence);
   const update = useOllie((s) => s.updateEvidence);
   const remove = useOllie((s) => s.removeEvidence);
@@ -310,7 +334,7 @@ function WalletPage() {
   const areas = new Set(items.map((i) => i.domain).filter(Boolean)).size;
 
   return (
-    <MembershipGate need="core">
+    <div>
       <input
         ref={uploadRef}
         type="file"
@@ -361,11 +385,12 @@ function WalletPage() {
         }}
       />
       <PageHeader
-        title="Evidence Wallet"
-        lede="A pocket for short, dated notes about everyday function. One slip per situation. It stays on this device."
+        title="Evidence pocket"
+        lede="Slips, diary, carer notes, flags, and a weekly chart — one pocket. It stays on this device."
         picture="/brand/story-wallet.jpg"
         actions={
-          <div className="flex flex-wrap gap-2">
+          tab === "slips" && canAccess(membership, "core") ? (
+            <div className="flex flex-wrap gap-2">
             <Button
               variant="secondary"
               onClick={() => uploadRef.current?.click()}
@@ -393,9 +418,46 @@ function WalletPage() {
               {open ? "Close slip" : "Add a slip"}
             </Button>
           </div>
+          ) : undefined
         }
       />
 
+      <div className="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Evidence pocket">
+        {WALLET_TABS.map((t) => (
+          <Link
+            key={t.id}
+            to="/wallet"
+            search={{ tab: t.id }}
+            role="tab"
+            aria-selected={tab === t.id}
+            className={cn(
+              "inline-flex min-h-11 items-center rounded-full border px-3 text-sm",
+              tab === t.id ? "border-primary bg-primary-soft" : "border-line bg-card",
+            )}
+          >
+            {t.label}
+          </Link>
+        ))}
+      </div>
+
+      {tab === "diary" ? <DiaryPanel /> : null}
+      {tab === "carer" ? (
+        <MembershipGate need="core">
+          <CarerPanel />
+        </MembershipGate>
+      ) : null}
+      {tab === "flags" ? (
+        <MembershipGate need="core">
+          <FlagsPanel />
+        </MembershipGate>
+      ) : null}
+      {tab === "chart" ? (
+        <MembershipGate need="core">
+          <ChartPanel />
+        </MembershipGate>
+      ) : null}
+      {tab === "slips" ? (
+        <MembershipGate need="core">
       <PlanUploadHero
         busy={readingPlan}
         onPick={() => planRef.current?.click()}
@@ -789,6 +851,8 @@ function WalletPage() {
           ))
         )}
       </div>
-    </MembershipGate>
+        </MembershipGate>
+      ) : null}
+    </div>
   );
 }
