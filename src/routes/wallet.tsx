@@ -26,6 +26,7 @@ import { DiaryPanel } from "@/components/pocket/diary-panel";
 import { CarerPanel } from "@/components/pocket/carer-panel";
 import { FlagsPanel } from "@/components/pocket/flags-panel";
 import { ChartPanel } from "@/components/pocket/chart-panel";
+import { GpPackButtons } from "@/components/gp-pack-buttons";
 import type { EvidenceItem, EvidenceType, WhodasDomain } from "@/lib/types";
 
 const WALLET_TABS = [
@@ -391,6 +392,7 @@ function WalletPage() {
         actions={
           tab === "slips" && canAccess(membership, "core") ? (
             <div className="flex flex-wrap gap-2">
+            <GpPackButtons />
             <Button
               variant="secondary"
               onClick={() => uploadRef.current?.click()}

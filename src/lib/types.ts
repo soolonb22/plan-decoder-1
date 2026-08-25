@@ -30,6 +30,7 @@ export type Client = {
   ndisNumber: string;
   planStart: string;
   planEnd: string;
+  letterReceived: string;
   planManagedBy: "self" | "plan" | "ndia" | "mix" | "";
   notes: string;
   createdAt: string;
@@ -160,6 +161,22 @@ export type AppointmentPrep = {
   notes: string;
 };
 
+export type ClaimStatus = "quote" | "invoice" | "claimed" | "paid";
+
+export type ClaimItem = {
+  id: string;
+  clientId: string;
+  date: string;
+  provider: string;
+  description: string;
+  pot: "core" | "capacity" | "capital" | "recurring";
+  stated: boolean;
+  amount: number;
+  claimedOn: string;
+  status: ClaimStatus;
+  notes: string;
+};
+
 export type SchoolNote = {
   id: string;
   clientId: string;
@@ -206,6 +223,7 @@ export type AppState = {
   meetings: MeetingPrep[];
   appointments: AppointmentPrep[];
   schoolNotes: SchoolNote[];
+  claims: ClaimItem[];
   whodas: WhodasRecord[];
   drafts: GuidedDraft[];
   lastGuide: string;

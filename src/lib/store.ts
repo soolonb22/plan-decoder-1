@@ -7,6 +7,7 @@ import type {
   AppState,
   BudgetLine,
   ChecklistState,
+  ClaimItem,
   Client,
   EvidenceItem,
   Flag,
@@ -38,6 +39,7 @@ function defaultClient(): Client {
     ndisNumber: "",
     planStart: "",
     planEnd: "",
+    letterReceived: "",
     planManagedBy: "",
     notes: "",
     createdAt: new Date().toISOString(),
@@ -62,6 +64,7 @@ const initial: AppState = {
   meetings: [],
   appointments: [],
   schoolNotes: [],
+  claims: [],
   whodas: [],
   drafts: [],
   lastGuide: "",
@@ -106,6 +109,8 @@ type Actions = {
   removeAppointment: (id: string) => void;
   addSchoolNote: (e: Omit<SchoolNote, "id" | "clientId"> & { clientId?: string }) => string;
   removeSchoolNote: (id: string) => void;
+  upsertClaim: (e: Omit<ClaimItem, "id" | "clientId"> & { id?: string; clientId?: string }) => string;
+  removeClaim: (id: string) => void;
   saveWhodas: (e: Omit<WhodasRecord, "id" | "clientId"> & { clientId?: string }) => string;
   saveDraft: (e: Omit<GuidedDraft, "id" | "createdAt" | "clientId"> & { clientId?: string }) => string;
   upsertAssessment: (e: Partial<AssessmentDraft> & { id?: string }) => string;
@@ -326,6 +331,30 @@ export const useOllie = create<AppState & Actions>()(
       },
       removeSchoolNote: (id) =>
         set((s) => ({ schoolNotes: s.schoolNotes.filter((x) => x.id !== id) })),
+      upsertClaim: (e) => {
+        const id = e.id ?? uid("claim");
+        set((s) => {
+          const row: ClaimItem = {
+            id,
+            clientId: e.clientId || s.activeClientId,
+            date: e.date,
+            provider: e.provider,
+            description: e.description,
+            pot: e.pot,
+            stated: e.stated,
+            amount: e.amount,
+            claimedOn: e.claimedOn,
+            status: e.status,
+            notes: e.notes,
+          };
+          const exists = s.claims.some((x) => x.id === id);
+          return {
+            claims: exists ? s.claims.map((x) => (x.id === id ? { ...x, ...row } : x)) : [row, ...s.claims],
+          };
+        });
+        return id;
+      },
+      removeClaim: (id) => set((s) => ({ claims: s.claims.filter((x) => x.id !== id) })),
       saveWhodas: (e) => {
         const id = uid("who");
         set((s) => ({
@@ -485,6 +514,34 @@ export const useOllie = create<AppState & Actions>()(
             { id: uid("bud"), clientId, category: "capacity", name: "Support coordination", allocated: 6200, spent: 2100 },
             { id: uid("bud"), clientId, category: "capital", name: "Assistive technology", allocated: 3500, spent: 0 },
           ],
+          claims: [
+            {
+              id: uid("claim"),
+              clientId,
+              date: offset(-12),
+              provider: "Known support worker",
+              description: "Community access 4 hours",
+              pot: "core",
+              stated: false,
+              amount: 268,
+              claimedOn: offset(-10),
+              status: "paid",
+              notes: "Invoice in wallet.",
+            },
+            {
+              id: uid("claim"),
+              clientId,
+              date: offset(-3),
+              provider: "OT clinic",
+              description: "Functional assessment session",
+              pot: "capacity",
+              stated: true,
+              amount: 193.99,
+              claimedOn: "",
+              status: "invoice",
+              notes: "Need to claim.",
+            },
+          ],
           assessments: [...s.assessments, sampleAssess],
           activeAssessmentId: sampleAssess.id,
         }));
@@ -506,6 +563,11 @@ export const useOllie = create<AppState & Actions>()(
           credits: p.credits ?? current.credits ?? 0,
           subscriptionStatus: p.subscriptionStatus ?? current.subscriptionStatus ?? "none",
           planRead: p.planRead ?? current.planRead ?? null,
+          claims: p.claims ?? current.claims ?? [],
+          clients: (p.clients ?? current.clients).map((c) => ({
+            ...c,
+            letterReceived: c.letterReceived ?? "",
+          })),
         };
       },
       storage: createJSONStorage(() => {

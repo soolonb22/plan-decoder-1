@@ -18,7 +18,7 @@ export const NAV: NavItem[] = [
   { to: "/plan", label: "My plan", need: "free", group: "Planning" },
   { to: "/rights", label: "Know your rights", need: "free", group: "Rights" },
   { to: "/clients", label: "Clients", need: "pro", group: "Professional" },
-  { to: "/reports", label: "Reports", need: "pro", group: "Professional" },
+  { to: "/reports", label: "GP pack & reports", need: "core", group: "Professional" },
   { to: "/school", label: "School collaboration", need: "pro", group: "Professional" },
   { to: "/ops", label: "Operations", need: "pro", group: "Professional" },
   { to: "/membership", label: "Pay & credits", need: "free", group: "Account" },

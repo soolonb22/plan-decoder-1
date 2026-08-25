@@ -19,6 +19,7 @@ function ClientsPage() {
   const [ndis, setNdis] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const [letter, setLetter] = useState("");
   const [notes, setNotes] = useState("");
 
   return (
@@ -44,6 +45,9 @@ function ClientsPage() {
           <Field label="Plan end">
             <Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} />
           </Field>
+          <Field label="Decision letter received">
+            <Input type="date" value={letter} onChange={(e) => setLetter(e.target.value)} />
+          </Field>
         </div>
         <Field label="Working notes">
           <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
@@ -57,6 +61,7 @@ function ClientsPage() {
               ndisNumber: ndis,
               planStart: start,
               planEnd: end,
+              letterReceived: letter,
               notes,
               pronouns: "",
               planManagedBy: "",
@@ -79,6 +84,7 @@ function ClientsPage() {
                 <p className="text-sm text-muted">
                   {c.ndisNumber || "No NDIS number recorded"}
                   {c.planEnd ? ` · plan to ${c.planEnd}` : ""}
+                  {c.letterReceived ? ` · letter ${c.letterReceived}` : ""}
                 </p>
               </div>
               <div className="flex gap-2">
