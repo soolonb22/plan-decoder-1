@@ -4,7 +4,7 @@ import { FileUp, Sparkles } from "lucide-react";
 import type { PlanRead } from "@/lib/plan-reader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { PlanStructureDiagram } from "@/components/plan-diagram";
 
 const MGMT: Record<PlanRead["management"], { label: string; tone: "primary" | "ok" | "warn" | "neutral" }> = {
   self: { label: "Looks self-managed", tone: "ok" },
@@ -62,6 +62,9 @@ export function PlanUploadHero({
           </Button>
         </details>
       ) : null}
+      <div className="mt-4">
+        <PlanStructureDiagram compact />
+      </div>
     </Card>
   );
 }
@@ -95,6 +98,8 @@ export function PlanExplainer({
           </Button>
         </div>
       </div>
+
+      <PlanStructureDiagram read={read} />
 
       {read.warnings.map((w) => (
         <p key={w} className="rounded-xl bg-warn-soft px-4 py-3 text-sm">

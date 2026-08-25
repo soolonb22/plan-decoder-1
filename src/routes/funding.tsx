@@ -3,7 +3,7 @@ import { FUNDING_BUDGETS } from "@/lib/content/funding";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer, PageHeader } from "@/components/layout/page";
-import { FUNDING_VIDEO, YoutubeEmbed } from "@/components/youtube-embed";
+import { PlanStructureDiagram } from "@/components/plan-diagram";
 
 export const Route = createFileRoute("/funding")({
   component: FundingPage,
@@ -30,6 +30,9 @@ function FundingPage() {
       <Disclaimer>
         Plan Decoder is not affiliated with the NDIA or NDIS. Check your plan and ndis.gov.au before you spend. Official balances live in the my NDIS app.
       </Disclaimer>
+      <div className="mt-5">
+        <PlanStructureDiagram />
+      </div>
       <YoutubeEmbed id={FUNDING_VIDEO.id} title={FUNDING_VIDEO.title} credit={FUNDING_VIDEO.credit} />
 
       <h2 className="mt-8 text-lg font-semibold">The four support budgets</h2>
