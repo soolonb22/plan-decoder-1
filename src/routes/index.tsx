@@ -12,13 +12,34 @@ import { daysUntil, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
-import { Guide3D } from "@/components/guide-3d/panel";
 import { OllieMark } from "@/components/mark";
 import { LiveNewsStrip } from "@/components/live-news";
+import { MarketingHome } from "@/components/marketing-home";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { AuthSplash } from "@/components/layout/auth-gate";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  component: Home,
+  head: () => ({
+    meta: [
+      { title: "Plan Decoder — calm NDIS practice tools" },
+      {
+        name: "description",
+        content:
+          "Independent NDIS practice assessment, evidence notes, and plain-language rights for families, carers, and coordinators. Not the NDIA. Not a diagnosis.",
+      },
+    ],
+  }),
+});
 
 function Home() {
+  const { user, isPending } = useCurrentUserState();
+  if (isPending) return <AuthSplash />;
+  if (!user) return <MarketingHome />;
+  return <WorkspaceHome />;
+}
+
+function WorkspaceHome() {
   const client = useActiveClient();
   const loadSample = useOllie((s) => s.loadSample);
   const membership = useOllie((s) => s.membership);
@@ -44,10 +65,6 @@ function Home() {
       </section>
 
       <StoryStrip heading="How this works" steps={HOW_OLLIE_WORKS} />
-
-      <div className="mt-6">
-        <Guide3D compact />
-      </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
         <Button asChild>

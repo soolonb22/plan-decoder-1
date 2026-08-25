@@ -5,7 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page";
 
-export const Route = createFileRoute("/glossary")({ component: GlossaryPage });
+export const Route = createFileRoute("/glossary")({
+  component: GlossaryPage,
+  head: () => ({
+    meta: [
+      { title: "NDIS glossary in plain English · Plan Decoder" },
+      {
+        name: "description",
+        content:
+          "NDIS words such as reasonable and necessary, ART, core, capital, and nominee — explained in ordinary English. Independent of the NDIA.",
+      },
+    ],
+  }),
+});
 
 function GlossaryPage() {
   const [q, setQ] = useState("");

@@ -1,4 +1,21 @@
 User-agent: *
 Allow: /
+Allow: /assessment
+Allow: /rights
+Allow: /news
+Allow: /glossary
+Allow: /funding
+Allow: /art
+Allow: /code-of-conduct
+Allow: /service-charter
+Allow: /ndis-changes
+Disallow: /login
+Disallow: /privacy
+Disallow: /api/
+Disallow: /wallet
+Disallow: /plan
+Disallow: /clients
 
-# This app is a practice tool independent of the NDIA and NDIS.
+Sitemap: https://www.plandecoder.com/sitemap.xml
+
+# Plan Decoder is an independent practice tool. Not the NDIA.

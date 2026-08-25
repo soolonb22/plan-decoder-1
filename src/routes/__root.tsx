@@ -3,16 +3,36 @@ import {
   HeadContent,
   Outlet,
   Scripts,
-  useRouterState,
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
-import { AppShell } from "@/components/layout/app-shell";
-import { RequireAuth } from "@/components/layout/auth-gate";
+import { PageFrame } from "@/components/layout/page-frame";
 import { HydrateOllie } from "@/components/hydrate-ollie";
+import { SITE_URL } from "@/lib/public-paths";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Plan Decoder";
+const DESC =
+  "Independent NDIS practice workspace for families, carers, and coordinators: WHODAS-inspired rehearsal, evidence notes, and plain-language rights. Not affiliated with the NDIA or NDIS. Not a diagnosis.";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: APP_NAME,
+      url: SITE_URL,
+      description: DESC,
+      inLanguage: "en-AU",
+    },
+    {
+      "@type": "Organization",
+      name: APP_NAME,
+      url: SITE_URL,
+      description: "Independent NDIS practice tool. Not the NDIA.",
+    },
+  ],
+};
 
 export const Route = createRootRoute({
   head: () => ({
@@ -20,14 +40,23 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: APP_NAME },
-      {
-        name: "description",
-        content:
-          "Plan Decoder is an independent NDIS practice workspace: WHODAS-inspired functional rehearsal, evidence notes, and calm language. Not affiliated with the NDIA or NDIS. Not a diagnosis.",
-      },
+      { name: "description", content: DESC },
       { name: "theme-color", content: "#6E2C92" },
+      { name: "robots", content: "index,follow" },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: APP_NAME },
+      { property: "og:title", content: APP_NAME },
+      { property: "og:description", content: DESC },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:image", content: `${SITE_URL}/og.jpg` },
+      { property: "og:locale", content: "en_AU" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: APP_NAME },
+      { name: "twitter:description", content: DESC },
+      { name: "twitter:image", content: `${SITE_URL}/og.jpg` },
     ],
     links: [
+      { rel: "canonical", href: SITE_URL },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -44,30 +73,19 @@ export const Route = createRootRoute({
 });
 
 function RootDocument() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const publicPage =
-    pathname === "/login" ||
-    pathname === "/reset-password" ||
-    pathname === "/get-files" ||
-    pathname === "/health";
   return (
     <html lang="en-AU" className="antialiased" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className="bg-paper text-ink">
         <PreviewHostBridge />
         <AuthProvider>
           <HydrateOllie />
-          {publicPage ? (
+          <PageFrame>
             <Outlet />
-          ) : (
-            <RequireAuth>
-              <AppShell>
-                <Outlet />
-              </AppShell>
-            </RequireAuth>
-          )}
+          </PageFrame>
         </AuthProvider>
         <Scripts />
       </body>
