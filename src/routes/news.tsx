@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Disclaimer, PageHeader } from "@/components/layout/page";
+import { NewsStatus } from "@/components/live-news";
 
 export const Route = createFileRoute("/news")({
   component: NewsPage,
@@ -25,18 +26,27 @@ function NewsPage() {
   const [live, setLive] = useState<LiveNewsItem[]>([]);
   const [fetchedAt, setFetchedAt] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [stale, setStale] = useState(false);
   const [busy, setBusy] = useState(true);
 
   function load(force = false) {
     setBusy(true);
     void fetch(force ? "/api/news?refresh=1" : "/api/news")
-      .then((r) => r.json() as Promise<{ live?: LiveNewsItem[]; fetchedAt?: string; error?: string | null }>)
-      .then((d) => {
+      .then(async (r) => {
+        const d = (await r.json()) as {
+          live?: LiveNewsItem[];
+          fetchedAt?: string;
+          error?: string | null;
+          stale?: boolean;
+        };
         setLive(d.live ?? []);
         setFetchedAt(d.fetchedAt ?? "");
         setError(d.error ?? null);
+        setStale(Boolean(d.stale));
       })
-      .catch(() => setError("Could not reach the news endpoint."))
+      .catch(() => {
+        setError("Could not reach the news endpoint. The official site may be busy.");
+      })
       .finally(() => setBusy(false));
   }
 
@@ -62,8 +72,7 @@ function NewsPage() {
       </Disclaimer>
 
       <h2 className="mt-6 text-lg font-semibold">From ndis.gov.au</h2>
-      {error && !live.length ? <p className="mt-2 text-sm text-muted">{error}</p> : null}
-      {fetchedAt ? <p className="mt-1 text-xs text-muted">Fetched {formatDate(fetchedAt.slice(0, 10))}.</p> : null}
+      <NewsStatus error={error} stale={stale} fetchedAt={fetchedAt} />
       <div className="mt-3 space-y-3">
         {live.map((n) => (
           <Card key={n.id}>

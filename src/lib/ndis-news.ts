@@ -6,11 +6,18 @@ export type LiveNewsItem = {
   source: string;
 };
 
-export type NewsPayload = { items: LiveNewsItem[]; fetchedAt: string; error?: string };
+export type NewsPayload = {
+  items: LiveNewsItem[];
+  fetchedAt: string;
+  error?: string;
+  stale?: boolean;
+  source: "live" | "cache" | "empty";
+};
 
 const MONTHS =
   "January|February|March|April|May|June|July|August|September|October|November|December";
 const FRESH_MS = 3 * 60 * 60 * 1000;
+const FETCH_MS = 12_000;
 
 function toIso(au: string) {
   const m = au.match(new RegExp(`(\\d{1,2}) (${MONTHS}) (\\d{4})`, "i"));
@@ -21,7 +28,23 @@ function toIso(au: string) {
   return `${m[3]}-${String(month).padStart(2, "0")}-${m[1].padStart(2, "0")}`;
 }
 
+export function publicScrapeError(raw: string) {
+  const t = raw.toLowerCase();
+  if (/abort|timeout|timed out/.test(t)) return "The official site took too long to answer.";
+  if (/\b403\b|blocked|forbidden|just a moment|cloudflare/.test(t)) return "The official site blocked this request.";
+  if (/\b404\b|not found/.test(t)) return "The official news page was not found.";
+  if (/\b429\b|too many/.test(t)) return "The official site asked us to wait. Try again in a little while.";
+  if (/\b5\d\d\b|unavailable|bad gateway/.test(t)) return "The official site is having trouble right now.";
+  if (/layout|parse|no headlines/.test(t)) return "Could not read headlines from the page. The layout may have changed.";
+  if (/database|news_cache/.test(t)) return "Headlines could not be saved, but the scrape still ran.";
+  return "Could not reach ndis.gov.au just now.";
+}
+
 export function parseNdisNewsHtml(html: string): LiveNewsItem[] {
+  if (!html || html.length < 400) return [];
+  if (/just a moment|cf-browser-verification|attention required/i.test(html) && !/\/news\/\d+-/.test(html)) {
+    return [];
+  }
   const items: LiveNewsItem[] = [];
   const patterns = [
     /href="(\/news\/(\d+)-([a-z0-9-]+))"([^>]*)>([^<]{8,200})/gi,
@@ -57,6 +80,46 @@ export function parseNdisNewsHtml(html: string): LiveNewsItem[] {
     .slice(0, 16);
 }
 
+async function sleep(ms: number) {
+  await new Promise((r) => setTimeout(r, ms));
+}
+
+async function fetchHtml(url: string): Promise<{ html?: string; error?: string }> {
+  let last = "Could not reach ndis.gov.au.";
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), FETCH_MS);
+    try {
+      const res = await fetch(url, {
+        signal: ctrl.signal,
+        headers: {
+          Accept: "text/html,application/xhtml+xml",
+          "User-Agent": "PlanDecoder/1.0 (+https://www.plandecoder.com; independent practice tool, not NDIA)",
+        },
+      });
+      if (res.status === 429 || res.status >= 500) {
+        last = `Official page returned ${res.status}`;
+        await sleep(400 * (attempt + 1) * (attempt + 1));
+        continue;
+      }
+      if (!res.ok) return { error: `Official page returned ${res.status}` };
+      const html = await res.text();
+      if (!html || html.length < 400) return { error: "Official page was empty." };
+      if (/just a moment|cf-browser-verification/i.test(html) && !/\/news\/\d+-/.test(html)) {
+        return { error: "blocked by Cloudflare" };
+      }
+      return { html };
+    } catch (err) {
+      const name = err instanceof Error ? err.name : "";
+      last = name === "AbortError" || name === "TimeoutError" ? "timeout" : err instanceof Error ? err.message : "network";
+      if (attempt < 2) await sleep(400 * (attempt + 1) * (attempt + 1));
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  return { error: last };
+}
+
 async function scrapeNdisNews(): Promise<NewsPayload> {
   const urls = [
     "https://www.ndis.gov.au/news/latest",
@@ -64,23 +127,14 @@ async function scrapeNdisNews(): Promise<NewsPayload> {
     "https://www.ndis.gov.au/",
   ];
   const items: LiveNewsItem[] = [];
-  let error: string | undefined;
+  const errors: string[] = [];
   for (const url of urls) {
-    try {
-      const res = await fetch(url, {
-        headers: {
-          Accept: "text/html,application/xhtml+xml",
-          "User-Agent": "PlanDecoder/1.0 (+https://www.plandecoder.com; independent practice tool, not NDIA)",
-        },
-      });
-      if (!res.ok) {
-        error = `Official page returned ${res.status}`;
-        continue;
-      }
-      items.push(...parseNdisNewsHtml(await res.text()));
-    } catch (err) {
-      error = err instanceof Error ? err.message : "Could not reach ndis.gov.au";
+    const got = await fetchHtml(url);
+    if (got.error) {
+      errors.push(got.error);
+      continue;
     }
+    if (got.html) items.push(...parseNdisNewsHtml(got.html));
   }
   const seen = new Set<string>();
   const unique = items.filter((i) => {
@@ -89,10 +143,13 @@ async function scrapeNdisNews(): Promise<NewsPayload> {
     return true;
   });
   unique.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  const fail = unique.length ? undefined : publicScrapeError(errors[0] || "no headlines");
   return {
     items: unique.slice(0, 16),
     fetchedAt: new Date().toISOString(),
-    error: unique.length ? undefined : error,
+    error: fail,
+    stale: false,
+    source: unique.length ? "live" : "empty",
   };
 }
 
@@ -105,19 +162,33 @@ async function readStored(): Promise<NewsPayload | null> {
     );
     if (!rows.length) return null;
     const row = rows[0];
-    const payload = typeof row.payload === "string" ? JSON.parse(row.payload) : row.payload;
-    const items = Array.isArray(payload) ? (payload as LiveNewsItem[]) : (payload as { items?: LiveNewsItem[] }).items ?? [];
+    let parsed: unknown = row.payload;
+    if (typeof parsed === "string") {
+      try {
+        parsed = JSON.parse(parsed);
+      } catch {
+        return null;
+      }
+    }
+    const items = Array.isArray(parsed)
+      ? (parsed as LiveNewsItem[])
+      : ((parsed as { items?: LiveNewsItem[] })?.items ?? []);
+    if (!Array.isArray(items)) return null;
     return {
-      items,
+      items: items.filter((i) => i && typeof i.title === "string" && typeof i.url === "string"),
       fetchedAt: row.fetched_at,
       error: row.error || undefined,
+      stale: true,
+      source: "cache",
     };
-  } catch {
+  } catch (err) {
+    console.error("[news-cache-read]", err instanceof Error ? err.message : err);
     return null;
   }
 }
 
 async function writeStored(payload: NewsPayload) {
+  if (!payload.items.length) return;
   try {
     const { getSql } = await import("./db");
     const sql = await getSql();
@@ -128,7 +199,17 @@ async function writeStored(payload: NewsPayload) {
       [JSON.stringify(payload.items), payload.fetchedAt, payload.error ?? null],
     );
   } catch (err) {
-    console.error("[news-cache]", err instanceof Error ? err.message : err);
+    console.error("[news-cache-write]", err instanceof Error ? err.message : err);
+  }
+}
+
+async function markStoredError(message: string) {
+  try {
+    const { getSql } = await import("./db");
+    const sql = await getSql();
+    await sql.query(`update news_cache set error = $1 where id = 'ndia'`, [message]);
+  } catch {
+    /* keep last good copy */
   }
 }
 
@@ -137,10 +218,35 @@ function mem() {
 }
 
 export async function refreshAndStoreNews(): Promise<NewsPayload> {
-  const payload = await scrapeNdisNews();
-  mem().__pdNewsCache__ = { at: Date.now(), payload };
-  if (payload.items.length) await writeStored(payload);
-  return payload;
+  const stored = await readStored();
+  let payload: NewsPayload;
+  try {
+    payload = await scrapeNdisNews();
+  } catch (err) {
+    const error = publicScrapeError(err instanceof Error ? err.message : "scrape failed");
+    console.error("[news-scrape]", err);
+    if (stored?.items.length) {
+      const kept = { ...stored, error, stale: true, source: "cache" as const };
+      mem().__pdNewsCache__ = { at: Date.now(), payload: kept };
+      await markStoredError(error);
+      return kept;
+    }
+    return { items: [], fetchedAt: new Date().toISOString(), error, stale: false, source: "empty" };
+  }
+  if (payload.items.length) {
+    mem().__pdNewsCache__ = { at: Date.now(), payload };
+    await writeStored(payload);
+    return payload;
+  }
+  const error = payload.error || publicScrapeError("no headlines");
+  if (stored?.items.length) {
+    const kept = { ...stored, error, stale: true, source: "cache" as const };
+    mem().__pdNewsCache__ = { at: Date.now(), payload: kept };
+    await markStoredError(error);
+    return kept;
+  }
+  mem().__pdNewsCache__ = { at: Date.now(), payload: { ...payload, error } };
+  return { ...payload, error };
 }
 
 export async function fetchNdisNews(opts: { force?: boolean } = {}): Promise<NewsPayload> {
@@ -157,7 +263,12 @@ export async function fetchNdisNews(opts: { force?: boolean } = {}): Promise<New
       return stored;
     }
   }
-  const fresh = await refreshAndStoreNews();
-  if (!fresh.items.length && stored?.items.length) return stored;
-  return fresh;
+  try {
+    return await refreshAndStoreNews();
+  } catch (err) {
+    const error = publicScrapeError(err instanceof Error ? err.message : "scrape failed");
+    console.error("[news-fetch]", err);
+    if (stored?.items.length) return { ...stored, error, stale: true, source: "cache" };
+    return { items: [], fetchedAt: new Date().toISOString(), error, stale: false, source: "empty" };
+  }
 }

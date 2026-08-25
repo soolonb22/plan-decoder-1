@@ -9,24 +9,39 @@ type Feed = {
   live: LiveNewsItem[];
   fetchedAt: string;
   error: string | null;
+  stale: boolean;
 };
 
 function useLiveNews() {
-  const [feed, setFeed] = useState<Feed>({ live: [], fetchedAt: "", error: null });
+  const [feed, setFeed] = useState<Feed>({ live: [], fetchedAt: "", error: null, stale: false });
   const [busy, setBusy] = useState(true);
 
   function load(refresh = false) {
     setBusy(true);
     void fetch(refresh ? "/api/news?refresh=1" : "/api/news")
-      .then((r) => r.json() as Promise<{ live?: LiveNewsItem[]; fetchedAt?: string; error?: string | null }>)
-      .then((d) =>
+      .then(async (r) => {
+        const data = (await r.json()) as {
+          live?: LiveNewsItem[];
+          fetchedAt?: string;
+          error?: string | null;
+          stale?: boolean;
+        };
+        if (!r.ok && !data.live?.length) throw new Error(data.error || "Could not load headlines.");
         setFeed({
-          live: d.live ?? [],
-          fetchedAt: d.fetchedAt ?? "",
-          error: d.error ?? null,
-        }),
+          live: data.live ?? [],
+          fetchedAt: data.fetchedAt ?? "",
+          error: data.error ?? null,
+          stale: Boolean(data.stale),
+        });
+      })
+      .catch(() =>
+        setFeed((f) => ({
+          ...f,
+          error: f.live.length
+            ? "Could not refresh. Showing the last saved headlines."
+            : "Could not load headlines. The official site may be busy.",
+        })),
       )
-      .catch(() => setFeed((f) => ({ ...f, error: "Could not load headlines." })))
       .finally(() => setBusy(false));
   }
 
@@ -37,8 +52,23 @@ function useLiveNews() {
   return { ...feed, busy, load };
 }
 
+export function NewsStatus({ error, stale, fetchedAt }: { error: string | null; stale?: boolean; fetchedAt?: string }) {
+  if (!error && !stale) {
+    return fetchedAt ? <p className="mt-1 text-xs text-muted">Last pulled {formatDate(fetchedAt.slice(0, 10))}.</p> : null;
+  }
+  return (
+    <p className="mt-2 rounded-xl border border-line bg-paper-2 px-3 py-2 text-sm" role="status">
+      {error || "Showing the last saved headlines."}{" "}
+      {stale ? "These are the last saved headlines, not a live pull." : ""}{" "}
+      <a className="text-primary underline-offset-4 hover:underline" href="https://www.ndis.gov.au/news/latest" target="_blank" rel="noreferrer">
+        Open ndis.gov.au
+      </a>
+    </p>
+  );
+}
+
 export function LiveNewsStrip({ limit = 3 }: { limit?: number }) {
-  const { live, fetchedAt, error, busy, load } = useLiveNews();
+  const { live, fetchedAt, error, stale, busy, load } = useLiveNews();
   const rows = live.slice(0, limit);
 
   return (
@@ -57,11 +87,8 @@ export function LiveNewsStrip({ limit = 3 }: { limit?: number }) {
           </Button>
         </div>
       </div>
-      <p className="mt-1 text-xs text-muted">
-        Independent scrape, refreshed several times a day. Not the NDIA.
-        {fetchedAt ? ` Last pulled ${formatDate(fetchedAt.slice(0, 10))}.` : ""}
-      </p>
-      {error && !rows.length ? <p className="mt-2 text-sm text-muted">{error}</p> : null}
+      <p className="mt-1 text-xs text-muted">Independent scrape, refreshed several times a day. Not the NDIA.</p>
+      <NewsStatus error={error} stale={stale} fetchedAt={fetchedAt} />
       <ul className="mt-3 space-y-2">
         {rows.map((n) => (
           <li key={n.id}>
@@ -80,20 +107,15 @@ export function LiveNewsStrip({ limit = 3 }: { limit?: number }) {
           </li>
         ))}
       </ul>
-      {!busy && !rows.length && !error ? (
+      {!busy && !rows.length ? (
         <p className="mt-2 text-sm text-muted">
-          No headlines parsed just now.{" "}
-          <Link className="text-primary underline-offset-4 hover:underline" to="/news">
-            Open the news page
-          </Link>
+          No headlines just now.{" "}
+          <a className="text-primary underline-offset-4 hover:underline" href="https://www.ndis.gov.au/news/latest" target="_blank" rel="noreferrer">
+            Open the official news page
+          </a>
           .
         </p>
       ) : null}
     </section>
   );
-}
-
-export function LiveNewsList() {
-  const { live, fetchedAt, error, busy, load } = useLiveNews();
-  return { live, fetchedAt, error, busy, load };
 }
