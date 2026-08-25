@@ -16,7 +16,6 @@ import { OllieMark } from "@/components/mark";
 import { LiveNewsStrip } from "@/components/live-news";
 import { MarketingHome } from "@/components/marketing-home";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { AuthSplash } from "@/components/layout/auth-gate";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -33,10 +32,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { user, isPending } = useCurrentUserState();
-  if (isPending) return <AuthSplash />;
-  if (!user) return <MarketingHome />;
-  return <WorkspaceHome />;
+  const { user } = useCurrentUserState();
+  if (user) return <WorkspaceHome />;
+  return <MarketingHome />;
 }
 
 function WorkspaceHome() {

@@ -13,8 +13,13 @@ export function PageFrame({ children }: { children: ReactNode }) {
   const authScreen = pathname === "/login" || pathname === "/reset-password";
 
   if (authScreen) return <>{children}</>;
+  // Public pages must render immediately — Googlebot indexes the first HTML,
+  // and an auth splash would be the whole page in Search.
+  if (isPublicPath(pathname)) {
+    if (user) return <AppShell>{children}</AppShell>;
+    return <PublicShell>{children}</PublicShell>;
+  }
   if (isPending) return <AuthSplash />;
   if (user) return <AppShell>{children}</AppShell>;
-  if (isPublicPath(pathname)) return <PublicShell>{children}</PublicShell>;
   return <RedirectToSignIn />;
 }
