@@ -20,23 +20,29 @@ function toIso(au: string) {
 
 export function parseNdisNewsHtml(html: string): LiveNewsItem[] {
   const items: LiveNewsItem[] = [];
-  const re = /href="(\/news\/(\d+)-([a-z0-9-]+))"([^>]*)>([^<]{8,200})/gi;
-  let match: RegExpExecArray | null;
-  while ((match = re.exec(html))) {
-    const path = match[1];
-    const id = match[2];
-    const title = match[5].replace(/\s+/g, " ").trim();
-    if (!title || /listen|read more/i.test(title)) continue;
-    const window = html.slice(match.index, match.index + 900);
-    const dateMatch = window.match(new RegExp(`(\\d{1,2} (?:${MONTHS}) \\d{4})`, "i"));
-    const date = dateMatch ? toIso(dateMatch[1]) : "";
-    items.push({
-      id: `ndia-${id}`,
-      title,
-      date,
-      url: `https://www.ndis.gov.au${path}`,
-      source: "ndis.gov.au",
-    });
+  const patterns = [
+    /href="(\/news\/(\d+)-([a-z0-9-]+))"([^>]*)>([^<]{8,200})/gi,
+    /href="(https:\/\/www\.ndis\.gov\.au\/news\/(\d+)-([a-z0-9-]+))"([^>]*)>([^<]{8,200})/gi,
+  ];
+  for (const re of patterns) {
+    let match: RegExpExecArray | null;
+    while ((match = re.exec(html))) {
+      const raw = match[1];
+      const id = match[2];
+      const title = match[5].replace(/\s+/g, " ").trim();
+      if (!title || /listen|read more|skip to/i.test(title)) continue;
+      const window = html.slice(match.index, match.index + 900);
+      const dateMatch = window.match(new RegExp(`(\\d{1,2} (?:${MONTHS}) \\d{4})`, "i"));
+      const date = dateMatch ? toIso(dateMatch[1]) : "";
+      const path = raw.startsWith("http") ? raw : `https://www.ndis.gov.au${raw}`;
+      items.push({
+        id: `ndia-${id}`,
+        title,
+        date,
+        url: path,
+        source: "ndis.gov.au",
+      });
+    }
   }
   const seen = new Set<string>();
   return items.filter((i) => {
@@ -52,7 +58,11 @@ export async function fetchNdisNews(): Promise<{ items: LiveNewsItem[]; fetchedA
   };
   const now = Date.now();
   if (g.__pdNewsCache__ && now - g.__pdNewsCache__.at < 30 * 60 * 1000) return g.__pdNewsCache__.payload;
-  const urls = ["https://www.ndis.gov.au/news/latest", "https://www.ndis.gov.au/news"];
+  const urls = [
+    "https://www.ndis.gov.au/news/latest",
+    "https://www.ndis.gov.au/news",
+    "https://www.ndis.gov.au/",
+  ];
   const items: LiveNewsItem[] = [];
   let error: string | undefined;
   for (const url of urls) {

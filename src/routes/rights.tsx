@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Disclaimer, PageHeader } from "@/components/layout/page";
 import { YoutubeEmbed } from "@/components/youtube-embed";
+import { LiveNewsStrip } from "@/components/live-news";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/rights")({
@@ -65,6 +66,8 @@ function RightsPage() {
           </Link>
         ))}
       </div>
+
+      <LiveNewsStrip limit={4} />
 
       <Card className="mt-5">
         <p className="text-sm font-medium text-primary">Help now</p>

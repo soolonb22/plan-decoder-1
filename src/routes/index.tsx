@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/card";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 import { Guide3D } from "@/components/guide-3d/panel";
 import { OllieMark } from "@/components/mark";
+import { LiveNewsStrip } from "@/components/live-news";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -71,6 +72,8 @@ function Home() {
           </Button>
         </Card>
       ) : null}
+
+      <LiveNewsStrip limit={3} />
 
       <p className="mb-3 mt-8 text-sm font-medium text-muted">What do you need today?</p>
       <div className="grid gap-3 sm:grid-cols-2">

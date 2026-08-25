@@ -47,8 +47,9 @@ function NewsPage() {
   return (
     <div>
       <PageHeader
-        title="NDIS news, translated"
-        lede="Headlines from the official site, plus our notes. Always open ndis.gov.au if a decision depends on it."
+        title="NDIS news"
+        lede="Live headlines from ndis.gov.au, then our notes on why a family might care. Not the NDIA."
+        picture="/brand/story-rights.jpg"
         actions={
           <Button variant="secondary" disabled={busy} onClick={() => load()}>
             {busy ? "Checking…" : "Check again"}
@@ -56,8 +57,10 @@ function NewsPage() {
         }
       />
       <Disclaimer>
-        Live list is scraped from ndis.gov.au. Plan Decoder is not the NDIA. Last notes check {formatDate(NEWS_CHECKED)}.
+        Headlines are copied from the official site. Always open the NDIA page if a decision depends on it. Last notes
+        check {formatDate(NEWS_CHECKED)}.
       </Disclaimer>
+
       <h2 className="mt-6 text-lg font-semibold">From ndis.gov.au</h2>
       {error && !live.length ? <p className="mt-2 text-sm text-muted">{error}</p> : null}
       {fetchedAt ? <p className="mt-1 text-xs text-muted">Fetched {formatDate(fetchedAt.slice(0, 10))}.</p> : null}
@@ -81,16 +84,21 @@ function NewsPage() {
         {!busy && !live.length ? (
           <Card>
             <p className="text-sm text-muted">
-              No headlines parsed just now. The official site may have changed layout, or the Worker could not fetch it.
-              Use the notes below, and{" "}
-              <a className="text-primary underline-offset-4 hover:underline" href="https://www.ndis.gov.au/news/latest" target="_blank" rel="noreferrer">
-                ndis.gov.au/news/latest
+              No headlines parsed just now. The official layout may have changed, or the Worker could not fetch it.{" "}
+              <a
+                className="text-primary underline-offset-4 hover:underline"
+                href="https://www.ndis.gov.au/news/latest"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open ndis.gov.au/news/latest
               </a>
               .
             </p>
           </Card>
         ) : null}
       </div>
+
       <h2 className="mt-8 text-lg font-semibold">Why it might matter (our notes)</h2>
       <div className="mt-3 space-y-3">
         {NEWS.map((n) => (
