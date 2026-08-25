@@ -27,7 +27,7 @@ export function MarketingHome() {
           <Link to="/login">Create a free account</Link>
         </Button>
         <Button variant="secondary" asChild>
-          <Link to="/assessment">See the practice assessment</Link>
+          <Link to="/assessment" search={{ tab: "about" }}>See the practice assessment</Link>
         </Button>
       </div>
 

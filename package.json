@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "node scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080",
+    "build": "npm run build:cf",
     "build:cf": "VITE_AUTH_ENABLED=true vite build --config vite.cloudflare.config.ts",
     "deploy:cf": "npm run build:cf && wrangler deploy",
     "cf-typegen": "wrangler types",

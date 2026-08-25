@@ -98,7 +98,7 @@ export function NoteSync() {
   }
 
   async function removeCloud() {
-    if (!confirm("Delete the encrypted copy from your account? Notes on this browser stay.")) return;
+    if (!window.confirm("Delete the encrypted copy from your account? Notes on this browser stay.")) return;
     setBusy(true);
     try {
       await fetch("/api/sync", { method: "DELETE", credentials: "include" });

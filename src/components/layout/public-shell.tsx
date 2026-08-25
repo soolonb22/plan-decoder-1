@@ -26,6 +26,7 @@ export function PublicShell({ children }: { children: ReactNode }) {
               <Link
                 key={item.to}
                 to={item.to}
+                search={item.to === "/assessment" ? { tab: "about" } : undefined}
                 className={cn(
                   "inline-flex min-h-10 items-center rounded-lg px-3 text-sm",
                   pathname === item.to ? "bg-primary text-primary-fg" : "hover:bg-primary-soft",

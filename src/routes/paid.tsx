@@ -75,7 +75,7 @@ function PaidReturn() {
             <Link to="/membership">Pay & credits</Link>
           </Button>
           <Button variant="secondary" asChild>
-            <Link to="/assessment">Practice assessment</Link>
+            <Link to="/assessment" search={{ tab: "about" }}>Practice assessment</Link>
           </Button>
         </div>
       </Card>

@@ -40,5 +40,12 @@ export const emailAndPasswordOptions = {
 };
 
 function escapeHtml(s: string) {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&", "<": "<", ">": ">", '"': """, "'": "&#39;" })[c] ?? c);
+  const amp = String.fromCharCode(38);
+  return s.replace(/[&<>"']/g, (c) => {
+    if (c === "&") return amp + "amp;";
+    if (c === "<") return amp + "lt;";
+    if (c === ">") return amp + "gt;";
+    if (c === '"') return amp + "quot;";
+    return amp + "#39;";
+  });
 }
