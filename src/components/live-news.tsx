@@ -15,9 +15,9 @@ function useLiveNews() {
   const [feed, setFeed] = useState<Feed>({ live: [], fetchedAt: "", error: null });
   const [busy, setBusy] = useState(true);
 
-  function load() {
+  function load(refresh = false) {
     setBusy(true);
-    void fetch("/api/news")
+    void fetch(refresh ? "/api/news?refresh=1" : "/api/news")
       .then((r) => r.json() as Promise<{ live?: LiveNewsItem[]; fetchedAt?: string; error?: string | null }>)
       .then((d) =>
         setFeed({
@@ -49,7 +49,7 @@ export function LiveNewsStrip({ limit = 3 }: { limit?: number }) {
           <h2 className="text-lg font-semibold">NDIS news</h2>
         </div>
         <div className="flex gap-2">
-          <Button size="sm" variant="ghost" disabled={busy} onClick={() => load()}>
+          <Button size="sm" variant="ghost" disabled={busy} onClick={() => load(true)}>
             {busy ? "Checking…" : "Check again"}
           </Button>
           <Button size="sm" variant="secondary" asChild>
@@ -58,8 +58,8 @@ export function LiveNewsStrip({ limit = 3 }: { limit?: number }) {
         </div>
       </div>
       <p className="mt-1 text-xs text-muted">
-        Independent scrape. Not the NDIA.
-        {fetchedAt ? ` Fetched ${formatDate(fetchedAt.slice(0, 10))}.` : ""}
+        Independent scrape, refreshed several times a day. Not the NDIA.
+        {fetchedAt ? ` Last pulled ${formatDate(fetchedAt.slice(0, 10))}.` : ""}
       </p>
       {error && !rows.length ? <p className="mt-2 text-sm text-muted">{error}</p> : null}
       <ul className="mt-3 space-y-2">

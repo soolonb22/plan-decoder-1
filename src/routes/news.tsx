@@ -27,9 +27,9 @@ function NewsPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
 
-  function load() {
+  function load(force = false) {
     setBusy(true);
-    void fetch("/api/news")
+    void fetch(force ? "/api/news?refresh=1" : "/api/news")
       .then((r) => r.json() as Promise<{ live?: LiveNewsItem[]; fetchedAt?: string; error?: string | null }>)
       .then((d) => {
         setLive(d.live ?? []);
@@ -51,14 +51,14 @@ function NewsPage() {
         lede="Live headlines from ndis.gov.au, then our notes on why a family might care. Not the NDIA."
         picture="/brand/story-rights.jpg"
         actions={
-          <Button variant="secondary" disabled={busy} onClick={() => load()}>
+          <Button variant="secondary" disabled={busy} onClick={() => load(true)}>
             {busy ? "Checking…" : "Check again"}
           </Button>
         }
       />
       <Disclaimer>
-        Headlines are copied from the official site. Always open the NDIA page if a decision depends on it. Last notes
-        check {formatDate(NEWS_CHECKED)}.
+        Headlines are copied from the official site and pulled several times a day. Always open the NDIA page if a
+        decision depends on it. Last notes check {formatDate(NEWS_CHECKED)}.
       </Disclaimer>
 
       <h2 className="mt-6 text-lg font-semibold">From ndis.gov.au</h2>

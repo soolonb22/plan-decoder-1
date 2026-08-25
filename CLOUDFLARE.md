@@ -55,6 +55,12 @@ Wrangler attaches them as Cloudflare **Custom Domains** (SSL is automatic). If a
 | `STRIPE_SECRET_KEY` | secret | Optional webhook verify |
 | `STRIPE_WEBHOOK_SECRET` | secret | Optional |
 
+News headlines refresh automatically:
+
+1. GitHub Action `.github/workflows/ndis-news.yml` four times a day. Add repo secret **`PD_CRON_SECRET`** with the same value as Worker `BETTER_AUTH_SECRET`.
+2. The Worker also re-scrapes if the saved copy is older than 3 hours (first visitor after that).
+3. Wrangler cron `20 7,13,19,23 * * *` UTC is registered on deploy.
+
 Without `DATABASE_URL`, accounts will not persist across Worker isolates.
 
 ## 5. Dashboard-only upload
