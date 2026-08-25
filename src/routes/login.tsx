@@ -305,6 +305,16 @@ function Login() {
               {busy ? "Please wait…" : mode === "up" ? "Create account" : "Sign in"}
             </Button>
           </form>
+          <details className="mt-4 text-sm">
+            <summary className="cursor-pointer font-medium">Cannot sign in?</summary>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-muted">
+              <li>First visit: tap Create account. Sign-in will not work until then.</li>
+              <li>Password must be 8 or more characters, with a letter and a number.</li>
+              <li>This app cannot email a reset link yet. If you are signed in, change the password under Privacy.</li>
+              <li>If this email never got you in, try Create account again. If it says the email exists, that password is different — use a new email, or the one you set last time.</li>
+              <li>Practice notes live in this browser. A new login does not copy them unless you saved a local pocket file.</li>
+            </ul>
+          </details>
         </div>
 
         <p className="mt-5 text-center text-sm text-muted">

@@ -9,6 +9,8 @@ export type NewsItem = {
   tags: string[];
 };
 
+export const NEWS_CHECKED = "2026-08-25";
+
 export const NEWS: NewsItem[] = [
   {
     id: "apr-2026-27",
@@ -69,5 +71,29 @@ export const NEWS: NewsItem[] = [
     whyItMatters:
       "Use the Plan checklist in Plan Decoder to mark what you understand and what you will ask your coordinator or planner. Confusion is common. It is not a failing.",
     tags: ["plans", "how-to"],
+  },
+  {
+    id: "claiming-window-2026",
+    title: "Claim close to the date of the support",
+    date: "2026-07-01",
+    source: "NDIA pricing / claiming pages",
+    url: "https://www.ndis.gov.au/providers/pricing-and-payments",
+    summary:
+      "Claiming rules can change. From late 2026, government pages describe a 90-day window for some claims. Always check the live NDIA page, not a screenshot.",
+    whyItMatters:
+      "If you self-manage, keep invoices dated and claim soon. Plan Decoder’s claiming book is a practice clock on this device — not a claim to the NDIS.",
+    tags: ["claiming", "self-manage"],
+  },
+  {
+    id: "support-needs-2027",
+    title: "New support needs assessments (I-CAN based) — later for most people",
+    date: "2026-06-01",
+    source: "NDIA public statements",
+    url: "https://www.ndis.gov.au",
+    summary:
+      "A new planning pathway using a customised I-CAN tool plus extra questionnaires is described as rolling out for some people from 2027. Official instruments are licensed and not published in full.",
+    whyItMatters:
+      "You can still practise talking about daily function, environment, permanency, and mainstream supports. Plan Decoder’s questionnaire is rehearsal only — not I-CAN, not the NDIA.",
+    tags: ["assessment", "planning"],
   },
 ];

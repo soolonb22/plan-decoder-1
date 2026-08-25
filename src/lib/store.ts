@@ -17,6 +17,7 @@ import type {
   LogEntry,
   MeetingPrep,
   Membership,
+  Provider,
   Report,
   Role,
   SavedScript,
@@ -65,6 +66,7 @@ const initial: AppState = {
   appointments: [],
   schoolNotes: [],
   claims: [],
+  providers: [],
   whodas: [],
   drafts: [],
   lastGuide: "",
@@ -111,6 +113,8 @@ type Actions = {
   removeSchoolNote: (id: string) => void;
   upsertClaim: (e: Omit<ClaimItem, "id" | "clientId"> & { id?: string; clientId?: string }) => string;
   removeClaim: (id: string) => void;
+  upsertProvider: (e: Omit<Provider, "id" | "clientId"> & { id?: string; clientId?: string }) => string;
+  removeProvider: (id: string) => void;
   saveWhodas: (e: Omit<WhodasRecord, "id" | "clientId"> & { clientId?: string }) => string;
   saveDraft: (e: Omit<GuidedDraft, "id" | "createdAt" | "clientId"> & { clientId?: string }) => string;
   upsertAssessment: (e: Partial<AssessmentDraft> & { id?: string }) => string;
@@ -355,6 +359,27 @@ export const useOllie = create<AppState & Actions>()(
         return id;
       },
       removeClaim: (id) => set((s) => ({ claims: s.claims.filter((x) => x.id !== id) })),
+      upsertProvider: (e) => {
+        const id = e.id ?? uid("prov");
+        set((s) => {
+          const row: Provider = {
+            id,
+            clientId: e.clientId || s.activeClientId,
+            name: e.name,
+            pot: e.pot,
+            registered: e.registered,
+            agreement: e.agreement,
+            contact: e.contact,
+            notes: e.notes,
+          };
+          const exists = s.providers.some((x) => x.id === id);
+          return {
+            providers: exists ? s.providers.map((x) => (x.id === id ? { ...x, ...row } : x)) : [row, ...s.providers],
+          };
+        });
+        return id;
+      },
+      removeProvider: (id) => set((s) => ({ providers: s.providers.filter((x) => x.id !== id) })),
       saveWhodas: (e) => {
         const id = uid("who");
         set((s) => ({
@@ -564,6 +589,7 @@ export const useOllie = create<AppState & Actions>()(
           subscriptionStatus: p.subscriptionStatus ?? current.subscriptionStatus ?? "none",
           planRead: p.planRead ?? current.planRead ?? null,
           claims: p.claims ?? current.claims ?? [],
+          providers: p.providers ?? current.providers ?? [],
           clients: (p.clients ?? current.clients).map((c) => ({
             ...c,
             letterReceived: c.letterReceived ?? "",

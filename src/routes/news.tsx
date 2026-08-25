@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { NEWS } from "@/lib/content/news";
+import { NEWS, NEWS_CHECKED } from "@/lib/content/news";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -15,7 +15,7 @@ function NewsPage() {
         lede="What changed, and why a family or coordinator might care. Always check the official source."
       />
       <Disclaimer>
-        Summaries are for orientation. Policy and prices change. This is not legal or financial advice.
+        Summaries are for orientation. Policy and prices change. Last checked {formatDate(NEWS_CHECKED)}. This is not legal or financial advice.
       </Disclaimer>
       <div className="mt-5 space-y-3">
         {NEWS.map((n) => (

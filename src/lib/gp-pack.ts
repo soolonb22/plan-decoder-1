@@ -16,6 +16,7 @@ import type {
   Goal,
   LogEntry,
   MeetingPrep,
+  Provider,
   SchoolNote,
   WhodasRecord,
 } from "./types";
@@ -33,6 +34,7 @@ export type PackInput = {
   checklist: ChecklistState[];
   whodas: WhodasRecord[];
   claims: ClaimItem[];
+  providers: Provider[];
   budgets: BudgetLine[];
 };
 
@@ -123,6 +125,11 @@ export function buildGpPackText(input: PackInput) {
     "Spend notes (not the my NDIS balance)",
     ...(input.budgets.length
       ? input.budgets.map((b) => `- ${b.name} (${b.category}): ${money(b.spent)} / ${money(b.allocated)}`)
+      : ["- None saved"]),
+    "",
+    "People you use",
+    ...(input.providers?.length
+      ? input.providers.map((p) => `- ${p.name} (${p.pot}, registered: ${p.registered}${p.agreement ? ", agreement noted" : ""})`)
       : ["- None saved"]),
     "",
     "Claims / invoices (practice book)",

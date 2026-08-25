@@ -33,6 +33,7 @@ function ReportsPage() {
   const checklist = useClientList("checklist");
   const whodas = useClientList("whodas");
   const claims = useClientList("claims");
+  const providers = useClientList("providers");
   const budgets = useClientList("budgets");
   const reports = useClientList("reports");
   const addReport = useOllie((s) => s.addReport);
@@ -53,6 +54,7 @@ function ReportsPage() {
     checklist,
     whodas,
     claims,
+    providers,
     budgets,
   };
   const bundle = buildGpPackText(pack);

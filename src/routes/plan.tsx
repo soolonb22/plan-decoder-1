@@ -13,11 +13,15 @@ import { Disclaimer, EmptyState, MembershipGate, PageHeader } from "@/components
 import { PlanStructureDiagram } from "@/components/plan-diagram";
 import { FUNDING_VIDEO, IMPLEMENTATION_VIDEO, YoutubeEmbed } from "@/components/youtube-embed";
 import { RoomTabs } from "@/components/room-tabs";
+import { PeoplePanel } from "@/components/plan/people-panel";
+import { FitPanel } from "@/components/plan/fit-panel";
 
 const TABS = [
   { id: "pots", label: "Pots" },
   { id: "spend", label: "Spend" },
   { id: "claims", label: "Claims" },
+  { id: "people", label: "People" },
+  { id: "fit", label: "Fit" },
   { id: "checklist", label: "Checklist" },
   { id: "goals", label: "Goals" },
 ] as const;
@@ -31,7 +35,16 @@ function money(n: number) {
 export const Route = createFileRoute("/plan")({
   validateSearch: (raw: Record<string, unknown>): { tab: Tab } => {
     const tab = String(raw.tab ?? "");
-    if (tab === "spend" || tab === "claims" || tab === "checklist" || tab === "goals" || tab === "pots") return { tab };
+    if (
+      tab === "spend" ||
+      tab === "claims" ||
+      tab === "people" ||
+      tab === "fit" ||
+      tab === "checklist" ||
+      tab === "goals" ||
+      tab === "pots"
+    )
+      return { tab };
     return { tab: "pots" };
   },
   component: PlanPage,
@@ -67,6 +80,16 @@ function PlanPage() {
       {tab === "claims" ? (
         <MembershipGate need="core">
           <ClaimsPanel />
+        </MembershipGate>
+      ) : null}
+      {tab === "people" ? (
+        <MembershipGate need="core">
+          <PeoplePanel />
+        </MembershipGate>
+      ) : null}
+      {tab === "fit" ? (
+        <MembershipGate need="core">
+          <FitPanel />
         </MembershipGate>
       ) : null}
       {tab === "goals" ? (

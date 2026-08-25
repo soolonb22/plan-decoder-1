@@ -161,6 +161,17 @@ export type AppointmentPrep = {
   notes: string;
 };
 
+export type Provider = {
+  id: string;
+  clientId: string;
+  name: string;
+  pot: "core" | "capacity" | "capital" | "recurring" | "mix";
+  registered: "yes" | "no" | "unsure";
+  agreement: boolean;
+  contact: string;
+  notes: string;
+};
+
 export type ClaimStatus = "quote" | "invoice" | "claimed" | "paid";
 
 export type ClaimItem = {
@@ -224,6 +235,7 @@ export type AppState = {
   appointments: AppointmentPrep[];
   schoolNotes: SchoolNote[];
   claims: ClaimItem[];
+  providers: Provider[];
   whodas: WhodasRecord[];
   drafts: GuidedDraft[];
   lastGuide: string;

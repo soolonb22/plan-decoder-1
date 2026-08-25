@@ -19,6 +19,7 @@ export function GpPackButtons({ size = "sm" }: { size?: "sm" | "default" }) {
   const checklist = useClientList("checklist");
   const whodas = useClientList("whodas");
   const claims = useClientList("claims");
+  const providers = useClientList("providers");
   const budgets = useClientList("budgets");
 
   const input = {
@@ -34,6 +35,7 @@ export function GpPackButtons({ size = "sm" }: { size?: "sm" | "default" }) {
     checklist,
     whodas,
     claims,
+    providers,
     budgets,
   };
 
