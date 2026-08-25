@@ -95,6 +95,7 @@ export type Goal = {
 
 export type SavedScript = {
   id: string;
+  clientId?: string;
   title: string;
   category: string;
   body: string;

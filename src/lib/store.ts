@@ -214,7 +214,7 @@ export const useOllie = create<AppState & Actions>()(
       removeGoal: (id) => set((s) => ({ goals: s.goals.filter((x) => x.id !== id) })),
       addScript: (e) => {
         const id = uid("script");
-        set((s) => ({ scripts: [{ ...e, id }, ...s.scripts] }));
+        set((s) => ({ scripts: [{ ...withClient(s, e), id }, ...s.scripts] }));
         return id;
       },
       removeScript: (id) =>

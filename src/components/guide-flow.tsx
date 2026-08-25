@@ -39,6 +39,7 @@ export function GuideFlow({
   const saveDraft = useOllie((s) => s.saveDraft);
   const addEvidence = useOllie((s) => s.addEvidence);
   const upsertMeeting = useOllie((s) => s.upsertMeeting);
+  const upsertAppointment = useOllie((s) => s.upsertAppointment);
 
   const field = flow.fields[step];
   const done = step >= flow.fields.length;
@@ -77,6 +78,16 @@ export function GuideFlow({
                     talkingPoints: output,
                     questions: answers.questions || "",
                     purpose: answers.purpose || "",
+                  });
+                }
+                if (flow.id === "appointment") {
+                  upsertAppointment({
+                    title: answers.who || "Allied health appointment",
+                    who: answers.who || "",
+                    questions: answers.ask || "",
+                    sensoryNeeds: answers.sensory || "",
+                    notes: output,
+                    date: new Date().toISOString().slice(0, 10),
                   });
                 }
               }}

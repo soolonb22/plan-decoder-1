@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer, PageHeader } from "@/components/layout/page";
 import { PlanStructureDiagram } from "@/components/plan-diagram";
+import { FUNDING_VIDEO, YoutubeEmbed } from "@/components/youtube-embed";
 
 export const Route = createFileRoute("/funding")({
   component: FundingPage,
@@ -99,10 +100,14 @@ function FundingPage() {
 
       <div className="mt-6 flex flex-wrap gap-2">
         <Button asChild>
-          <Link to="/budget">Open budget helper (your notes)</Link>
+          <Link to="/plan" search={{ tab: "spend" }}>
+            Open spend notes in My plan
+          </Link>
         </Button>
         <Button variant="secondary" asChild>
-          <Link to="/checklist">Plan implementation checklist</Link>
+          <Link to="/plan" search={{ tab: "checklist" }}>
+            Plan checklist
+          </Link>
         </Button>
         <Button variant="ghost" asChild>
           <Link to="/rights">Know your rights</Link>

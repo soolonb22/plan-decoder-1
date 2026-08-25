@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { PLAN_CHECKLIST } from "@/lib/content/checklist";
 import { useOllie, useClientList } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page";
 import { IMPLEMENTATION_VIDEO, YoutubeEmbed } from "@/components/youtube-embed";
@@ -31,28 +32,21 @@ function ChecklistPage() {
     <div>
       <PageHeader
         title="Plan implementation checklist"
-        lede="What to do after a plan is approved. Not a test. Tick what you already know. The rest is a to-ask list."
+        lede="What to do after a plan is approved. Also inside My plan. Tick what you already know."
         picture="/brand/story-path.jpg"
+        actions={
+          <Button variant="secondary" asChild>
+            <Link to="/plan" search={{ tab: "checklist" }}>
+              Open in My plan
+            </Link>
+          </Button>
+        }
       />
       <YoutubeEmbed
         id={IMPLEMENTATION_VIDEO.id}
         title={IMPLEMENTATION_VIDEO.title}
         credit={IMPLEMENTATION_VIDEO.credit}
       />
-      <Card className="mt-4 text-sm text-muted">
-        <p>
-          Official NDIA page (current 9 June 2026): a plan implementation meeting is optional. They aim to make a time
-          within 7 days if you want one. Skipping it does not stop your plan or funding.{" "}
-          <a
-            className="text-primary underline-offset-4 hover:underline"
-            href="https://www.ndis.gov.au/participants/using-your-funding/plan-implementation-meeting/what-plan-implementation-meeting"
-            target="_blank"
-            rel="noreferrer"
-          >
-            What is a plan implementation meeting
-          </a>
-        </p>
-      </Card>
       <p className="mb-4 mt-4 text-sm text-muted tabular-nums">
         {doneCount} of {total} understood
       </p>

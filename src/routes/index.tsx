@@ -104,7 +104,7 @@ function Home() {
             body: "Reviews and privacy — said in plain language.",
           },
           {
-            to: "/language",
+            to: "/words",
             icon: MessageSquare,
             image: "/brand/story-words.jpg",
             title: "Find the words",
