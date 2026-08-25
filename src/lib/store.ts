@@ -28,6 +28,7 @@ import type {
 } from "./types";
 import { makeSampleAssessment } from "./assessment/sample";
 import type { PlanRead } from "./plan-reader";
+import { takeSnapshot, type NoteSnapshot } from "./note-snapshot";
 
 const DEFAULT_CLIENT_ID = "self";
 
@@ -125,6 +126,8 @@ type Actions = {
   loadSample: () => void;
   resetAll: () => void;
   setPlanRead: (p: PlanRead | null) => void;
+  exportNotes: () => NoteSnapshot;
+  importNotes: (p: NoteSnapshot) => void;
 };
 
 function withClient<T extends { clientId?: string }>(state: AppState, item: T) {
@@ -573,6 +576,8 @@ export const useOllie = create<AppState & Actions>()(
       },
       resetAll: () => set({ ...initial, clients: [defaultClient()] }),
       setPlanRead: (planRead) => set({ planRead }),
+      exportNotes: () => takeSnapshot(get()),
+      importNotes: (p) => set((s) => ({ ...s, ...p })),
     }),
     {
       name: "ollie-ndis-v1",

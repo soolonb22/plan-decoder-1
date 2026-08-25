@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/input";
 import { Disclaimer, PageHeader } from "@/components/layout/page";
+import { NoteSync } from "@/components/note-sync";
 
 export const Route = createFileRoute("/privacy")({ component: PrivacyPage });
 
@@ -72,7 +73,7 @@ function PrivacyPage() {
         <Card>
           <p className="font-semibold">What stays on this device</p>
           <p className="mt-2 text-sm text-muted">
-            Evidence, logs, flags, goals, briefs, school notes, claims, providers, WHODAS-inspired snapshots, practice assessments, and drafts are stored in this browser. Clearing site data deletes them. We do not put those notes in the cloud database.
+            Evidence, logs, flags, goals, briefs, school notes, claims, providers, WHODAS-inspired snapshots, practice assessments, and drafts are stored in this browser. Clearing site data deletes them. An encrypted copy is optional, below — off unless you save one. Pocket files (PDFs, photos) never leave this device.
           </p>
         </Card>
         <Card>
@@ -84,7 +85,7 @@ function PrivacyPage() {
         <Card>
           <p className="font-semibold">Passwords</p>
           <p className="mt-2 text-sm text-muted">
-            Email passwords are hashed on the server with scrypt. The plain password is never written to the database. This app cannot email a reset link yet — change it here while you are signed in.
+            Email passwords are hashed on the server with scrypt. The plain password is never written to the database. You can email a reset link from the sign-in page (needs Resend or Mailgun secrets), or change it here while you are signed in.
           </p>
           {user?.primaryEmail ? (
             <div className="mt-3 space-y-3">
@@ -100,6 +101,7 @@ function PrivacyPage() {
             </div>
           ) : null}
         </Card>
+        <NoteSync />
         <Card>
           <p className="font-semibold">What “Draft with Plan Decoder” sends</p>
           <p className="mt-2 text-sm text-muted">

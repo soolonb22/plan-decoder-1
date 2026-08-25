@@ -25,7 +25,7 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const { user, isPending } = useCurrentUserState();
-  const [mode, setMode] = useState<"in" | "up">("in");
+  const [mode, setMode] = useState<"in" | "up" | "reset">("in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -54,6 +54,34 @@ function Login() {
   async function onEmail(e: FormEvent) {
     e.preventDefault();
     if (!authEnabled) return;
+    const emailNorm = email.trim().toLowerCase();
+    if (mode === "reset") {
+      setBusy(true);
+      setError(null);
+      try {
+        const redirectTo = `${window.location.origin}/reset-password`;
+        const res = await fetch("/api/auth/request-password-reset", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: emailNorm, redirectTo }),
+        });
+        const data = (await res.json().catch(() => ({}))) as { message?: string; error?: string };
+        if (!res.ok) {
+          throw new Error(
+            data.message ||
+              data.error ||
+              "Could not send a reset email. Add RESEND_API_KEY and EMAIL_FROM as Worker secrets.",
+          );
+        }
+        setError("If that email has an account, a reset link is on its way. Check spam. The link lasts one hour.");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not send a reset email.");
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     if (mode === "up") {
       if (password !== confirm) {
         setError("The two passwords do not match.");
@@ -68,7 +96,6 @@ function Login() {
       setError("Check the email and password and try again.");
       return;
     }
-    const emailNorm = email.trim().toLowerCase();
     setBusy(true);
     setError(null);
     try {
@@ -147,7 +174,7 @@ function Login() {
         </div>
 
         <div className="rounded-2xl border border-line bg-card p-6 shadow-[var(--shadow-card)]">
-          <div className="grid grid-cols-2 rounded-xl bg-paper-2 p-1" role="tablist" aria-label="Account">
+          <div className="grid grid-cols-3 rounded-xl bg-paper-2 p-1" role="tablist" aria-label="Account">
             <button
               type="button"
               role="tab"
@@ -176,17 +203,34 @@ function Login() {
                 setError(null);
               }}
             >
-              Create account
+              Create
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "reset"}
+              className={cn(
+                "min-h-11 rounded-lg text-sm font-medium",
+                mode === "reset" ? "bg-card text-ink shadow-[var(--shadow-card)]" : "text-muted",
+              )}
+              onClick={() => {
+                setMode("reset");
+                setError(null);
+              }}
+            >
+              Reset
             </button>
           </div>
 
           <h1 className="mt-5 text-xl font-semibold">
-            {mode === "in" ? "Welcome back" : "Create your account"}
+            {mode === "in" ? "Welcome back" : mode === "up" ? "Create your account" : "Reset password"}
           </h1>
           <p className="mt-1 text-sm text-muted">
             {mode === "in"
               ? "Sign in to open your Plan Decoder workspace."
-              : "You need an account to use Plan Decoder. Practice answers still stay on this device."}
+              : mode === "up"
+                ? "You need an account to use Plan Decoder. Practice answers still stay on this device."
+                : "We email a one-hour link. Needs EMAIL_FROM and RESEND_API_KEY on the Worker."}
           </p>
           {dbReady === false ? (
             <div className="mt-4 rounded-2xl border border-alert/30 bg-alert/10 p-3 text-sm text-ink" role="status">
@@ -262,6 +306,8 @@ function Login() {
                 required
               />
             </div>
+            {mode !== "reset" ? (
+            <>
             <div>
               <Label htmlFor="password">Password</Label>
               <Input
@@ -279,7 +325,7 @@ function Login() {
               <p className="mt-1 text-xs text-muted">
                 {mode === "up"
                   ? "At least 8 characters, with a letter and a number. Hashed on the server — never stored in the clear."
-                  : "First visit? Use Create account. Sign-in only works after that."}
+                  : "First visit? Use Create. Sign-in only works after that."}
               </p>
             </div>
             {mode === "up" ? (
@@ -296,23 +342,24 @@ function Login() {
                 />
               </div>
             ) : null}
+            </>
+            ) : null}
             {error ? (
               <p className="text-sm text-alert" role="alert">
                 {error}
               </p>
             ) : null}
             <Button type="submit" className="w-full" disabled={busy || Boolean(oauthBusy) || !authEnabled}>
-              {busy ? "Please wait…" : mode === "up" ? "Create account" : "Sign in"}
+              {busy ? "Please wait…" : mode === "up" ? "Create account" : mode === "reset" ? "Email a reset link" : "Sign in"}
             </Button>
           </form>
           <details className="mt-4 text-sm">
             <summary className="cursor-pointer font-medium">Cannot sign in?</summary>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-muted">
-              <li>First visit: tap Create account. Sign-in will not work until then.</li>
-              <li>Password must be 8 or more characters, with a letter and a number.</li>
-              <li>This app cannot email a reset link yet. If you are signed in, change the password under Privacy.</li>
-              <li>If this email never got you in, try Create account again. If it says the email exists, that password is different — use a new email, or the one you set last time.</li>
-              <li>Practice notes live in this browser. A new login does not copy them unless you saved a local pocket file.</li>
+              <li>First visit: tap Create. Sign-in will not work until then.</li>
+              <li>Use Reset to email a one-hour link. That needs Resend (or Mailgun) secrets on the Worker.</li>
+              <li>If you are already signed in, change the password under Privacy.</li>
+              <li>Practice notes live in this browser unless you save an encrypted copy under Privacy.</li>
             </ul>
           </details>
         </div>
