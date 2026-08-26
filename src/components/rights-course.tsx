@@ -34,7 +34,7 @@ function saveDone(set: Set<number>) {
 export type CourseSearch = { m?: number; x?: string };
 
 export function RightsCourse({ search }: { search: CourseSearch }) {
-  const navigate = useNavigate({ from: "/course" });
+  const navigate = useNavigate({ from: "/rights" });
   const [done, setDone] = useState<Set<number>>(new Set());
   const [certOpen, setCertOpen] = useState(false);
   const [name, setName] = useState("");
@@ -85,7 +85,7 @@ export function RightsCourse({ search }: { search: CourseSearch }) {
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => void navigate({ to: "/course" })}
+            onClick={() => void navigate({ to: "/rights" })}
           >
             Contents
           </Button>
@@ -119,7 +119,7 @@ export function RightsCourse({ search }: { search: CourseSearch }) {
               className="flex-1"
               onClick={() => {
                 if (moduleIdx < MODULES.length - 1) openModule(moduleIdx + 1);
-                else void navigate({ to: "/course" });
+                else void navigate({ to: "/rights" });
               }}
             >
               {moduleIdx < MODULES.length - 1 ? `Next: ${MODULES[moduleIdx + 1].title}` : "Finish"}
@@ -253,9 +253,9 @@ export function RightsCourse({ search }: { search: CourseSearch }) {
           <a className="text-primary underline-offset-2 hover:underline" href="https://www.ndis.gov.au" target="_blank" rel="noreferrer">
             ndis.gov.au
           </a>
-          . Prefer written cards?{" "}
-          <Link to="/rights" className="font-medium text-primary underline-offset-2 hover:underline">
-            Know your rights
+          . Words you can look up:{" "}
+          <Link to="/glossary" className="font-medium text-primary underline-offset-2 hover:underline">
+            Glossary
           </Link>
           .
         </p>

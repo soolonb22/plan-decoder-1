@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ClipboardList, Scale, Newspaper, BookMarked, GraduationCap } from "lucide-react";
+import { ClipboardList, Scale, Newspaper, BookMarked } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LiveNewsStrip } from "@/components/live-news";
@@ -46,12 +46,6 @@ export function MarketingHome() {
             to: "/rights" as const,
             icon: Scale,
             title: "Know your rights",
-            body: "Reviews, timeframes, and 2026 law notes in plain English.",
-          },
-          {
-            to: "/course" as const,
-            icon: GraduationCap,
-            title: "Rights course",
             body: "Eight short modules, a quiz in each, and a certificate at the end.",
           },
           {

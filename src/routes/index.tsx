@@ -119,13 +119,6 @@ function WorkspaceHome() {
             icon: Scale,
             image: "/brand/story-rights.jpg",
             title: "Know your rights",
-            body: "Reviews and privacy — said in plain language.",
-          },
-          {
-            to: "/course",
-            icon: Scale,
-            image: "/brand/story-rights.jpg",
-            title: "Rights course",
             body: "Eight short modules with quizzes. Progress stays in this browser.",
           },
           {

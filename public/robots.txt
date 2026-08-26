@@ -2,7 +2,6 @@ User-agent: *
 Allow: /
 Allow: /assessment
 Allow: /rights
-Allow: /course
 Allow: /news
 Allow: /glossary
 Allow: /funding
