@@ -34,21 +34,34 @@ function Login() {
   const [busy, setBusy] = useState(false);
   const [oauthBusy, setOauthBusy] = useState<string | null>(null);
   const [dbReady, setDbReady] = useState<boolean | null>(null);
+  const [secretReady, setSecretReady] = useState<boolean | null>(null);
+  const [waited, setWaited] = useState(false);
   const showOauth =
     typeof window !== "undefined" && window.location.hostname.endsWith(".grok-sandbox.com");
 
   function checkReady() {
     void fetch("/api/ready")
-      .then((r) => r.json() as Promise<{ database?: boolean }>)
-      .then((d) => setDbReady(Boolean(d.database)))
-      .catch(() => setDbReady(null));
+      .then((r) => r.json() as Promise<{ database?: boolean; secret?: boolean }>)
+      .then((d) => {
+        setDbReady(Boolean(d.database));
+        setSecretReady(Boolean(d.secret));
+      })
+      .catch(() => {
+        setDbReady(null);
+        setSecretReady(null);
+      });
   }
 
   useEffect(() => {
     checkReady();
   }, []);
 
-  if (isPending) return <AuthSplash />;
+  useEffect(() => {
+    const t = window.setTimeout(() => setWaited(true), 2500);
+    return () => window.clearTimeout(t);
+  }, []);
+
+  if (isPending && !waited) return <AuthSplash />;
   if (user) return <Navigate to="/" />;
 
   async function onEmail(e: FormEvent) {
@@ -232,18 +245,21 @@ function Login() {
                 ? "You need an account to use Plan Decoder. Practice answers still stay on this device."
                 : "We email a one-hour link. Needs EMAIL_FROM and RESEND_API_KEY on the Worker."}
           </p>
-          {dbReady === false ? (
+          {dbReady === false || secretReady === false ? (
             <div className="mt-4 rounded-2xl border border-alert/30 bg-alert/10 p-3 text-sm text-ink" role="status">
               <p>
-                Sign-in is not connected yet. Your email and password are not the problem. The Worker is missing the
-                Neon database secret.
+                Sign-in is not connected yet. Your email and password are not the problem. The Worker is missing{" "}
+                {dbReady === false && secretReady === false
+                  ? "the database and the signing key."
+                  : dbReady === false
+                    ? "the Neon database secret."
+                    : "BETTER_AUTH_SECRET (the signing key)."}
               </p>
               <p className="mt-2">
                 In Cloudflare open Worker <strong>plan-decoder-1</strong> → Settings → Variables and Secrets
-                (the Worker, <strong>not</strong> Build variables). Add a Secret named{" "}
-                <strong>DATABASE_URL</strong>. Paste the Neon pooled connection string that starts with{" "}
-                <code>postgresql://</code> and includes <code>-pooler</code>. Encrypt it. Then come back here and tap
-                Check again. No new build is needed.
+                (the Worker, <strong>not</strong> Build variables). Encrypted secrets named{" "}
+                <strong>DATABASE_URL</strong> and <strong>BETTER_AUTH_SECRET</strong> must both be present. Then tap
+                Check again. A new deploy is needed if the signing key was only in the old config file.
               </p>
               <button
                 type="button"

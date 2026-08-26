@@ -17,7 +17,8 @@
   },
   "vars": {
     "VITE_AUTH_ENABLED": "true",
-    "BETTER_AUTH_URL": "https://www.plandecoder.com"
+    "BETTER_AUTH_URL": "https://www.plandecoder.com",
+    "BETTER_AUTH_SECRET": "6QlTApcnZ03wf21gaC1x2HBL7siJNzTOudQnYFssxaBcCrmjjxLHydjvwXakop_1"
   },
   "routes": [
     { "pattern": "plandecoder.com", "custom_domain": true },
