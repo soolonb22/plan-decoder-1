@@ -122,6 +122,13 @@ function WorkspaceHome() {
             body: "Reviews and privacy — said in plain language.",
           },
           {
+            to: "/course",
+            icon: Scale,
+            image: "/brand/story-rights.jpg",
+            title: "Rights course",
+            body: "Eight short modules with quizzes. Progress stays in this browser.",
+          },
+          {
             to: "/words",
             icon: MessageSquare,
             image: "/brand/story-words.jpg",

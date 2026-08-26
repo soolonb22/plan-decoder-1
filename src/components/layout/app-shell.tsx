@@ -30,7 +30,7 @@ import {
   Cog,
   BadgeCheck,
   Shield,
-  Orbit,
+  GraduationCap,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "@/lib/auth/client";
@@ -46,7 +46,6 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   "/": Home,
   "/assessment": ClipboardList,
   "/guide": Compass,
-  "/companion": Orbit,
   "/wallet": FolderOpen,
   "/carer": HeartHandshake,
   "/fluctuation": Activity,
@@ -65,6 +64,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   "/goals": Target,
   "/checklist": ListChecks,
   "/rights": Scale,
+  "/course": GraduationCap,
   "/code-of-conduct": Shield,
   "/art": Scale,
   "/service-charter": BadgeCheck,

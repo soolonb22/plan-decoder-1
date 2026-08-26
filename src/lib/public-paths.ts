@@ -4,6 +4,7 @@ export const PUBLIC_PATHS = new Set([
   "/login",
   "/reset-password",
   "/rights",
+  "/course",
   "/news",
   "/glossary",
   "/funding",
@@ -29,6 +30,7 @@ export const PUBLIC_NAV = [
   { to: "/", label: "Home" },
   { to: "/assessment", label: "Practice assessment" },
   { to: "/rights", label: "Know your rights" },
+  { to: "/course", label: "Rights course" },
   { to: "/news", label: "NDIS news" },
   { to: "/glossary", label: "Glossary" },
 ] as const;

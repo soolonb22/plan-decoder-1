@@ -47,6 +47,29 @@ function RightsPage() {
       />
       <Disclaimer>{RIGHTS_DISCLAIMER}</Disclaimer>
 
+      <Card className="mt-5 border-lavender bg-primary-soft">
+        <p className="text-sm font-medium text-primary">Free interactive course</p>
+        <h2 className="mt-1 text-xl font-semibold">Know Your NDIS Rights</h2>
+        <p className="mt-2 text-sm text-muted">
+          Eight short modules (~10–14 minutes each) with a quiz in every one. Progress saves in this browser. When you
+          finish, you can download a certificate. Not the NDIA.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            to="/course"
+            className="inline-flex min-h-11 items-center rounded-full bg-primary px-4 text-sm font-medium text-primary-fg"
+          >
+            Start the course
+          </Link>
+          <a
+            href="/courses/know-your-rights.html"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-card px-4 text-sm"
+          >
+            Open full screen
+          </a>
+        </div>
+      </Card>
+
       <div className="mt-4 flex flex-wrap gap-2">
         {[
           { to: "/glossary" as const, label: "Glossary" },
