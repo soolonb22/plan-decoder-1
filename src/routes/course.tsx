@@ -1,7 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHeader } from "@/components/layout/page";
+import { createFileRoute } from "@tanstack/react-router";
+import { RightsCourse, type CourseSearch } from "@/components/rights-course";
 
 export const Route = createFileRoute("/course")({
+  validateSearch: (raw: Record<string, unknown>): CourseSearch => {
+    const x = typeof raw.x === "string" ? raw.x : undefined;
+    if (x === "x0" || x === "x1") return { x };
+    const n = Number(raw.m);
+    if (Number.isInteger(n) && n >= 0 && n <= 7) return { m: n };
+    return {};
+  },
   component: RightsCoursePage,
   head: () => ({
     meta: [
@@ -16,32 +23,6 @@ export const Route = createFileRoute("/course")({
 });
 
 function RightsCoursePage() {
-  return (
-    <div>
-      <PageHeader
-        title="Know Your NDIS Rights"
-        lede="Eight short modules with a quiz in each. Progress stays in this browser. This is education — not the NDIA, and not advice about your plan."
-      />
-      <p className="mb-4 text-sm text-muted">
-        Prefer the written cards?{" "}
-        <Link to="/rights" className="font-medium text-primary underline-offset-2 hover:underline">
-          Open Know your rights
-        </Link>
-        . You can also{" "}
-        <a className="font-medium text-primary underline-offset-2 hover:underline" href="/courses/know-your-rights.html">
-          open the course on its own page
-        </a>
-        .
-      </p>
-      <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-[var(--shadow-card)]">
-        <iframe
-          title="Know Your NDIS Rights interactive course"
-          src="/courses/know-your-rights.html"
-          className="block w-full border-0"
-          style={{ minHeight: "calc(100dvh - 11rem)", height: "78dvh" }}
-          allow="downloads"
-        />
-      </div>
-    </div>
-  );
+  const search = Route.useSearch();
+  return <RightsCourse search={search} />;
 }

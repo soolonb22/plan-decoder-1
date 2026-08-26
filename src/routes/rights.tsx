@@ -61,12 +61,6 @@ function RightsPage() {
           >
             Start the course
           </Link>
-          <a
-            href="/courses/know-your-rights.html"
-            className="inline-flex min-h-11 items-center rounded-full border border-line bg-card px-4 text-sm"
-          >
-            Open full screen
-          </a>
         </div>
       </Card>
 
