@@ -21,7 +21,29 @@ function withSecurityHeaders(response: Response) {
   });
 }
 
-const logErrors = createMiddleware().server(async ({ next }) => {
+const canonicalHost = createMiddleware({ type: "request" }).server(async ({ next, request }) => {
+  let host = "";
+  try {
+    host = new URL(request.url).hostname;
+  } catch {
+    host = "";
+  }
+  if (host === "plandecoder.com") {
+    const nextUrl = new URL(request.url);
+    nextUrl.hostname = "www.plandecoder.com";
+    nextUrl.protocol = "https:";
+    return new Response(null, {
+      status: 301,
+      headers: {
+        Location: nextUrl.toString(),
+        ...SECURITY,
+      },
+    });
+  }
+  return next();
+});
+
+const logErrors = createMiddleware({ type: "request" }).server(async ({ next }) => {
   try {
     const result = await next();
     if (result instanceof Response) return withSecurityHeaders(result);
@@ -42,5 +64,5 @@ const logErrors = createMiddleware().server(async ({ next }) => {
 });
 
 export const startInstance = createStart(() => ({
-  requestMiddleware: [logErrors],
+  requestMiddleware: [canonicalHost, logErrors],
 }));

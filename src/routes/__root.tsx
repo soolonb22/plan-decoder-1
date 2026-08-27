@@ -3,6 +3,7 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
@@ -21,6 +22,7 @@ const jsonLd = {
     {
       "@type": "WebSite",
       name: APP_NAME,
+      alternateName: ["plandecoder.com", "PlanDecoder"],
       url: SITE_URL,
       description: DESC,
       inLanguage: "en-AU",
@@ -39,24 +41,23 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: APP_NAME },
+      { title: "Plan Decoder | NDIS practice tools" },
       { name: "description", content: DESC },
       { name: "theme-color", content: "#6E2C92" },
-      { name: "robots", content: "index,follow" },
+      { name: "robots", content: "index,follow,max-image-preview:large" },
+      { name: "googlebot", content: "index,follow" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: APP_NAME },
-      { property: "og:title", content: APP_NAME },
+      { property: "og:title", content: "Plan Decoder | NDIS practice tools" },
       { property: "og:description", content: DESC },
-      { property: "og:url", content: SITE_URL },
       { property: "og:image", content: `${SITE_URL}/og.jpg` },
       { property: "og:locale", content: "en_AU" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: APP_NAME },
+      { name: "twitter:title", content: "Plan Decoder | NDIS practice tools" },
       { name: "twitter:description", content: DESC },
       { name: "twitter:image", content: `${SITE_URL}/og.jpg` },
     ],
     links: [
-      { rel: "canonical", href: SITE_URL },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -72,11 +73,20 @@ export const Route = createRootRoute({
   component: RootDocument,
 });
 
+function canonicalFor(pathname: string) {
+  if (pathname === "/") return SITE_URL;
+  return `${SITE_URL}${pathname}`;
+}
+
 function RootDocument() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const canonical = canonicalFor(pathname);
   return (
     <html lang="en-AU" className="antialiased" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <link rel="canonical" href={canonical} />
+        <meta property="og:url" content={canonical} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className="bg-paper text-ink">

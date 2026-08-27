@@ -9,15 +9,21 @@ import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 export function MarketingHome() {
   return (
     <div>
+      <noscript>
+        <p>
+          Plan Decoder at plandecoder.com is an independent NDIS practice tool. Open the practice assessment, Know your
+          rights course, NDIS news, and glossary without an account. Not the NDIA. Not a diagnosis.
+        </p>
+      </noscript>
       <section className="welcome-row">
         <OllieMark className="size-14 shrink-0" />
         <div>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Calm NDIS practice tools for families, carers, and coordinators.
+            Plan Decoder — calm NDIS practice tools
           </h1>
           <p className="mt-2 max-w-xl text-sm text-muted sm:text-base">
-            Rehearse functional questions, keep evidence on this device, and read rights in plain language. Plan Decoder
-            is not the NDIA and does not decide eligibility or funding.
+            For families, carers, and coordinators. Rehearse functional questions, keep evidence on this device, and
+            read rights in plain language. Not the NDIA. Does not decide eligibility or funding.
           </p>
         </div>
       </section>
