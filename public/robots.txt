@@ -9,6 +9,7 @@ Allow: /art
 Allow: /code-of-conduct
 Allow: /service-charter
 Allow: /ndis-changes
+Allow: /about
 Disallow: /login
 Disallow: /privacy
 Disallow: /api/

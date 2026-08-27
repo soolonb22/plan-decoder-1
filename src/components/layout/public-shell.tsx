@@ -51,7 +51,34 @@ export function PublicShell({ children }: { children: ReactNode }) {
         {children}
       </main>
       <footer className="border-t border-line px-4 py-6 text-center text-xs text-muted">
-        Plan Decoder is independent. Not the NDIA. Not a diagnosis. Not legal advice.
+        <p>
+          <a className="font-medium text-ink" href="https://www.plandecoder.com/">
+            Plan Decoder
+          </a>{" "}
+          · www.plandecoder.com · Australia · independent NDIS practice tools. Not the NDIA. Not a diagnosis. Not legal
+          advice.
+        </p>
+        <p className="mt-2">
+          <Link to="/about" className="underline-offset-2 hover:underline">
+            About
+          </Link>
+          {" · "}
+          <Link to="/assessment" search={{ tab: "about" }} className="underline-offset-2 hover:underline">
+            Practice assessment
+          </Link>
+          {" · "}
+          <Link to="/rights" className="underline-offset-2 hover:underline">
+            Know your rights
+          </Link>
+          {" · "}
+          <Link to="/news" className="underline-offset-2 hover:underline">
+            News
+          </Link>
+          {" · "}
+          <Link to="/glossary" className="underline-offset-2 hover:underline">
+            Glossary
+          </Link>
+        </p>
       </footer>
     </div>
   );

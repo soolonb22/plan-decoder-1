@@ -13,6 +13,7 @@ export const PUBLIC_PATHS = new Set([
   "/service-charter",
   "/ndis-changes",
   "/assessment",
+  "/about",
   "/sitemap.xml",
   "/health",
   "/get-files",

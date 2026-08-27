@@ -5,14 +5,17 @@ import { Card } from "@/components/ui/card";
 import { LiveNewsStrip } from "@/components/live-news";
 import { OllieMark } from "@/components/mark";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
+import { HOME_FAQS, faqJsonLd } from "@/lib/seo-faq";
 
 export function MarketingHome() {
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }} />
       <noscript>
         <p>
-          Plan Decoder at plandecoder.com is an independent NDIS practice tool. Open the practice assessment, Know your
-          rights course, NDIS news, and glossary without an account. Not the NDIA. Not a diagnosis.
+          Plan Decoder at https://www.plandecoder.com is an independent NDIS practice tool. Open the practice
+          assessment, Know your rights course, NDIS news, and glossary without an account. Not the NDIA. Not a
+          diagnosis.
         </p>
       </noscript>
       <section className="welcome-row">
@@ -22,8 +25,8 @@ export function MarketingHome() {
             Plan Decoder — calm NDIS practice tools
           </h1>
           <p className="mt-2 max-w-xl text-sm text-muted sm:text-base">
-            For families, carers, and coordinators. Rehearse functional questions, keep evidence on this device, and
-            read rights in plain language. Not the NDIA. Does not decide eligibility or funding.
+            For families, carers, and coordinators in Australia. Rehearse functional questions, keep evidence on this
+            device, and read rights in plain language. Not the NDIA. Does not decide eligibility or funding.
           </p>
         </div>
       </section>
@@ -33,7 +36,12 @@ export function MarketingHome() {
           <Link to="/login">Create a free account</Link>
         </Button>
         <Button variant="secondary" asChild>
-          <Link to="/assessment" search={{ tab: "about" }}>See the practice assessment</Link>
+          <Link to="/assessment" search={{ tab: "about" }}>
+            See the practice assessment
+          </Link>
+        </Button>
+        <Button variant="ghost" asChild>
+          <Link to="/rights">Know your NDIS rights</Link>
         </Button>
       </div>
 
@@ -80,6 +88,16 @@ export function MarketingHome() {
       </div>
 
       <LiveNewsStrip limit={3} />
+
+      <h2 className="mb-3 mt-10 text-lg font-semibold">Common questions</h2>
+      <div className="space-y-3">
+        {HOME_FAQS.map((item) => (
+          <Card key={item.q}>
+            <h3 className="font-semibold">{item.q}</h3>
+            <p className="mt-2 text-sm text-muted">{item.a}</p>
+          </Card>
+        ))}
+      </div>
 
       <Card className="mt-8">
         <p className="font-semibold">Please read this first</p>

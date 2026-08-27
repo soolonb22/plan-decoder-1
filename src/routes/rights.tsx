@@ -12,7 +12,7 @@ export const Route = createFileRoute("/rights")({
   component: RightsPage,
   head: () => ({
     meta: [
-      { title: "Know your rights · Plan Decoder" },
+      { title: "Know your NDIS rights — free interactive course | Plan Decoder" },
       {
         name: "description",
         content:
