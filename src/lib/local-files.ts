@@ -83,11 +83,6 @@ export async function dataUrlToBlob(dataUrl: string): Promise<Blob> {
   return res.blob();
 }
 
-export function fileKindAllowed(file: File): boolean {
-  const n = file.name.toLowerCase();
-  const okExt = /\.(pdf|png|jpe?g|webp|gif|txt|md|doc|docx|rtf|csv)$/i.test(n);
-  const okType = /^(image\/|application\/pdf|text\/|application\/msword|application\/vnd\.openxmlformats)/.test(
-    file.type || "application/octet-stream",
-  );
-  return okExt || okType;
+export function fileKindAllowed(_file: File): boolean {
+  return true;
 }

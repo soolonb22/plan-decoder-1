@@ -170,7 +170,7 @@ function WalletPage() {
     const meta = [];
     for (const file of files) {
       if (!fileKindAllowed(file)) {
-        setFileNote("Use a PDF, photo, or Word/text file. Nothing executable.");
+        setFileNote("Could not use that file.");
         continue;
       }
       try {
@@ -340,7 +340,7 @@ function WalletPage() {
         ref={uploadRef}
         type="file"
         className="sr-only"
-        accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.doc,.docx,.rtf,.csv,image/*,application/pdf"
+        multiple
         onChange={(e) => {
           const list = [...(e.target.files ?? [])];
           e.target.value = "";
@@ -630,7 +630,7 @@ function WalletPage() {
               ref={slipUploadRef}
               type="file"
               className="sr-only"
-              accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.doc,.docx,.rtf,.csv,image/*,application/pdf"
+              multiple
               onChange={(e) => {
                 const list = [...(e.target.files ?? [])];
                 e.target.value = "";
@@ -648,7 +648,7 @@ function WalletPage() {
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 text-xs text-muted">PDF, photo, or Word. Max 8 MB. Not sent anywhere.</p>
+              <p className="mt-2 text-xs text-muted">Any file type. Max 8 MB each. Stays on this device. Not sent away.</p>
             )}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -800,7 +800,7 @@ function WalletPage() {
                       <Button size="sm" variant="secondary" onClick={() => {
                         const input = document.createElement("input");
                         input.type = "file";
-                        input.accept = ".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.doc,.docx,image/*,application/pdf";
+                        input.multiple = true;
                         input.onchange = () => {
                           const list = [...(input.files ?? [])];
                           if (list.length) void attachToItem(item.id, list);
