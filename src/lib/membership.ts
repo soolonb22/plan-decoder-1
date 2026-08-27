@@ -38,13 +38,13 @@ export const PLANS = [
     cadence: "always",
     blurb: "Rights, language you can trust, and a calm place to start.",
     features: [
-      "Know Your Rights",
       "Glossary",
       "NDIS News",
       "See what the practice assessment covers",
       "Basic support diary (up to 10 entries)",
       "Plan understanding checklist",
       "Guided navigation (intro)",
+      "Know Your Rights course as a visitor (lead-in)",
     ],
   },
   {
@@ -61,7 +61,7 @@ export const PLANS = [
       "Evidence Wallet",
       "Functional language builder",
       "Impact statements",
-      "Advocacy scripts",
+      "Know Your Rights course in the app",
       "Fluctuation patterns",
       "Carer impact log",
       "Meeting and appointment prep",

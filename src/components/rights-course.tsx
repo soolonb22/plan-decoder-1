@@ -4,6 +4,8 @@ import course from "@/lib/content/rights-course-data.json";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { MembershipGate } from "@/components/layout/page";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { cn } from "@/lib/utils";
 
 const PROGRESS_KEY = "ndis-course-progress-v1";
@@ -34,6 +36,18 @@ function saveDone(set: Set<number>) {
 export type CourseSearch = { m?: number; x?: string };
 
 export function RightsCourse({ search }: { search: CourseSearch }) {
+  const { user } = useCurrentUserState();
+  if (user) {
+    return (
+      <MembershipGate need="core">
+        <RightsCourseBody search={search} signedIn />
+      </MembershipGate>
+    );
+  }
+  return <RightsCourseBody search={search} signedIn={false} />;
+}
+
+function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn: boolean }) {
   const navigate = useNavigate({ from: "/rights" });
   const [done, setDone] = useState<Set<number>>(new Set());
   const [certOpen, setCertOpen] = useState(false);
@@ -134,13 +148,18 @@ export function RightsCourse({ search }: { search: CourseSearch }) {
     <div>
       <section className="rounded-3xl bg-primary px-5 py-7 text-primary-fg shadow-[var(--shadow-card)] sm:px-8">
         <p className="text-xs font-semibold uppercase tracking-widest text-lavender">
-          Free interactive course
+          {signedIn ? "Core membership" : "Free to try · lead-in course"}
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Know Your NDIS Rights</h1>
         <p className="mt-2 max-w-xl text-sm text-lavender sm:text-base">
           Eight short modules. A quiz in each. Progress stays in this browser. Not the NDIA, and not
           advice about your plan.
         </p>
+        {!signedIn ? (
+          <p className="mt-3 max-w-xl text-sm text-lavender">
+            Try it without an account. Inside the signed-in app this course is part of Core ($12 / month).
+          </p>
+        ) : null}
         <div className="mt-5">
           <div className="mb-1 flex justify-between text-xs font-medium">
             <span>
@@ -170,6 +189,11 @@ export function RightsCourse({ search }: { search: CourseSearch }) {
           {done.size === MODULES.length ? (
             <Button variant="secondary" onClick={() => setCertOpen(true)}>
               Get my certificate
+            </Button>
+          ) : null}
+          {!signedIn ? (
+            <Button variant="ghost" className="text-lavender" asChild>
+              <Link to="/login">Create an account</Link>
             </Button>
           ) : null}
           {done.size > 0 ? (
