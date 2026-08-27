@@ -35,6 +35,39 @@ function saveDone(set: Set<number>) {
 
 export type CourseSearch = { m?: number; x?: string };
 
+const PREVIEW_MODULE = 0;
+
+function isPreviewLocked(signedIn: boolean, moduleIdx: number | null, extra: boolean) {
+  if (signedIn) return false;
+  if (extra) return true;
+  if (moduleIdx === null) return false;
+  return moduleIdx > PREVIEW_MODULE;
+}
+
+function PreviewWall({ onHome }: { onHome: () => void }) {
+  return (
+    <Card className="mx-auto max-w-xl">
+      <p className="text-sm font-medium text-primary">Preview</p>
+      <h2 className="mt-1 text-xl font-semibold">That part is in Core</h2>
+      <p className="mt-2 text-sm text-muted">
+        Visitors can try Module 0 — Getting In. The other seven modules, Easy Read, the in-course glossary, and the
+        certificate open with Core membership ($12 / month) after you sign in.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button asChild>
+          <Link to="/login">Create an account</Link>
+        </Button>
+        <Button variant="secondary" asChild>
+          <Link to="/membership">See membership</Link>
+        </Button>
+        <Button variant="ghost" onClick={onHome}>
+          Back to Module 0
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
 export function RightsCourse({ search }: { search: CourseSearch }) {
   const { user } = useCurrentUserState();
   if (user) {
@@ -77,9 +110,9 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
   }
 
   useEffect(() => {
-    if (moduleIdx !== null) mark(moduleIdx);
+    if (moduleIdx !== null && !isPreviewLocked(signedIn, moduleIdx, false)) mark(moduleIdx);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [moduleIdx]);
+  }, [moduleIdx, signedIn]);
 
   function openModule(i: number) {
     void navigate({ search: { m: i } });
@@ -87,9 +120,18 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
 
   const pct = Math.round((done.size / MODULES.length) * 100);
   const nextUnfinished = useMemo(() => {
+    if (!signedIn) return PREVIEW_MODULE;
     for (let i = 0; i < MODULES.length; i++) if (!done.has(i)) return i;
     return -1;
-  }, [done]);
+  }, [done, signedIn]);
+
+  if (isPreviewLocked(signedIn, moduleIdx, Boolean(extra))) {
+    return (
+      <div className="py-6">
+        <PreviewWall onHome={() => void navigate({ to: "/rights", search: { m: PREVIEW_MODULE } })} />
+      </div>
+    );
+  }
 
   if (reading) {
     const isExtra = Boolean(extra);
@@ -136,7 +178,11 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
                 else void navigate({ to: "/rights" });
               }}
             >
-              {moduleIdx < MODULES.length - 1 ? `Next: ${MODULES[moduleIdx + 1].title}` : "Finish"}
+              {!signedIn && moduleIdx === PREVIEW_MODULE
+                ? "See the rest in Core"
+                : moduleIdx < MODULES.length - 1
+                  ? `Next: ${MODULES[moduleIdx + 1].title}`
+                  : "Finish"}
             </Button>
           </div>
         ) : null}
@@ -148,18 +194,14 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
     <div>
       <section className="rounded-3xl bg-primary px-5 py-7 text-primary-fg shadow-[var(--shadow-card)] sm:px-8">
         <p className="text-xs font-semibold uppercase tracking-widest text-lavender">
-          {signedIn ? "Core membership" : "Free to try · lead-in course"}
+          {signedIn ? "Core membership" : "Free preview"}
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Know Your NDIS Rights</h1>
         <p className="mt-2 max-w-xl text-sm text-lavender sm:text-base">
-          Eight short modules. A quiz in each. Progress stays in this browser. Not the NDIA, and not
-          advice about your plan.
+          {signedIn
+            ? "Eight short modules. A quiz in each. Progress stays in this browser. Not the NDIA, and not advice about your plan."
+            : "Try Module 0 — Getting In. See the other seven titles below. Full course, Easy Read, and certificate are in Core after you sign in."}
         </p>
-        {!signedIn ? (
-          <p className="mt-3 max-w-xl text-sm text-lavender">
-            Try it without an account. Inside the signed-in app this course is part of Core ($12 / month).
-          </p>
-        ) : null}
         <div className="mt-5">
           <div className="mb-1 flex justify-between text-xs font-medium">
             <span>
@@ -181,12 +223,14 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
             onClick={() => openModule(nextUnfinished === -1 ? 0 : nextUnfinished)}
           >
             {done.size === 0
-              ? "Start from the beginning"
+              ? signedIn
+                ? "Start from the beginning"
+                : "Try Module 0"
               : nextUnfinished === -1
                 ? "Review from the beginning"
                 : `Continue: ${MODULES[nextUnfinished].title}`}
           </Button>
-          {done.size === MODULES.length ? (
+          {signedIn && done.size === MODULES.length ? (
             <Button variant="secondary" onClick={() => setCertOpen(true)}>
               Get my certificate
             </Button>
@@ -218,6 +262,7 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
       <div className="grid gap-3 sm:grid-cols-2">
         {MODULES.map((m, i) => {
           const complete = done.has(i);
+          const locked = !signedIn && i > PREVIEW_MODULE;
           return (
             <button
               key={m.title}
@@ -238,12 +283,14 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
                     complete ? "bg-leaf text-primary-fg" : "bg-paper-2 text-muted",
                   )}
                 >
-                  {complete ? "✓" : i}
+                  {complete ? "✓" : locked ? "–" : i}
                 </span>
               </div>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-primary">Module {i}</p>
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-primary">
+                {locked ? "Core" : `Module ${i}`}
+              </p>
               <p className="font-semibold">{m.title}</p>
-              <p className="mt-1 text-sm text-muted">{m.sub}</p>
+              <p className="mt-1 text-sm text-muted">{locked ? "Included with membership." : m.sub}</p>
             </button>
           );
         })}
@@ -257,7 +304,7 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
           <button
             key={id}
             type="button"
-            onClick={() => void navigate({ search: { x: id } })}
+            onClick={() => (signedIn ? void navigate({ search: { x: id } }) : openModule(1))}
             className="rounded-2xl border border-line bg-card p-4 text-left shadow-[var(--shadow-card)] hover:border-line-strong hover:bg-primary-soft"
           >
             <p className="text-2xl" aria-hidden>
