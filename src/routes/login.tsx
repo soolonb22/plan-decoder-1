@@ -29,7 +29,7 @@ export const Route = createFileRoute("/login")({
 function Login() {
   const { create } = Route.useSearch();
   const { user, isPending } = useCurrentUserState();
-  const [mode, setMode] = useState<"in" | "up" | "reset">(create === "1" ? "up" : "in");
+  const [mode, setMode] = useState<"in" | "up" | "reset">(create === 1 ? "up" : "in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -63,7 +63,7 @@ function Login() {
   }, []);
 
   useEffect(() => {
-    if (create === "1") setMode("up");
+    if (create === 1) setMode("up");
   }, [create]);
 
   useEffect(() => {

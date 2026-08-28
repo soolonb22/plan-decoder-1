@@ -38,4 +38,4 @@ export const PUBLIC_NAV = [
 ] as const;
 
 /** Open /login on the Create tab so CTA copy matches the form. */
-export const LOGIN_CREATE_SEARCH = { create: "1" } as const;
+export const LOGIN_CREATE_SEARCH = { create: 1 } as const;

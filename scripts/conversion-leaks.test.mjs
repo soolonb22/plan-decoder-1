@@ -31,12 +31,12 @@ test("pricing page uses billing constants instead of a second price list", () =>
 test("login opens create mode from query param and has no zip download", () => {
   const login = read("src/routes/login.tsx");
   assert.match(login, /parseLoginSearch/);
-  assert.match(login, /create === "1"/);
+  assert.match(login, /create === 1/);
   assert.match(login, /Create a free account/);
   assert.doesNotMatch(login, /github\.com\/.*archive.*\.zip/);
   assert.doesNotMatch(login, /Wrangler/);
   const search = read("src/lib/login-search.ts");
-  assert.match(search, /create\?: "1"/);
+  assert.match(search, /create\?: 1/);
 });
 
 test("production login hides Worker secret setup behind a local-host check", () => {
