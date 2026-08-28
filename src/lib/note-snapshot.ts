@@ -19,6 +19,8 @@ export const SYNC_KEYS = [
   "schoolNotes",
   "claims",
   "providers",
+  "navigatorPlaces",
+  "navigatorGoals",
   "whodas",
   "drafts",
   "lastGuide",

@@ -30,6 +30,7 @@ import {
   Cog,
   BadgeCheck,
   Shield,
+  MapPin,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "@/lib/auth/client";
@@ -45,6 +46,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   "/": Home,
   "/assessment": ClipboardList,
   "/guide": Compass,
+  "/navigator": MapPin,
   "/wallet": FolderOpen,
   "/carer": HeartHandshake,
   "/fluctuation": Activity,

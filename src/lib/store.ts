@@ -18,6 +18,8 @@ import type {
   MeetingPrep,
   Membership,
   Provider,
+  NavigatorPlace,
+  NavigatorGoal,
   Report,
   Role,
   SavedScript,
@@ -68,6 +70,8 @@ const initial: AppState = {
   schoolNotes: [],
   claims: [],
   providers: [],
+  navigatorPlaces: [],
+  navigatorGoals: [],
   whodas: [],
   drafts: [],
   lastGuide: "",
@@ -116,6 +120,10 @@ type Actions = {
   removeClaim: (id: string) => void;
   upsertProvider: (e: Omit<Provider, "id" | "clientId"> & { id?: string; clientId?: string }) => string;
   removeProvider: (id: string) => void;
+  upsertNavigatorPlace: (e: Omit<NavigatorPlace, "id" | "clientId" | "createdAt"> & { id?: string; clientId?: string; createdAt?: string }) => string;
+  removeNavigatorPlace: (id: string) => void;
+  upsertNavigatorGoal: (e: Omit<NavigatorGoal, "id" | "clientId" | "createdAt"> & { id?: string; clientId?: string; createdAt?: string }) => string;
+  removeNavigatorGoal: (id: string) => void;
   saveWhodas: (e: Omit<WhodasRecord, "id" | "clientId"> & { clientId?: string }) => string;
   saveDraft: (e: Omit<GuidedDraft, "id" | "createdAt" | "clientId"> & { clientId?: string }) => string;
   upsertAssessment: (e: Partial<AssessmentDraft> & { id?: string }) => string;
@@ -383,6 +391,58 @@ export const useOllie = create<AppState & Actions>()(
         return id;
       },
       removeProvider: (id) => set((s) => ({ providers: s.providers.filter((x) => x.id !== id) })),
+      upsertNavigatorPlace: (e) => {
+        const id = e.id ?? uid("navp");
+        set((s) => {
+          const row: NavigatorPlace = {
+            id,
+            clientId: e.clientId || s.activeClientId,
+            name: e.name,
+            kind: e.kind,
+            suburb: e.suburb,
+            need: e.need,
+            welcome: e.welcome,
+            access: e.access,
+            sensory: e.sensory,
+            honesty: e.honesty,
+            goBack: e.goBack,
+            notes: e.notes,
+            sourceUrl: e.sourceUrl,
+            createdAt: e.createdAt ?? new Date().toISOString(),
+          };
+          const exists = s.navigatorPlaces.some((x) => x.id === id);
+          return {
+            navigatorPlaces: exists
+              ? s.navigatorPlaces.map((x) => (x.id === id ? { ...x, ...row } : x))
+              : [row, ...s.navigatorPlaces],
+          };
+        });
+        return id;
+      },
+      removeNavigatorPlace: (id) => set((s) => ({ navigatorPlaces: s.navigatorPlaces.filter((x) => x.id !== id) })),
+      upsertNavigatorGoal: (e) => {
+        const id = e.id ?? uid("navg");
+        set((s) => {
+          const row: NavigatorGoal = {
+            id,
+            clientId: e.clientId || s.activeClientId,
+            title: e.title,
+            need: e.need,
+            area: e.area,
+            query: e.query,
+            done: e.done,
+            createdAt: e.createdAt ?? new Date().toISOString(),
+          };
+          const exists = s.navigatorGoals.some((x) => x.id === id);
+          return {
+            navigatorGoals: exists
+              ? s.navigatorGoals.map((x) => (x.id === id ? { ...x, ...row } : x))
+              : [row, ...s.navigatorGoals],
+          };
+        });
+        return id;
+      },
+      removeNavigatorGoal: (id) => set((s) => ({ navigatorGoals: s.navigatorGoals.filter((x) => x.id !== id) })),
       saveWhodas: (e) => {
         const id = uid("who");
         set((s) => ({
@@ -595,6 +655,8 @@ export const useOllie = create<AppState & Actions>()(
           planRead: p.planRead ?? current.planRead ?? null,
           claims: p.claims ?? current.claims ?? [],
           providers: p.providers ?? current.providers ?? [],
+          navigatorPlaces: p.navigatorPlaces ?? current.navigatorPlaces ?? [],
+          navigatorGoals: p.navigatorGoals ?? current.navigatorGoals ?? [],
           clients: (p.clients ?? current.clients).map((c) => ({
             ...c,
             letterReceived: c.letterReceived ?? "",

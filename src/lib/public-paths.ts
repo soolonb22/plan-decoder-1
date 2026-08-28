@@ -15,6 +15,7 @@ export const PUBLIC_PATHS = new Set([
   "/assessment",
   "/about",
   "/pricing",
+  "/navigator",
   "/sitemap.xml",
   "/health",
   "/get-files",
@@ -31,6 +32,7 @@ export const SITE_URL = "https://www.plandecoder.com";
 export const PUBLIC_NAV = [
   { to: "/", label: "Home" },
   { to: "/assessment", label: "Practice assessment" },
+  { to: "/navigator", label: "Navigator" },
   { to: "/rights", label: "Know your rights" },
   { to: "/news", label: "NDIS news" },
   { to: "/glossary", label: "Glossary" },

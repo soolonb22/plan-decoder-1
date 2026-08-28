@@ -11,6 +11,7 @@ Allow: /service-charter
 Allow: /ndis-changes
 Allow: /about
 Allow: /pricing
+Allow: /navigator
 Disallow: /login
 Disallow: /privacy
 Disallow: /api/

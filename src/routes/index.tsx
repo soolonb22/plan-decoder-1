@@ -101,6 +101,13 @@ function WorkspaceHome() {
             body: "Tick questions about daily life. Practice only — not the NDIA.",
           },
           {
+            to: "/navigator",
+            icon: Compass,
+            image: "/brand/story-path.jpg",
+            title: "Community navigator",
+            body: "Find health, housing, and local doors if NDIS is not the whole picture.",
+          },
+          {
             to: "/guide",
             icon: Compass,
             image: "/brand/story-path.jpg",

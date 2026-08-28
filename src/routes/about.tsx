@@ -35,6 +35,12 @@ function AboutPage() {
       </Card>
       <ul className="mt-5 space-y-2 text-sm">
         <li>
+          <Link className="font-medium text-primary underline-offset-2 hover:underline" to="/navigator">
+            Community navigator
+          </Link>{" "}
+          — find mainstream and local doors, with or without NDIS.
+        </li>
+        <li>
           <Link className="font-medium text-primary underline-offset-2 hover:underline" to="/assessment">
             Practice assessment
           </Link>{" "}
