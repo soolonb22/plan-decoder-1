@@ -172,6 +172,23 @@ export type Provider = {
   notes: string;
 };
 
+export type NavigatorPlace = {
+  id: string;
+  clientId: string;
+  name: string;
+  kind: string;
+  suburb: string;
+  need: string;
+  welcome: number;
+  access: number;
+  sensory: number;
+  honesty: number;
+  goBack: number;
+  notes: string;
+  sourceUrl: string;
+  createdAt: string;
+};
+
 export type ClaimStatus = "quote" | "invoice" | "claimed" | "paid";
 
 export type ClaimItem = {
@@ -236,6 +253,7 @@ export type AppState = {
   schoolNotes: SchoolNote[];
   claims: ClaimItem[];
   providers: Provider[];
+  navigatorPlaces: NavigatorPlace[];
   whodas: WhodasRecord[];
   drafts: GuidedDraft[];
   lastGuide: string;

@@ -63,6 +63,10 @@ export function PublicShell({ children }: { children: ReactNode }) {
             About
           </Link>
           {" · "}
+          <Link to="/navigator" search={{ tab: "walk" }} className="underline-offset-2 hover:underline">
+            Navigator
+          </Link>
+          {" · "}
           <Link to="/assessment" search={{ tab: "about" }} className="underline-offset-2 hover:underline">
             Practice assessment
           </Link>

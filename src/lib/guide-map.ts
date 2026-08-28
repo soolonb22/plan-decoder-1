@@ -3,7 +3,7 @@ export type GuideStation = {
   title: string;
   easy: string;
   caption: string;
-  to: "/" | "/assessment" | "/wallet" | "/rights" | "/membership";
+  to: "/" | "/assessment" | "/wallet" | "/rights" | "/membership" | "/navigator";
   color: string;
 };
 
@@ -25,6 +25,15 @@ export const GUIDE_STATIONS: GuideStation[] = [
       "The practice assessment asks about daily life, supports, and whether difficulty has lasted. You can skip, save, or delete.",
     to: "/assessment",
     color: "#8bc541",
+  },
+  {
+    id: "navigator",
+    title: "Find other supports",
+    easy: "If NDIS is not the door, we still walk you to the next one.",
+    caption:
+      "The community navigator points to health, housing, carers, and local groups. It is not an official NDIS Navigator.",
+    to: "/navigator",
+    color: "#3d7a6a",
   },
   {
     id: "notes",

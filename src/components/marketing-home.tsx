@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ClipboardList, Scale, Newspaper, BookMarked } from "lucide-react";
+import { ClipboardList, Scale, Newspaper, BookMarked, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LiveNewsStrip } from "@/components/live-news";
@@ -51,10 +51,10 @@ export function MarketingHome() {
       <div className="grid gap-3 sm:grid-cols-2">
         {[
           {
-            to: "/assessment" as const,
-            icon: ClipboardList,
-            title: "Practice assessment",
-            body: "WHODAS-inspired rehearsal. Not I-CAN. Not a diagnosis.",
+            to: "/navigator" as const,
+            icon: MapPin,
+            title: "Community navigator",
+            body: "Find health, housing, and local doors — with or without NDIS. Not the official Navigator.",
           },
           {
             to: "/rights" as const,

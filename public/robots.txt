@@ -10,6 +10,7 @@ Allow: /code-of-conduct
 Allow: /service-charter
 Allow: /ndis-changes
 Allow: /about
+Allow: /navigator
 Disallow: /login
 Disallow: /privacy
 Disallow: /api/

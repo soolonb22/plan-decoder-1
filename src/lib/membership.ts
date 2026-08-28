@@ -38,6 +38,7 @@ export const PLANS = [
     cadence: "always",
     blurb: "Rights, language you can trust, and a calm place to start.",
     features: [
+      "Community navigator (mainstream and local doors)",
       "Glossary",
       "NDIS News",
       "See what the practice assessment covers",
