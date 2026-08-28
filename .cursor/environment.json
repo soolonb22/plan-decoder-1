@@ -1,0 +1,11 @@
+{
+  "name": "Plan Decoder",
+  "install": "npm ci",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "npm run dev"
+    }
+  ],
+  "ports": [8080]
+}
