@@ -256,3 +256,53 @@ export const FUNDING_CHANGE_STEPS = [
 export function needsByIds(ids: NavigatorNeedId[]) {
   return NEEDS.filter((n) => ids.includes(n.id));
 }
+
+export const SMALL_GOALS: {
+  id: string;
+  title: string;
+  lede: string;
+  need: NavigatorNeedId;
+  query: string;
+}[] = [
+  { id: "gp", title: "See a GP who has time", lede: "A longer appointment. Not a rush.", need: "health", query: "bulk billing GP" },
+  { id: "mental", title: "Find someone to talk to", lede: "A counsellor, Head to Health, or a GP mental health plan.", need: "mental-health", query: "bulk billing psychologist OR mental health service" },
+  { id: "group", title: "Try one local group once", lede: "Library, art, sport, or a quiet club.", need: "community", query: "community centre neighbourhood house library" },
+  { id: "home", title: "Get a little help at home", lede: "Meals, cleaning, or personal care — council or community first.", need: "daily", query: "community care home help meals on wheels" },
+  { id: "bus", title: "Work out how I get there", lede: "Concession, community transport, or an accessible taxi.", need: "transport", query: "community transport accessible taxi" },
+  { id: "house", title: "Ask about housing", lede: "A housing service, not a promise of a house.", need: "housing", query: "community housing homelessness service" },
+  { id: "money", title: "Check payments and bills", lede: "Centrelink, concessions, or free money help.", need: "money", query: "financial counselling Centrelink service centre" },
+  { id: "job", title: "Ask about work support", lede: "JobAccess or a Disability Employment Service.", need: "work", query: "Disability Employment Service JobAccess" },
+  { id: "school", title: "Name the school or TAFE contact", lede: "Disability liaison or inclusion teacher.", need: "learning", query: "TAFE disability support school" },
+  { id: "carer", title: "Get carer support", lede: "Carer Gateway — a break or someone who gets it.", need: "carers", query: "carer support respite" },
+  { id: "kids", title: "Find help for a child", lede: "Child health, early childhood, or school inclusion.", need: "kids", query: "child health early intervention" },
+  { id: "safe", title: "Make a safety plan", lede: "Commission, advocate, or 1800RESPECT if you need it.", need: "safety", query: "disability advocate" },
+];
+
+export type LocalDoor = { name: string; href: string; why: string };
+
+export function doorsForGoal(area: string, query: string, need: NavigatorNeedId): LocalDoor[] {
+  const place = area.trim() || "Australia";
+  const maps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${query} near ${place} Australia`)}`;
+  const dir = `https://www.mycommunitydirectory.com.au/search?search_term=${encodeURIComponent(query)}&location=${encodeURIComponent(place)}`;
+  const izzy = `https://askizzy.org.au`;
+  const needDoors = NEEDS.find((n) => n.id === need)?.doors ?? [];
+  const local: LocalDoor[] = [
+    {
+      name: `Near ${place} — map search`,
+      href: maps,
+      why: "Shows what is nearby. We do not vet these listings. Check hours, access, and cost yourself.",
+    },
+    {
+      name: "My Community Directory",
+      href: dir,
+      why: "Community groups and services by area.",
+    },
+    {
+      name: "Ask Izzy",
+      href: izzy,
+      why: `Type ${place} on Ask Izzy for free local help (housing, food, health).`,
+    },
+  ];
+  return [...local, ...needDoors];
+}
+

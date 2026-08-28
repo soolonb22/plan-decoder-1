@@ -172,6 +172,17 @@ export type Provider = {
   notes: string;
 };
 
+export type NavigatorGoal = {
+  id: string;
+  clientId: string;
+  title: string;
+  need: string;
+  area: string;
+  query: string;
+  done: boolean;
+  createdAt: string;
+};
+
 export type NavigatorPlace = {
   id: string;
   clientId: string;
@@ -254,6 +265,7 @@ export type AppState = {
   claims: ClaimItem[];
   providers: Provider[];
   navigatorPlaces: NavigatorPlace[];
+  navigatorGoals: NavigatorGoal[];
   whodas: WhodasRecord[];
   drafts: GuidedDraft[];
   lastGuide: string;

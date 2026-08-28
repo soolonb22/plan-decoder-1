@@ -20,6 +20,7 @@ export const SYNC_KEYS = [
   "claims",
   "providers",
   "navigatorPlaces",
+  "navigatorGoals",
   "whodas",
   "drafts",
   "lastGuide",

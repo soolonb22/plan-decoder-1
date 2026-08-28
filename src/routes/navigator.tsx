@@ -5,8 +5,9 @@ import {
   FUNDING_CHANGE_STEPS,
   NAVIGATOR_DISCLAIMER,
   NEEDS,
+  SMALL_GOALS,
   SITUATIONS,
-  needsByIds,
+  doorsForGoal,
   type NavigatorNeedId,
   type NavigatorSituationId,
 } from "@/lib/content/navigator";
@@ -18,9 +19,9 @@ import { Disclaimer, PageHeader } from "@/components/layout/page";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/navigator")({
-  validateSearch: (raw: Record<string, unknown>): { tab: "walk" | "places" | "change" } => {
+  validateSearch: (raw: Record<string, unknown>): { tab: "walk" | "places" | "change" | "goals" } => {
     const tab = String(raw.tab ?? "");
-    if (tab === "places" || tab === "change") return { tab };
+    if (tab === "places" || tab === "change" || tab === "goals") return { tab };
     return { tab: "walk" };
   },
   component: NavigatorPage,
@@ -38,6 +39,7 @@ export const Route = createFileRoute("/navigator")({
 
 const TABS = [
   { id: "walk" as const, label: "Walk with me" },
+  { id: "goals" as const, label: "My small goals" },
   { id: "change" as const, label: "If funding changed" },
   { id: "places" as const, label: "My places" },
 ];
@@ -48,7 +50,7 @@ function NavigatorPage() {
     <div>
       <PageHeader
         title="Community navigator"
-        lede="A personal guide to the next door — NDIS, mainstream, or community. You are not meant to do this alone."
+        lede="Pick a few small goals. We will suggest supports near you. Not an official NDIS Navigator."
         picture="/brand/story-path.jpg"
       />
       <Disclaimer>{NAVIGATOR_DISCLAIMER}</Disclaimer>
@@ -70,6 +72,7 @@ function NavigatorPage() {
         ))}
       </div>
       {tab === "walk" ? <WalkPanel /> : null}
+      {tab === "goals" ? <GoalsPanel /> : null}
       {tab === "change" ? <ChangePanel /> : null}
       {tab === "places" ? <PlacesPanel /> : null}
     </div>
@@ -77,18 +80,44 @@ function NavigatorPage() {
 }
 
 function WalkPanel() {
+  const saveGoal = useOllie((s) => s.upsertNavigatorGoal);
   const [situation, setSituation] = useState<NavigatorSituationId | "">("");
-  const [picked, setPicked] = useState<NavigatorNeedId[]>([]);
-  const shown = useMemo(() => needsByIds(picked), [picked]);
+  const [goalIds, setGoalIds] = useState<string[]>([]);
+  const [custom, setCustom] = useState("");
+  const [area, setArea] = useState("");
+  const [savedNote, setSavedNote] = useState("");
 
-  function toggle(id: NavigatorNeedId) {
-    setPicked((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id].slice(0, 3)));
+  function toggleGoal(id: string) {
+    setGoalIds((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id].slice(0, 3)));
+  }
+
+  const chosen = useMemo(() => {
+    const fromList = SMALL_GOALS.filter((g) => goalIds.includes(g.id));
+    const extra =
+      custom.trim() && fromList.length < 3
+        ? [{ id: "custom", title: custom.trim(), lede: "Your words.", need: "community" as NavigatorNeedId, query: custom.trim() }]
+        : [];
+    return [...fromList, ...extra].slice(0, 3);
+  }, [goalIds, custom]);
+
+  function saveChosen() {
+    if (!chosen.length) return;
+    for (const g of chosen) {
+      saveGoal({
+        title: g.title,
+        need: g.need,
+        area: area.trim(),
+        query: g.query,
+        done: false,
+      });
+    }
+    setSavedNote("Saved on this device. Open My small goals any time.");
   }
 
   return (
     <div>
       <h2 className="text-lg font-semibold">1. Where are you today?</h2>
-      <p className="mt-1 text-sm text-muted">One is enough. You can change it.</p>
+      <p className="mt-1 text-sm text-muted">One is enough.</p>
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         {SITUATIONS.map((s) => (
           <button
@@ -108,69 +137,95 @@ function WalkPanel() {
 
       {situation ? (
         <>
-          <h2 className="mt-8 text-lg font-semibold">2. What would help right now?</h2>
-          <p className="mt-1 text-sm text-muted">Pick up to three. Skip anything that feels too much.</p>
+          <h2 className="mt-8 text-lg font-semibold">2. A few small goals</h2>
+          <p className="mt-1 text-sm text-muted">Pick up to three. Small enough to try this month — not a whole life plan.</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {NEEDS.map((n) => {
-              const on = picked.includes(n.id);
+            {SMALL_GOALS.map((g) => {
+              const on = goalIds.includes(g.id);
               return (
                 <button
-                  key={n.id}
+                  key={g.id}
                   type="button"
-                  onClick={() => toggle(n.id)}
+                  onClick={() => toggleGoal(g.id)}
                   className={cn(
                     "rounded-2xl border p-4 text-left",
                     on ? "border-primary bg-primary-soft" : "border-line bg-card",
                   )}
                 >
-                  <p className="font-semibold">{n.title}</p>
-                  <p className="mt-1 text-sm text-muted">{n.lede}</p>
+                  <p className="font-semibold">{g.title}</p>
+                  <p className="mt-1 text-sm text-muted">{g.lede}</p>
                 </button>
               );
             })}
           </div>
+          <Field label="Or write one in your own words" hint="Optional. Counts toward the three.">
+            <Input
+              value={custom}
+              onChange={(e) => setCustom(e.target.value)}
+              placeholder="e.g. Find a quiet art group on a Tuesday"
+            />
+          </Field>
         </>
       ) : null}
 
-      {shown.length ? (
+      {chosen.length ? (
+        <>
+          <h2 className="mt-8 text-lg font-semibold">3. Your area</h2>
+          <p className="mt-1 text-sm text-muted">Suburb, town, or postcode. We only use it to build search links. It stays on this device.</p>
+          <Field label="Suburb or postcode">
+            <Input value={area} onChange={(e) => setArea(e.target.value)} placeholder="e.g. Mackay 4740" />
+          </Field>
+        </>
+      ) : null}
+
+      {chosen.length ? (
         <div className="mt-8 space-y-4">
-          <h2 className="text-lg font-semibold">3. Next doors</h2>
-          {situation === "funding-change" || situation === "not-eligible" ? (
-            <Card>
-              <p className="text-sm text-muted">
-                {situation === "not-eligible"
-                  ? "You still have health, housing, carers, and community systems. NDIS is one door, not the only one."
-                  : "A smaller plan does not mean you have to figure out every replacement today. Start with one door."}
-              </p>
-            </Card>
-          ) : null}
-          {shown.map((n) => (
-            <Card key={n.id}>
-              <p className="font-semibold">{n.title}</p>
-              <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted">
-                {n.steps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
-              <p className="mt-3 text-sm font-medium">Words you can use</p>
-              <p className="mt-1 rounded-xl bg-paper-2 px-3 py-2 text-sm">{n.say}</p>
-              <ul className="mt-3 space-y-2">
-                {n.doors.map((d) => (
-                  <li key={d.href}>
-                    <a
-                      className="font-medium text-primary underline-offset-2 hover:underline"
-                      href={d.href}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {d.name}
-                    </a>
-                    <span className="text-sm text-muted"> — {d.why}</span>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          ))}
+          <h2 className="text-lg font-semibold">4. Suggested supports {area.trim() ? `near ${area.trim()}` : ""}</h2>
+          <p className="text-sm text-muted">
+            These are starting points from public directories. Plan Decoder does not recommend a business, does not check
+            quality, and is not the NDIA.
+          </p>
+          {chosen.map((g) => {
+            const doors = doorsForGoal(area, g.query, g.need);
+            const need = NEEDS.find((n) => n.id === g.need);
+            return (
+              <Card key={g.id}>
+                <p className="text-xs font-semibold uppercase tracking-wide text-primary">Goal</p>
+                <p className="font-semibold">{g.title}</p>
+                {need ? <p className="mt-1 text-sm text-muted">{need.lede}</p> : null}
+                {need ? (
+                  <>
+                    <p className="mt-3 text-sm font-medium">Words you can use</p>
+                    <p className="mt-1 rounded-xl bg-paper-2 px-3 py-2 text-sm">{need.say}</p>
+                  </>
+                ) : null}
+                <ul className="mt-3 space-y-2">
+                  {doors.map((d) => (
+                    <li key={d.name + d.href}>
+                      <a
+                        className="font-medium text-primary underline-offset-2 hover:underline"
+                        href={d.href}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {d.name}
+                      </a>
+                      <span className="text-sm text-muted"> — {d.why}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            );
+          })}
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={saveChosen}>Save these goals on this device</Button>
+            <Button variant="secondary" asChild>
+              <Link to="/navigator" search={{ tab: "goals" }}>
+                Open my small goals
+              </Link>
+            </Button>
+          </div>
+          {savedNote ? <p className="text-sm text-muted">{savedNote}</p> : null}
         </div>
       ) : null}
 
@@ -188,6 +243,61 @@ function WalkPanel() {
         </ul>
       </Card>
     </div>
+  );
+}
+
+function GoalsPanel() {
+  const items = useClientList("navigatorGoals");
+  const upsert = useOllie((s) => s.upsertNavigatorGoal);
+  const remove = useOllie((s) => s.removeNavigatorGoal);
+  if (!items.length) {
+    return (
+      <Card>
+        <p className="font-semibold">No small goals yet</p>
+        <p className="mt-2 text-sm text-muted">Walk with me first. Pick up to three. We will suggest supports near you.</p>
+        <Button className="mt-4" asChild>
+          <Link to="/navigator" search={{ tab: "walk" }}>
+            Start the walk
+          </Link>
+        </Button>
+      </Card>
+    );
+  }
+  return (
+    <ul className="space-y-3">
+      {items.map((g) => {
+        const doors = doorsForGoal(g.area, g.query || g.title, (g.need as NavigatorNeedId) || "community");
+        return (
+          <li key={g.id}>
+            <Card>
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className={cn("font-semibold", g.done && "text-muted line-through")}>{g.title}</p>
+                  <p className="text-sm text-muted">{g.area || "No area saved"}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => upsert({ ...g, done: !g.done })}>
+                    {g.done ? "Still going" : "I tried this"}
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => remove(g.id)}>
+                    Delete
+                  </Button>
+                </div>
+              </div>
+              <ul className="mt-3 space-y-1 text-sm">
+                {doors.slice(0, 4).map((d) => (
+                  <li key={d.name}>
+                    <a className="text-primary underline-offset-2 hover:underline" href={d.href} target="_blank" rel="noreferrer">
+                      {d.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
