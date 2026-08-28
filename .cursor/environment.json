@@ -1,0 +1,6 @@
+{
+  "name": "Plan Decoder",
+  "install": "npm ci",
+  "start": "npm run dev",
+  "ports": [8080]
+}
