@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { draftWithOllie } from "@/lib/ollie-ai";
-import { CREDIT_PRICE_AUD } from "@/lib/billing";
+import { CREDIT_PRICE_AUD, MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import { useSpendOutcome } from "@/components/outcome-paywall";
 import { useOllie } from "@/lib/store";
 import { downloadText } from "@/lib/utils";
@@ -56,7 +56,7 @@ export function DraftWithOllie({
       <p className="mt-2 text-xs text-muted">
         {pay.seated
           ? `You have ${pay.credits} credit${pay.credits === 1 ? "" : "s"}.`
-          : "Core membership ($12 / month) is needed before credits can be used."}
+          : `Core membership ($${MEMBERSHIP_PRICE_AUD.core} / month) is needed before credits can be used.`}
       </p>
       {pay.seated && pay.credits >= 1 ? (
         <Button className="mt-3" variant="secondary" disabled={busy || !notes.trim()} onClick={() => void run()}>
@@ -64,7 +64,7 @@ export function DraftWithOllie({
         </Button>
       ) : (
         <Button className="mt-3" variant="secondary" asChild>
-          <Link to="/membership">{pay.seated ? "Buy credits" : "Start Core — $12 / month"}</Link>
+          <Link to="/membership">{pay.seated ? "Buy credits" : `Start Core — $${MEMBERSHIP_PRICE_AUD.core} / month`}</Link>
         </Button>
       )}
       {error ? <p className="mt-3 text-sm text-alert">{error}</p> : null}

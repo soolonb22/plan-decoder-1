@@ -82,6 +82,10 @@ export function PublicShell({ children }: { children: ReactNode }) {
           <Link to="/glossary" className="underline-offset-2 hover:underline">
             Glossary
           </Link>
+          {" · "}
+          <Link to="/pricing" className="underline-offset-2 hover:underline">
+            Pricing
+          </Link>
         </p>
       </footer>
     </div>

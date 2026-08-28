@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ClipboardList, Lock, Shield, Trash2 } from "lucide-react";
 import { canAccess } from "@/lib/membership";
+import { MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import { SHORT_DISCLAIMER } from "@/lib/assessment/disclaimers";
 import { useOllie } from "@/lib/store";
 import { cn, formatDate } from "@/lib/utils";
@@ -15,7 +16,7 @@ import { FunctionPanel } from "@/components/pocket/function-panel";
 const TITLE =
   "NDIS practice assessment (WHODAS-inspired) — prepare for support needs conversations | Plan Decoder";
 const DESC =
-  "Free, private practice questionnaire to rehearse NDIS-style functional questions, environment, permanency and mainstream supports. Inspired by WHODAS 2.0 life areas and publicly described 2026 support-needs assessment themes. Not the NDIA. Not I-CAN. Not a diagnosis.";
+  "Private practice questionnaire to rehearse NDIS-style functional questions, environment, permanency and mainstream supports. Inspired by WHODAS 2.0 life areas and publicly described 2026 support-needs assessment themes. Not the NDIA. Not I-CAN. Not a diagnosis.";
 
 export const Route = createFileRoute("/assessment")({
   validateSearch: (raw: Record<string, unknown>): { tab: "about" | "practice" | "function" } => {
@@ -86,7 +87,7 @@ function AssessmentLanding() {
     name: "Plan Decoder practice assessment",
     applicationCategory: "HealthApplication",
     operatingSystem: "Web",
-    offers: { "@type": "Offer", price: "12", priceCurrency: "AUD" },
+    offers: { "@type": "Offer", price: String(MEMBERSHIP_PRICE_AUD.core), priceCurrency: "AUD" },
     description: DESC,
     audience: { "@type": "Audience", geographicArea: { "@type": "Country", name: "Australia" } },
   };
@@ -124,7 +125,7 @@ function AssessmentLanding() {
           </div>
           ) : (
             <Button asChild>
-              <Link to="/membership">Start Core to practise · $12 / month</Link>
+              <Link to="/membership">Start Core to practise · ${MEMBERSHIP_PRICE_AUD.core} / month</Link>
             </Button>
           )
         }
@@ -310,7 +311,11 @@ function AssessmentLanding() {
           Practice assessments are part of Core
         </h2>
         <p className="mt-2 text-sm text-muted">
-          You can read what the rehearsal covers here. Starting or continuing a practice assessment needs Core membership ($12 a month after a 3-day trial). Each finished practice report or polished draft then uses 1 credit ($5). Professional is $49 a month for coordinators and clinicians working with more than one person.
+          You can read what the rehearsal covers here. Starting or continuing a practice assessment needs Core.{" "}
+          <Link to="/pricing" className="font-medium text-primary underline-offset-2 hover:underline">
+            See pricing
+          </Link>
+          .
         </p>
         <div className="mt-4">
           <MembershipGate need="core">

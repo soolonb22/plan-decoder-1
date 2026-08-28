@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import course from "@/lib/content/rights-course-data.json";
+import { ACCESS_BOUNDARY } from "@/lib/access-copy";
+import { MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
+import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -51,14 +54,16 @@ function PreviewWall({ onHome }: { onHome: () => void }) {
       <h2 className="mt-1 text-xl font-semibold">That part is in Core</h2>
       <p className="mt-2 text-sm text-muted">
         Visitors can try Module 0 — Getting In. The other seven modules, Easy Read, the in-course glossary, and the
-        certificate open with Core membership ($12 / month) after you sign in.
+        certificate open with Core membership (${MEMBERSHIP_PRICE_AUD.core} / month) after you sign in.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Button asChild>
-          <Link to="/login">Create an account</Link>
+          <Link to="/login" search={LOGIN_CREATE_SEARCH}>
+            Create a free account
+          </Link>
         </Button>
         <Button variant="secondary" asChild>
-          <Link to="/membership">See membership</Link>
+          <Link to="/pricing">See pricing</Link>
         </Button>
         <Button variant="ghost" onClick={onHome}>
           Back to Module 0
@@ -200,7 +205,7 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
         <p className="mt-2 max-w-xl text-sm text-lavender sm:text-base">
           {signedIn
             ? "Eight short modules. A quiz in each. Progress stays in this browser. Not the NDIA, and not advice about your plan."
-            : "Try Module 0 — Getting In. See the other seven titles below. Full course, Easy Read, and certificate are in Core after you sign in."}
+            : ACCESS_BOUNDARY}
         </p>
         <div className="mt-5">
           <div className="mb-1 flex justify-between text-xs font-medium">
@@ -237,7 +242,9 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
           ) : null}
           {!signedIn ? (
             <Button variant="ghost" className="text-lavender" asChild>
-              <Link to="/login">Create an account</Link>
+              <Link to="/login" search={LOGIN_CREATE_SEARCH}>
+                Create a free account
+              </Link>
             </Button>
           ) : null}
           {done.size > 0 ? (

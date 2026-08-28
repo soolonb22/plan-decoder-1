@@ -64,6 +64,12 @@ function AboutPage() {
           </Link>{" "}
           — NDIS words in ordinary English.
         </li>
+        <li>
+          <Link className="font-medium text-primary underline-offset-2 hover:underline" to="/pricing">
+            Pricing
+          </Link>{" "}
+          — Free tools, Core, credits, and Professional.
+        </li>
       </ul>
     </div>
   );

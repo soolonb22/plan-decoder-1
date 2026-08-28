@@ -12,11 +12,11 @@ export const Route = createFileRoute("/rights")({
   component: RightsPage,
   head: () => ({
     meta: [
-      { title: "Know your NDIS rights — free interactive course | Plan Decoder" },
+      { title: "Know your NDIS rights — Module 0 preview | Plan Decoder" },
       {
         name: "description",
         content:
-          "Free interactive NDIS rights course: eight short modules on access, choice and control, complaints, plans, providers, safety, reviews, and decisions. Independent of the NDIA.",
+          "Preview NDIS rights in plain English. Module 0 is free without an account. The full course, Easy Read, and certificate are part of Core. Independent of the NDIA.",
       },
     ],
   }),

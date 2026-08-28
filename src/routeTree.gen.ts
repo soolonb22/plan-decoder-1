@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AppointmentRouteImport } from './routes/appointment'
 import { Route as ArtRouteImport } from './routes/art'
 import { Route as AssessmentRouteImport } from './routes/assessment'
@@ -20,6 +21,7 @@ import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as ClinicalRouteImport } from './routes/clinical'
 import { Route as CodeOfConductRouteImport } from './routes/code-of-conduct'
 import { Route as CompanionRouteImport } from './routes/companion'
+import { Route as CourseRouteImport } from './routes/course'
 import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as FlagsRouteImport } from './routes/flags'
 import { Route as FluctuationRouteImport } from './routes/fluctuation'
@@ -42,6 +44,7 @@ import { Route as PaidRouteImport } from './routes/paid'
 import { Route as PlanRouteImport } from './routes/plan'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as PrepRouteImport } from './routes/prep'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -62,6 +65,11 @@ import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhoo
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppointmentRoute = AppointmentRouteImport.update({
@@ -112,6 +120,11 @@ const CodeOfConductRoute = CodeOfConductRouteImport.update({
 const CompanionRoute = CompanionRouteImport.update({
   id: '/companion',
   path: '/companion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CourseRoute = CourseRouteImport.update({
+  id: '/course',
+  path: '/course',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiaryRoute = DiaryRouteImport.update({
@@ -224,6 +237,11 @@ const PrepRoute = PrepRouteImport.update({
   path: '/prep',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -307,6 +325,7 @@ const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/appointment': typeof AppointmentRoute
   '/art': typeof ArtRoute
   '/assessment': typeof AssessmentRoute
@@ -317,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/clinical': typeof ClinicalRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
+  '/course': typeof CourseRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
   '/fluctuation': typeof FluctuationRoute
@@ -339,6 +359,7 @@ export interface FileRoutesByFullPath {
   '/plan': typeof PlanRoute
   '/practice': typeof PracticeRoute
   '/prep': typeof PrepRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -358,6 +379,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/appointment': typeof AppointmentRoute
   '/art': typeof ArtRoute
   '/assessment': typeof AssessmentRoute
@@ -368,6 +390,7 @@ export interface FileRoutesByTo {
   '/clinical': typeof ClinicalRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
+  '/course': typeof CourseRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
   '/fluctuation': typeof FluctuationRoute
@@ -390,6 +413,7 @@ export interface FileRoutesByTo {
   '/plan': typeof PlanRoute
   '/practice': typeof PracticeRoute
   '/prep': typeof PrepRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -410,6 +434,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/appointment': typeof AppointmentRoute
   '/art': typeof ArtRoute
   '/assessment': typeof AssessmentRoute
@@ -420,6 +445,7 @@ export interface FileRoutesById {
   '/clinical': typeof ClinicalRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
+  '/course': typeof CourseRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
   '/fluctuation': typeof FluctuationRoute
@@ -442,6 +468,7 @@ export interface FileRoutesById {
   '/plan': typeof PlanRoute
   '/practice': typeof PracticeRoute
   '/prep': typeof PrepRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -463,6 +490,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/appointment'
     | '/art'
     | '/assessment'
@@ -473,6 +501,7 @@ export interface FileRouteTypes {
     | '/clinical'
     | '/code-of-conduct'
     | '/companion'
+    | '/course'
     | '/diary'
     | '/flags'
     | '/fluctuation'
@@ -495,6 +524,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/practice'
     | '/prep'
+    | '/pricing'
     | '/privacy'
     | '/reports'
     | '/reset-password'
@@ -514,6 +544,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/appointment'
     | '/art'
     | '/assessment'
@@ -524,6 +555,7 @@ export interface FileRouteTypes {
     | '/clinical'
     | '/code-of-conduct'
     | '/companion'
+    | '/course'
     | '/diary'
     | '/flags'
     | '/fluctuation'
@@ -546,6 +578,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/practice'
     | '/prep'
+    | '/pricing'
     | '/privacy'
     | '/reports'
     | '/reset-password'
@@ -565,6 +598,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/appointment'
     | '/art'
     | '/assessment'
@@ -575,6 +609,7 @@ export interface FileRouteTypes {
     | '/clinical'
     | '/code-of-conduct'
     | '/companion'
+    | '/course'
     | '/diary'
     | '/flags'
     | '/fluctuation'
@@ -597,6 +632,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/practice'
     | '/prep'
+    | '/pricing'
     | '/privacy'
     | '/reports'
     | '/reset-password'
@@ -617,6 +653,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AppointmentRoute: typeof AppointmentRoute
   ArtRoute: typeof ArtRoute
   AssessmentRoute: typeof AssessmentRoute
@@ -627,6 +664,7 @@ export interface RootRouteChildren {
   ClinicalRoute: typeof ClinicalRoute
   CodeOfConductRoute: typeof CodeOfConductRoute
   CompanionRoute: typeof CompanionRoute
+  CourseRoute: typeof CourseRoute
   DiaryRoute: typeof DiaryRoute
   FlagsRoute: typeof FlagsRoute
   FluctuationRoute: typeof FluctuationRoute
@@ -649,6 +687,7 @@ export interface RootRouteChildren {
   PlanRoute: typeof PlanRoute
   PracticeRoute: typeof PracticeRoute
   PrepRoute: typeof PrepRoute
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ReportsRoute: typeof ReportsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -674,6 +713,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/appointment': {
@@ -744,6 +790,13 @@ declare module '@tanstack/react-router' {
       path: '/companion'
       fullPath: '/companion'
       preLoaderRoute: typeof CompanionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/course': {
+      id: '/course'
+      path: '/course'
+      fullPath: '/course'
+      preLoaderRoute: typeof CourseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diary': {
@@ -900,6 +953,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrepRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -1017,6 +1077,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AppointmentRoute: AppointmentRoute,
   ArtRoute: ArtRoute,
   AssessmentRoute: AssessmentRoute,
@@ -1027,6 +1088,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClinicalRoute: ClinicalRoute,
   CodeOfConductRoute: CodeOfConductRoute,
   CompanionRoute: CompanionRoute,
+  CourseRoute: CourseRoute,
   DiaryRoute: DiaryRoute,
   FlagsRoute: FlagsRoute,
   FluctuationRoute: FluctuationRoute,
@@ -1049,6 +1111,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanRoute: PlanRoute,
   PracticeRoute: PracticeRoute,
   PrepRoute: PrepRoute,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ReportsRoute: ReportsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
@@ -1069,13 +1132,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

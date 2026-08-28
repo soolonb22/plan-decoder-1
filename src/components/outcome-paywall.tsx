@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { CREDIT_PRICE_AUD, OUTCOME_CREDITS, OUTCOME_LABEL, hasPaidSeat, type OutcomeKind, type SubscriptionStatus } from "@/lib/billing";
+import { CREDIT_PRICE_AUD, MEMBERSHIP_PRICE_AUD, OUTCOME_CREDITS, OUTCOME_LABEL, hasPaidSeat, type OutcomeKind, type SubscriptionStatus } from "@/lib/billing";
 import { spendCredit } from "@/lib/billing-sync";
 import { canAccess } from "@/lib/membership";
 import { useOllie } from "@/lib/store";
@@ -61,10 +61,10 @@ export function OutcomeUnlock({
         <p className="text-sm font-medium text-primary">Core membership first</p>
         <h2 className="mt-1 text-xl font-semibold">{title ?? name}</h2>
         <p className="mt-2 text-sm text-muted">
-          Core is $12 per month. Then each finished outcome uses 1 credit (${CREDIT_PRICE_AUD}).
+          Core is ${MEMBERSHIP_PRICE_AUD.core} per month. Then each finished outcome uses 1 credit (${CREDIT_PRICE_AUD}).
         </p>
         <Button className="mt-4" asChild>
-          <Link to="/membership">Start Core — $12 / month</Link>
+          <Link to="/membership">Start Core — ${MEMBERSHIP_PRICE_AUD.core} / month</Link>
         </Button>
       </Card>
     );

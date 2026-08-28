@@ -9,7 +9,7 @@ export const HOME_FAQS = [
   },
   {
     q: "Do I need an account to look around?",
-    a: "No. The practice assessment, Know your rights course, NDIS news, and glossary open without signing in. An account is only for saving a workspace on the app.",
+    a: "Without an account you can read the glossary, NDIS news, and rights Module 0. A free account adds a basic diary and the plan checklist. The practice assessment, the rest of the rights course, Easy Read, and a certificate need Core.",
   },
   {
     q: "Where is my information stored?",
