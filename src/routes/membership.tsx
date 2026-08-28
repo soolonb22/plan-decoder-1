@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { PLANS } from "@/lib/membership";
-import { CREDIT_PACKS, CREDIT_PRICE_AUD, MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
+import { CREDIT_PACKS, CREDIT_PRICE_AUD, CORE_TRIAL_DAYS, MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import {
   confirmPaid,
   createCheckout,
@@ -144,7 +144,7 @@ function MembershipPage() {
     <div>
       <PageHeader
         title="Membership and credits"
-        lede="Core: 3 days free, then $12 a month. Each finished report or polished draft uses 1 credit ($5)."
+        lede={`Core: ${CORE_TRIAL_DAYS} days free, then $${MEMBERSHIP_PRICE_AUD.core} a month. Each finished report or polished draft uses 1 credit ($${CREDIT_PRICE_AUD}).`}
         picture="/brand/story-path.jpg"
       />
 
@@ -211,7 +211,11 @@ function MembershipPage() {
                   disabled={Boolean(busy) || active}
                   onClick={() => void pay("core")}
                 >
-                  {active ? "Current plan" : busy === "core" ? "Opening Stripe…" : "Start 3-day trial · then $12 / month"}
+                  {active
+                    ? "Current plan"
+                    : busy === "core"
+                      ? "Opening Stripe…"
+                      : `Start ${CORE_TRIAL_DAYS}-day trial · then $${MEMBERSHIP_PRICE_AUD.core} / month`}
                 </Button>
               )}
             </Card>
@@ -221,7 +225,7 @@ function MembershipPage() {
           <p className="text-sm text-muted">Free tools</p>
           <p className="mt-1 text-3xl font-semibold">$0</p>
           <p className="mt-2 text-sm text-muted">
-            Rights, glossary, NDIS news, plan checklist, and starting a rehearsal stay available with an account.
+            Rights, glossary, NDIS news, and the plan checklist stay available with an account. Starting a rehearsal needs Core.
           </p>
         </Card>
       </div>

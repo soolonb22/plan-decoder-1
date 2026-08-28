@@ -1,3 +1,4 @@
+import { CORE_TRIAL_DAYS, CREDIT_PRICE_AUD, MEMBERSHIP_PRICE_AUD } from "./billing";
 import type { Membership } from "./types";
 
 export const MEMBERSHIP_RANK: Record<Membership, number> = {
@@ -44,24 +45,24 @@ export const PLANS = [
       "Basic support diary (up to 10 entries)",
       "Plan understanding checklist",
       "Guided navigation (intro)",
-      "Know Your Rights course as a visitor (lead-in)",
+      "Know Your Rights Module 0 preview",
     ],
   },
   {
     id: "core" as const,
     name: "Core",
-    price: "$12",
-    cadence: "per month after 3-day trial",
+    price: `$${MEMBERSHIP_PRICE_AUD.core}`,
+    cadence: `per month after ${CORE_TRIAL_DAYS}-day trial`,
     blurb: "Evidence, language, meeting prep, and the full practice assessment — kept on this device.",
     features: [
       "Full practice pack (36-item function, 12 life areas, permanency, mainstream)",
       "Core tools unlocked",
-      "Finished reports and polished drafts use 1 credit each ($5)",
+      `Finished reports and polished drafts use 1 credit each ($${CREDIT_PRICE_AUD})`,
       "Unlimited local assessment saves",
       "Evidence Wallet",
       "Functional language builder",
       "Impact statements",
-      "Know Your Rights course in the app",
+      "Full Know Your Rights course, Easy Read, and certificate",
       "Fluctuation patterns",
       "Carer impact log",
       "Meeting and appointment prep",
@@ -71,7 +72,7 @@ export const PLANS = [
   {
     id: "pro" as const,
     name: "Professional",
-    price: "$49",
+    price: `$${MEMBERSHIP_PRICE_AUD.pro}`,
     cadence: "per month",
     blurb: "For coordinators, coaches, clinicians, and schools.",
     features: [
@@ -90,9 +91,9 @@ export const PLANS = [
 export const ONE_OFF = {
   id: "report",
   name: "Practice report",
-  price: "$5",
+  price: `$${CREDIT_PRICE_AUD}`,
   cadence: "1 credit per outcome",
-  blurb: "Questions are included with Core. Each finished practice report uses 1 credit ($5).",
+  blurb: `Questions are included with Core. Each finished practice report uses 1 credit ($${CREDIT_PRICE_AUD}).`,
   features: [
     "Full clinical-style practice report for this rehearsal",
     "Results table, plots, interpretation, and answer grid",

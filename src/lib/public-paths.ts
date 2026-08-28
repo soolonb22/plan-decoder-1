@@ -14,6 +14,7 @@ export const PUBLIC_PATHS = new Set([
   "/ndis-changes",
   "/assessment",
   "/about",
+  "/pricing",
   "/sitemap.xml",
   "/health",
   "/get-files",
@@ -33,4 +34,8 @@ export const PUBLIC_NAV = [
   { to: "/rights", label: "Know your rights" },
   { to: "/news", label: "NDIS news" },
   { to: "/glossary", label: "Glossary" },
+  { to: "/pricing", label: "Pricing" },
 ] as const;
+
+/** Open /login on the Create tab so CTA copy matches the form. */
+export const LOGIN_CREATE_SEARCH = { create: "1" } as const;

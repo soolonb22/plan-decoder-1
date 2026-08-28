@@ -23,6 +23,7 @@ export const NAV: NavItem[] = [
   { to: "/school", label: "School collaboration", need: "pro", group: "Professional" },
   { to: "/ops", label: "Operations", need: "pro", group: "Professional" },
   { to: "/membership", label: "Pay & credits", need: "free", group: "Account" },
+  { to: "/pricing", label: "Pricing", need: "free", group: "Account" },
   { to: "/privacy", label: "Privacy", need: "free", group: "Account" },
 ];
 

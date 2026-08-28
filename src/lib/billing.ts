@@ -5,6 +5,9 @@ export const MEMBERSHIP_PRICE_AUD = {
   pro: 49,
 } as const;
 
+/** Core trial length shown on pricing and checkout. */
+export const CORE_TRIAL_DAYS = 3;
+
 /**
  * Credit rules (server is the source of truth):
  * - Core or Professional membership is required before any credit can be spent.

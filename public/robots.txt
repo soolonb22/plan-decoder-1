@@ -10,12 +10,14 @@ Allow: /code-of-conduct
 Allow: /service-charter
 Allow: /ndis-changes
 Allow: /about
+Allow: /pricing
 Disallow: /login
 Disallow: /privacy
 Disallow: /api/
 Disallow: /wallet
 Disallow: /plan
 Disallow: /clients
+Disallow: /get-files
 
 Sitemap: https://www.plandecoder.com/sitemap.xml
 

@@ -76,6 +76,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   "/ops": Cog,
   "/membership": BadgeCheck,
   "/privacy": Shield,
+  "/pricing": BadgeCheck,
 };
 
 function AuthSlot() {

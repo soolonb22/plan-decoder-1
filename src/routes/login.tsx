@@ -2,14 +2,17 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { GROK_PROVIDERS, authClient, authEnabled, signIn } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { isLocalAuthDebugHost } from "@/lib/site";
 import { OllieMark } from "@/components/mark";
 import { AuthSplash } from "@/components/layout/auth-gate";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { passwordIssue } from "@/lib/security/password-policy";
+import { parseLoginSearch } from "@/lib/login-search";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: parseLoginSearch,
   component: Login,
   head: () => ({
     meta: [
@@ -24,8 +27,9 @@ export const Route = createFileRoute("/login")({
 });
 
 function Login() {
+  const { create } = Route.useSearch();
   const { user, isPending } = useCurrentUserState();
-  const [mode, setMode] = useState<"in" | "up" | "reset">("in");
+  const [mode, setMode] = useState<"in" | "up" | "reset">(create === "1" ? "up" : "in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -36,6 +40,7 @@ function Login() {
   const [dbReady, setDbReady] = useState<boolean | null>(null);
   const [secretReady, setSecretReady] = useState<boolean | null>(null);
   const [waited, setWaited] = useState(false);
+  const [setupHints, setSetupHints] = useState(false);
   const showOauth =
     typeof window !== "undefined" && window.location.hostname.endsWith(".grok-sandbox.com");
 
@@ -53,8 +58,13 @@ function Login() {
   }
 
   useEffect(() => {
+    setSetupHints(isLocalAuthDebugHost(window.location.hostname));
     checkReady();
   }, []);
+
+  useEffect(() => {
+    if (create === "1") setMode("up");
+  }, [create]);
 
   useEffect(() => {
     const t = window.setTimeout(() => setWaited(true), 2500);
@@ -82,9 +92,11 @@ function Login() {
         const data = (await res.json().catch(() => ({}))) as { message?: string; error?: string };
         if (!res.ok) {
           throw new Error(
-            data.message ||
-              data.error ||
-              "Could not send a reset email. Add RESEND_API_KEY and EMAIL_FROM as Worker secrets.",
+            setupHints
+              ? data.message ||
+                  data.error ||
+                  "Could not send a reset email. Add RESEND_API_KEY and EMAIL_FROM as Worker secrets."
+              : "Could not send a reset email. Please try again later.",
           );
         }
         setError("If that email has an account, a reset link is on its way. Check spam. The link lasts one hour.");
@@ -148,7 +160,9 @@ function Login() {
       const raw = err instanceof Error ? err.message : "";
       if (dbReady === false) {
         setError(
-          "Sign-in is not connected to the database yet. Add DATABASE_URL on the Worker, then tap Check again.",
+          setupHints
+            ? "Sign-in is not connected to the database yet. Add DATABASE_URL on the Worker, then tap Check again."
+            : "Sign-in is unavailable just now. Please try again later.",
         );
       } else if (mode === "up") {
         setError(
@@ -175,6 +189,17 @@ function Login() {
     }
   }
 
+  const heading =
+    mode === "in" ? "Welcome back" : mode === "up" ? "Create a free account" : "Reset password";
+  const helper =
+    mode === "in"
+      ? "Sign in to open your Plan Decoder workspace."
+      : mode === "up"
+        ? "A free account keeps a workspace. Practice answers still stay on this device."
+        : setupHints
+          ? "We email a one-hour link. Needs EMAIL_FROM and RESEND_API_KEY on the Worker."
+          : "We email a one-hour link. Check spam if it does not arrive.";
+
   return (
     <main className="grid min-h-dvh place-items-center bg-paper px-4 py-10">
       <div className="w-full max-w-md">
@@ -182,7 +207,7 @@ function Login() {
           <OllieMark className="size-11" />
           <div>
             <p className="text-lg font-semibold">Plan Decoder</p>
-            <p className="text-sm text-muted">An account is required. Nothing here is the NDIA.</p>
+            <p className="text-sm text-muted">Independent NDIS practice tools.</p>
           </div>
         </div>
 
@@ -235,38 +260,36 @@ function Login() {
             </button>
           </div>
 
-          <h1 className="mt-5 text-xl font-semibold">
-            {mode === "in" ? "Welcome back" : mode === "up" ? "Create your account" : "Reset password"}
-          </h1>
-          <p className="mt-1 text-sm text-muted">
-            {mode === "in"
-              ? "Sign in to open your Plan Decoder workspace."
-              : mode === "up"
-                ? "You need an account to use Plan Decoder. Practice answers still stay on this device."
-                : "We email a one-hour link. Needs EMAIL_FROM and RESEND_API_KEY on the Worker."}
-          </p>
+          <h1 className="mt-5 text-xl font-semibold">{heading}</h1>
+          <p className="mt-1 text-sm text-muted">{helper}</p>
           {dbReady === false || secretReady === false ? (
             <div className="mt-4 rounded-2xl border border-alert/30 bg-alert/10 p-3 text-sm text-ink" role="status">
-              <p>
-                Sign-in is not connected yet. Your email and password are not the problem. The Worker is missing{" "}
-                {dbReady === false && secretReady === false
-                  ? "the database and the signing key."
-                  : dbReady === false
-                    ? "the Neon database secret."
-                    : "BETTER_AUTH_SECRET (the signing key)."}
-              </p>
-              <p className="mt-2">
-                In Cloudflare open Worker <strong>plan-decoder-1</strong> → Settings → Variables and Secrets
-                (the Worker, <strong>not</strong> Build variables). Encrypted secrets named{" "}
-                <strong>DATABASE_URL</strong> and <strong>BETTER_AUTH_SECRET</strong> must both be present. Then tap
-                Check again. A new deploy is needed if the signing key was only in the old config file.
-              </p>
+              {setupHints ? (
+                <>
+                  <p>
+                    Sign-in is not connected yet. Your email and password are not the problem. The Worker is missing{" "}
+                    {dbReady === false && secretReady === false
+                      ? "the database and the signing key."
+                      : dbReady === false
+                        ? "the Neon database secret."
+                        : "BETTER_AUTH_SECRET (the signing key)."}
+                  </p>
+                  <p className="mt-2">
+                    In Cloudflare open Worker <strong>plan-decoder-1</strong> → Settings → Variables and Secrets
+                    (the Worker, <strong>not</strong> Build variables). Encrypted secrets named{" "}
+                    <strong>DATABASE_URL</strong> and <strong>BETTER_AUTH_SECRET</strong> must both be present. Then tap
+                    Check again. A new deploy is needed if the signing key was only in the old config file.
+                  </p>
+                </>
+              ) : (
+                <p>Sign-in is unavailable just now. Please try again later.</p>
+              )}
               <button
                 type="button"
                 className="mt-3 min-h-11 rounded-lg border border-line bg-card px-3 text-sm"
                 onClick={() => checkReady()}
               >
-                Check again
+                {setupHints ? "Check again" : "Try again"}
               </button>
             </div>
           ) : null}
@@ -366,14 +389,24 @@ function Login() {
               </p>
             ) : null}
             <Button type="submit" className="w-full" disabled={busy || Boolean(oauthBusy) || !authEnabled}>
-              {busy ? "Please wait…" : mode === "up" ? "Create account" : mode === "reset" ? "Email a reset link" : "Sign in"}
+              {busy
+                ? "Please wait…"
+                : mode === "up"
+                  ? "Create a free account"
+                  : mode === "reset"
+                    ? "Email a reset link"
+                    : "Sign in"}
             </Button>
           </form>
           <details className="mt-4 text-sm">
             <summary className="cursor-pointer font-medium">Cannot sign in?</summary>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-muted">
               <li>First visit: tap Create. Sign-in will not work until then.</li>
-              <li>Use Reset to email a one-hour link. That needs Resend (or Mailgun) secrets on the Worker.</li>
+              <li>
+                {setupHints
+                  ? "Use Reset to email a one-hour link. That needs Resend (or Mailgun) secrets on the Worker."
+                  : "Use Reset to email a one-hour link. Check spam if it does not arrive."}
+              </li>
               <li>If you are already signed in, change the password under Privacy.</li>
               <li>Practice notes live in this browser unless you save an encrypted copy under Privacy.</li>
             </ul>
@@ -384,18 +417,6 @@ function Login() {
           Evidence and practice answers stay on this device. Your account only remembers who you are and membership.
           Not affiliated with the NDIA.
         </p>
-        <div className="mt-6 rounded-2xl border border-primary bg-primary-soft p-4 text-center">
-          <p className="font-semibold text-primary-deep">Need the files on your computer?</p>
-          <p className="mt-1 text-sm text-muted">Plan Decoder 1 — full app zip for Cloudflare / Wrangler.</p>
-          <Button className="mt-3 w-full min-h-12" asChild>
-            <a
-              href="https://github.com/soolonb22/plan-decoder-1/archive/refs/heads/main.zip"
-              download="Plan Decoder 1.zip"
-            >
-              Download Plan Decoder 1.zip
-            </a>
-          </Button>
-        </div>
       </div>
     </main>
   );

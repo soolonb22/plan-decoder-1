@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/card";
 import { LiveNewsStrip } from "@/components/live-news";
 import { OllieMark } from "@/components/mark";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
+import { ACCESS_BOUNDARY } from "@/lib/access-copy";
+import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import { HOME_FAQS, faqJsonLd } from "@/lib/seo-faq";
 
 export function MarketingHome() {
@@ -13,8 +15,9 @@ export function MarketingHome() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd()) }} />
       <noscript>
         <p>
-          Plan Decoder at https://www.plandecoder.com is an independent NDIS practice tool. Open the practice
-          assessment, Know your rights course, NDIS news, and glossary without an account. Not the NDIA. Not a
+          Plan Decoder at https://www.plandecoder.com is an independent NDIS practice tool. Without an account
+          you can read the glossary, NDIS news, and rights Module 0. A free account adds a basic diary and the
+          plan checklist. The practice assessment and the rest of the rights course need Core. Not the NDIA. Not a
           diagnosis.
         </p>
       </noscript>
@@ -33,7 +36,9 @@ export function MarketingHome() {
 
       <div className="mt-5 flex flex-wrap gap-2">
         <Button asChild>
-          <Link to="/login">Create a free account</Link>
+          <Link to="/login" search={LOGIN_CREATE_SEARCH}>
+            Create a free account
+          </Link>
         </Button>
         <Button variant="secondary" asChild>
           <Link to="/assessment" search={{ tab: "about" }}>
@@ -41,26 +46,26 @@ export function MarketingHome() {
           </Link>
         </Button>
         <Button variant="ghost" asChild>
-          <Link to="/rights">Know your NDIS rights</Link>
+          <Link to="/pricing">Pricing</Link>
         </Button>
       </div>
 
       <StoryStrip heading="How this works" steps={HOW_OLLIE_WORKS} />
 
-      <p className="mb-3 mt-8 text-sm font-medium text-muted">Open without signing in</p>
+      <p className="mb-3 mt-8 text-sm text-muted">{ACCESS_BOUNDARY}</p>
       <div className="grid gap-3 sm:grid-cols-2">
         {[
           {
             to: "/assessment" as const,
             icon: ClipboardList,
             title: "Practice assessment",
-            body: "WHODAS-inspired rehearsal. Not I-CAN. Not a diagnosis.",
+            body: "Read what the rehearsal covers. Starting it needs Core.",
           },
           {
             to: "/rights" as const,
             icon: Scale,
             title: "Know your rights",
-            body: "Eight short modules, a quiz in each, and a certificate at the end.",
+            body: "Module 0 is free to preview. The rest of the course is Core.",
           },
           {
             to: "/news" as const,

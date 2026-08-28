@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
+import { ACCESS_BOUNDARY } from "@/lib/access-copy";
+import { CREDIT_PRICE_AUD, MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import { canAccess } from "@/lib/membership";
 import type { Membership } from "@/lib/types";
 import { useOllie } from "@/lib/store";
@@ -71,11 +73,10 @@ export function MembershipGate({
       <p className="text-sm font-medium text-primary">Membership needed</p>
       <h2 className="mt-1 text-xl font-semibold">This is part of {name}</h2>
       <p className="mt-2 text-sm text-muted">
-        Free includes glossary, news, a basic diary, and the plan checklist. The rights course is free to try
-        while signed out; inside the app it is part of Core.
+        {ACCESS_BOUNDARY}
         {need === "pro"
-          ? " Professional is $49 a month for coordinators, coaches, clinicians, and schools."
-          : " Core is $12 a month. Finished reports and polished drafts then use 1 credit ($5) each."}
+          ? ` Professional is $${MEMBERSHIP_PRICE_AUD.pro} a month for coordinators, coaches, clinicians, and schools.`
+          : ` Finished reports and polished drafts then use 1 credit ($${CREDIT_PRICE_AUD}) each.`}
       </p>
       <div className="mt-5 rounded-xl bg-paper-2 px-4 py-4">
         <p className="mb-3 text-sm font-medium">Have a code word?</p>
@@ -86,7 +87,7 @@ export function MembershipGate({
           <Link to="/membership">See membership</Link>
         </Button>
         <Button variant="secondary" asChild>
-          <Link to="/news">Stay with free tools</Link>
+          <Link to="/pricing">Pricing</Link>
         </Button>
       </div>
     </Card>
