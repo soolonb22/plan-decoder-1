@@ -43,7 +43,7 @@ export const Route = createRootRoute({
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Plan Decoder | NDIS practice tools" },
       { name: "description", content: DESC },
-      { name: "theme-color", content: "#6E2C92" },
+      { name: "theme-color", content: "#6B2976" },
       { name: "robots", content: "index,follow,max-image-preview:large" },
       { name: "googlebot", content: "index,follow" },
       { property: "og:type", content: "website" },
