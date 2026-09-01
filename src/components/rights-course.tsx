@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { MembershipGate } from "@/components/layout/page";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { cn } from "@/lib/utils";
+import { CourseFrame } from "@/components/course-frame";
 
 const PROGRESS_KEY = "ndis-course-progress-v1";
 const NAME_KEY = "ndis-course-name-v1";
@@ -160,12 +161,7 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
             </span>
           ) : null}
         </div>
-        <iframe
-          title={reading.title}
-          srcDoc={reading.html}
-          className="min-h-0 w-full flex-1 border-0 bg-paper"
-          sandbox="allow-scripts allow-same-origin allow-modals"
-        />
+        <CourseFrame title={reading.title} html={reading.html} />
         {!isExtra && moduleIdx !== null ? (
           <div className="flex gap-2 border-t border-line bg-card p-3">
             <Button
@@ -290,7 +286,7 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
                     complete ? "bg-leaf text-primary-fg" : "bg-paper-2 text-muted",
                   )}
                 >
-                  {complete ? "✓" : locked ? "–" : i}
+                  {complete ? "\u2713" : locked ? "\u2013" : i}
                 </span>
               </div>
               <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-primary">
@@ -436,26 +432,26 @@ function drawCertificate(c: HTMLCanvasElement, name: string) {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
   const band = ctx.createLinearGradient(0, 0, W, 0);
-  band.addColorStop(0, "#6E2C92");
-  band.addColorStop(1, "#3d7a78");
+  band.addColorStop(0, "#6B2976");
+  band.addColorStop(1, "#007A86");
   ctx.fillStyle = band;
   ctx.fillRect(0, 0, W, 140);
   ctx.fillStyle = band;
   ctx.fillRect(0, H - 40, W, 40);
-  ctx.strokeStyle = "#6E2C92";
+  ctx.strokeStyle = "#6B2976";
   ctx.lineWidth = 4;
   ctx.strokeRect(70, 180, W - 140, H - 260);
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
   ctx.font = 'bold 44px Figtree, "Segoe UI", sans-serif';
   ctx.fillText("KNOW YOUR NDIS RIGHTS", W / 2, 92);
-  ctx.fillStyle = "#6E2C92";
+  ctx.fillStyle = "#4A1C53";
   ctx.font = 'bold 64px Figtree, "Segoe UI", sans-serif';
   ctx.fillText("Certificate of Completion", W / 2, 300);
-  ctx.fillStyle = "#4a5673";
+  ctx.fillStyle = "#5c5560";
   ctx.font = '32px Figtree, "Segoe UI", sans-serif';
   ctx.fillText("This certifies that", W / 2, 400);
-  ctx.fillStyle = "#1a1224";
+  ctx.fillStyle = "#2a2228";
   ctx.font = 'bold 80px Figtree, "Segoe UI", sans-serif';
   let nm = name.trim() || "Your Name";
   if (ctx.measureText(nm).width > W - 260) {
@@ -464,27 +460,27 @@ function drawCertificate(c: HTMLCanvasElement, name: string) {
   }
   ctx.fillText(nm, W / 2, 530);
   const tw = Math.min(W - 200, ctx.measureText(nm).width + 60);
-  ctx.strokeStyle = "#E8A317";
+  ctx.strokeStyle = "#C48414";
   ctx.lineWidth = 5;
   ctx.beginPath();
   ctx.moveTo(W / 2 - tw / 2, 570);
   ctx.lineTo(W / 2 + tw / 2, 570);
   ctx.stroke();
-  ctx.fillStyle = "#1a1224";
+  ctx.fillStyle = "#2a2228";
   ctx.font = '30px Figtree, "Segoe UI", sans-serif';
   ctx.fillText("has completed all 8 modules of the", W / 2, 640);
-  ctx.fillStyle = "#6E2C92";
+  ctx.fillStyle = "#6B2976";
   ctx.font = 'bold 34px Figtree, "Segoe UI", sans-serif';
   ctx.fillText("Know Your NDIS Rights interactive course", W / 2, 690);
-  ctx.fillStyle = "#4a5673";
+  ctx.fillStyle = "#5c5560";
   ctx.font = '24px Figtree, "Segoe UI", sans-serif';
   const items = MODULES.map((m, i) => `${i}. ${m.title}`);
   const half = Math.ceil(items.length / 2);
   ctx.textAlign = "left";
-  for (let i = 0; i < half; i++) ctx.fillText(`✓  ${items[i]}`, W * 0.28, 770 + i * 38);
-  for (let i = half; i < items.length; i++) ctx.fillText(`✓  ${items[i]}`, W * 0.72, 770 + (i - half) * 38);
+  for (let i = 0; i < half; i++) ctx.fillText(`\u2713  ${items[i]}`, W * 0.28, 770 + i * 38);
+  for (let i = half; i < items.length; i++) ctx.fillText(`\u2713  ${items[i]}`, W * 0.72, 770 + (i - half) * 38);
   ctx.textAlign = "center";
-  ctx.fillStyle = "#4a5673";
+  ctx.fillStyle = "#5c5560";
   ctx.font = '22px Figtree, "Segoe UI", sans-serif';
   ctx.fillText(
     `Awarded ${new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}`,
