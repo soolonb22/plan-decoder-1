@@ -10,8 +10,7 @@ import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { PageFrame } from "@/components/layout/page-frame";
 import { HydrateOllie } from "@/components/hydrate-ollie";
 import { SITE_URL } from "@/lib/public-paths";
-import appCss from "../styles.css?url";
-import ndisPaletteCss from "../ndis-palette.css?url";
+import appCss from "../app.css?url";
 
 const APP_NAME = "Plan Decoder";
 const DESC =
@@ -61,7 +60,6 @@ export const Route = createRootRoute({
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
-      { rel: "stylesheet", href: ndisPaletteCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
