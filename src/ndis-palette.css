@@ -1,0 +1,22 @@
+/* Calm official NDIS palette — overrides the brighter violet/lime defaults. */
+@theme {
+  --color-paper: #f7f4f1;
+  --color-paper-2: #ede6f0;
+  --color-card: #fffcf9;
+  --color-ink: #2a2228;
+  --color-muted: #5c5560;
+  --color-subtle: #7a7280;
+  --color-line: #e4dde6;
+  --color-line-strong: #b398b8;
+
+  --color-primary: #6b2976;
+  --color-primary-hover: #4a1c53;
+  --color-primary-fg: #ffffff;
+  --color-primary-soft: #ede6f0;
+  --color-primary-deep: #4a1c53;
+  --color-lavender: #b398b8;
+
+  --color-leaf: #4f7a24;
+  --color-leaf-fg: #24380f;
+  --color-leaf-soft: #e7f0d8;
+}
