@@ -25,7 +25,7 @@ export function PageHeader({
       <div className="welcome-row max-w-2xl">
         {picture ? <img src={picture} alt="" width={56} height={56} /> : null}
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{title}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-primary-deep sm:text-3xl">{title}</h1>
           {lede ? <p className="mt-2 text-muted">{lede}</p> : null}
         </div>
       </div>
@@ -54,7 +54,7 @@ export function EmptyState({
 
 export function Disclaimer({ children }: { children: ReactNode }) {
   return (
-    <p className="rounded-xl bg-primary-soft px-4 py-3 text-sm text-primary-deep">{children}</p>
+    <p className="rounded-xl border border-[#c5dfe3] bg-teal-soft px-4 py-3 text-sm text-[#12363b]">{children}</p>
   );
 }
 
