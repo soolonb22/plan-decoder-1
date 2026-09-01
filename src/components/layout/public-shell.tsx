@@ -75,6 +75,10 @@ export function PublicShell({ children }: { children: ReactNode }) {
             Know your rights
           </Link>
           {" · "}
+          <Link to="/articles" className="underline-offset-2 hover:underline">
+            Articles
+          </Link>
+          {" · "}
           <Link to="/news" className="underline-offset-2 hover:underline">
             News
           </Link>
