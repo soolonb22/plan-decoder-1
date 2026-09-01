@@ -1,4 +1,4 @@
-/* Calm official NDIS palette — overrides the brighter violet/lime defaults. */
+/* Same tokens as artifacts/NDIS_Know_Your_Rights_Course/articles/assets/ndis.css */
 @theme {
   --color-paper: #f7f4f1;
   --color-paper-2: #ede6f0;
@@ -19,4 +19,27 @@
   --color-leaf: #4f7a24;
   --color-leaf-fg: #24380f;
   --color-leaf-soft: #e7f0d8;
+
+  --color-teal: #007a86;
+  --color-teal-soft: #e3f2f4;
+  --color-focus: #c48414;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 3px solid #c48414;
+    outline-offset: 3px;
+  }
+
+  body {
+    background: #f7f4f1;
+    color: #2a2228;
+    line-height: 1.65;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: #4a1c53;
+  }
 }
