@@ -8,7 +8,7 @@ import { useOllie } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CodeWordUnlock } from "@/components/code-word";
-import { IllustrationTrio } from "@/components/illustrations";
+import { IllustrationTrio, PhoneRow } from "@/components/illustrations";
 
 export function PageHeader({
   title,
@@ -33,6 +33,7 @@ export function PageHeader({
       {picture ? (
         <div className="mt-5">
           <IllustrationTrio />
+          <PhoneRow />
         </div>
       ) : null}
     </header>
