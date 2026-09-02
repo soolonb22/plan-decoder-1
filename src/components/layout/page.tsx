@@ -8,18 +8,19 @@ import { useOllie } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CodeWordUnlock } from "@/components/code-word";
-import { IllustrationTrio, PhoneRow } from "@/components/illustrations";
+import { PageArt, type ArtTopic } from "@/components/illustrations";
 
 export function PageHeader({
   title,
   lede,
   actions,
-  picture,
+  art,
 }: {
   title: string;
   lede?: string;
   actions?: ReactNode;
   picture?: string;
+  art?: ArtTopic;
 }) {
   return (
     <header className="mb-6">
@@ -30,10 +31,9 @@ export function PageHeader({
         </div>
         {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
       </div>
-      {picture ? (
+      {art ? (
         <div className="mt-5">
-          <IllustrationTrio />
-          <PhoneRow />
+          <PageArt topic={art} />
         </div>
       ) : null}
     </header>
