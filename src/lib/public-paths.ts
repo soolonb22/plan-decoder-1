@@ -16,6 +16,7 @@ export const PUBLIC_PATHS = new Set([
   "/assessment",
   "/about",
   "/pricing",
+  "/privacy",
   "/navigator",
   "/sitemap.xml",
   "/health",
