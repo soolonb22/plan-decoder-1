@@ -29,7 +29,7 @@ function GlossaryPage() {
   }, [q]);
   return (
     <div>
-      <PageHeader title="Glossary" lede="NDIS words in ordinary English." />
+      <PageHeader title="Glossary" lede="NDIS words in ordinary English." art="glossary" />
       <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find a word" className="mb-4" />
       <div className="space-y-2">
         {items.map((g) => (
