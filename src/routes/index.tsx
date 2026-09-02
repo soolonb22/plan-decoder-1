@@ -14,7 +14,7 @@ import { Card } from "@/components/ui/card";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 import { LiveNewsStrip } from "@/components/live-news";
 import { MarketingHome } from "@/components/marketing-home";
-import { FeatureArt, IllustrationTrio } from "@/components/illustrations";
+import { FeatureArt, PageArt } from "@/components/illustrations";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 
 export const Route = createFileRoute("/")({
@@ -59,7 +59,7 @@ function WorkspaceHome() {
             This is {whose} calm workspace. Evidence stays on this device. Nothing here is an NDIA decision.
           </p>
         </div>
-        <IllustrationTrio />
+        <PageArt topic="home" showPhones={false} />
       </section>
 
       <StoryStrip heading="How this works" steps={HOW_OLLIE_WORKS} />
@@ -110,7 +110,7 @@ function WorkspaceHome() {
           {
             to: "/guide",
             icon: Compass,
-            kind: "nav" as const,
+            kind: "guide" as const,
             title: "Guided help",
             body: "Letters and meeting notes, one small step at a time.",
           },
@@ -164,7 +164,7 @@ function WorkspaceHome() {
         </Card>
         <Card>
           <div className="flex items-start gap-3">
-            <FeatureArt kind="rights" />
+            <FeatureArt kind="guide" />
             <div>
               <p className="font-semibold">You do not have to do this alone</p>
               <p className="mt-2 text-sm text-muted">
