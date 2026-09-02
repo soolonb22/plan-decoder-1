@@ -20,10 +20,15 @@ export const PUBLIC_PATHS = new Set([
   "/sitemap.xml",
   "/health",
   "/get-files",
+  "/prep-pack",
+  "/prep-pack/success",
+  "/unlock",
 ]);
 
 export function isPublicPath(pathname: string) {
   if (pathname.startsWith("/api/")) return true;
+  if (pathname.startsWith("/ndis-")) return true;
+  if (pathname.startsWith("/prep-pack")) return true;
   if (PUBLIC_PATHS.has(pathname)) return true;
   return false;
 }
@@ -36,10 +41,10 @@ export const PUBLIC_NAV = [
   { to: "/navigator", label: "Navigator" },
   { to: "/rights", label: "Know your rights" },
   { to: "/articles", label: "Articles" },
+  { to: "/prep-pack", label: "Prep Pack" },
   { to: "/news", label: "NDIS news" },
   { to: "/glossary", label: "Glossary" },
   { to: "/pricing", label: "Pricing" },
 ] as const;
 
-/** Open /login on the Create tab so CTA copy matches the form. */
 export const LOGIN_CREATE_SEARCH = { create: 1 } as const;
