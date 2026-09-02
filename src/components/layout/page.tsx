@@ -8,6 +8,7 @@ import { useOllie } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CodeWordUnlock } from "@/components/code-word";
+import { IllustrationTrio } from "@/components/illustrations";
 
 export function PageHeader({
   title,
@@ -21,15 +22,19 @@ export function PageHeader({
   picture?: string;
 }) {
   return (
-    <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="welcome-row max-w-2xl">
-        {picture ? <img src={picture} alt="" width={56} height={56} /> : null}
-        <div>
+    <header className="mb-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="max-w-2xl">
           <h1 className="text-2xl font-semibold tracking-tight text-primary-deep sm:text-3xl">{title}</h1>
           {lede ? <p className="mt-2 text-muted">{lede}</p> : null}
         </div>
+        {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
       </div>
-      {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
+      {picture ? (
+        <div className="mt-5">
+          <IllustrationTrio />
+        </div>
+      ) : null}
     </header>
   );
 }
