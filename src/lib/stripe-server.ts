@@ -57,6 +57,8 @@ export type StripeSession = {
   customer?: string | null;
   subscription?: string | null;
   client_reference_id?: string | null;
+  customer_email?: string | null;
+  customer_details?: { email?: string | null } | null;
   amount_total?: number | null;
   metadata?: Record<string, string>;
 };

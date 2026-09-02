@@ -23,6 +23,17 @@ function verify(raw: string, header: string, secret: string) {
   }
 }
 
+function sessionEmail(session: StripeSession) {
+  return (session.customer_details?.email || session.customer_email || "").trim().toLowerCase();
+}
+
+function sessionKind(session: StripeSession) {
+  if (session.metadata?.kind) return session.metadata.kind;
+  if (session.amount_total === 3900) return "prep-pack";
+  if (session.mode === "subscription") return "core";
+  return "credits";
+}
+
 export const Route = createFileRoute("/api/stripe/webhook")({
   server: {
     handlers: {
@@ -38,33 +49,42 @@ export const Route = createFileRoute("/api/stripe/webhook")({
           return new Response("invalid signature", { status: 400 });
         }
         const event = JSON.parse(raw) as { type: string; data: { object: StripeSession } };
-        if (event.type !== "checkout.session.completed") {
+        if (event.type !== "checkout.session.completed" && event.type !== "checkout.session.async_payment_succeeded") {
           return new Response("ok", { status: 200 });
         }
         const session = event.data.object;
-        const userId = session.client_reference_id || session.metadata?.userId;
-        if (!userId) return new Response("ok", { status: 200 });
         const sql = await getSql();
+        let userId = session.client_reference_id || session.metadata?.userId || "";
+        if (!userId) {
+          const email = sessionEmail(session);
+          if (email) {
+            const rows = await sql<{ id: string }>`
+              select id from "user" where lower(email) = ${email} limit 1
+            `;
+            userId = rows[0]?.id || "";
+          }
+        }
+        if (!userId) return new Response("ok", { status: 200 });
         const already = await sql<{ id: number }>`
           select id from credit_ledger where stripe_session_id = ${session.id} limit 1
         `;
         if (already.length) return new Response("ok", { status: 200 });
-        const kind =
-          session.metadata?.kind ||
-          (session.mode === "subscription" ? "core" : "credits");
-        if (kind === "core" || kind === "pro") {
+        const kind = sessionKind(session);
+        if (kind === "core" || kind === "pro" || kind === "prep-pack") {
+          const membership = kind === "pro" ? "pro" : "core";
           await sql`
-            update profiles
-            set membership = ${kind},
+            insert into profiles (user_id, role, membership, credits, subscription_status)
+            values (${userId}, 'participant', ${membership}, 0, 'active')
+            on conflict (user_id) do update
+            set membership = ${membership},
                 subscription_status = 'active',
                 stripe_customer_id = ${session.customer ?? null},
                 stripe_subscription_id = ${session.subscription ?? null},
                 updated_at = now()
-            where user_id = ${userId}
           `;
           await sql`
             insert into credit_ledger (user_id, delta, reason, stripe_session_id)
-            values (${userId}, 0, ${`membership:${kind}`}, ${session.id})
+            values (${userId}, 0, ${kind === "prep-pack" ? "membership:prep-pack" : `membership:${membership}`}, ${session.id})
           `;
         } else if (kind === "credits") {
           const n = Math.max(
