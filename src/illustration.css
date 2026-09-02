@@ -1,0 +1,78 @@
+.ill-hero {
+  display: grid;
+  gap: 1.25rem;
+  align-items: center;
+  padding: 0.25rem 0 0.5rem;
+}
+@media (min-width: 768px) {
+  .ill-hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+}
+.ill-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: 0.35rem;
+}
+.ill-trio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ill-trio-item { text-align: center; }
+.ill-trio-art {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 1.35rem;
+}
+.ill-trio-title {
+  margin-top: 0.4rem;
+  font-weight: 700;
+  color: var(--color-primary-deep);
+  font-size: 0.9rem;
+}
+.ill-trio-body {
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  line-height: 1.35;
+}
+.ill-phones {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 1.4rem 0 0.25rem;
+}
+.ill-phone {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 16px rgb(74 28 83 / 0.08));
+}
+@media (max-width: 639px) {
+  .ill-phones { grid-template-columns: repeat(2, 1fr); }
+}
+.invite-card .ill-feature,
+.welcome-row .ill-feature {
+  width: 4.5rem;
+  height: 4.5rem;
+  flex-shrink: 0;
+  border-radius: 1rem;
+}
+.ill-banner {
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+}
+@media (min-width: 700px) {
+  .ill-banner {
+    grid-template-columns: minmax(0, 1fr) 16rem;
+  }
+}
