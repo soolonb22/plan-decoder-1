@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RightsCourse, type CourseSearch } from "@/components/rights-course";
+import { IllustrationTrio, PhoneRow } from "@/components/illustrations";
 
 export const Route = createFileRoute("/rights")({
   validateSearch: (raw: Record<string, unknown>): CourseSearch => {
@@ -24,5 +25,16 @@ export const Route = createFileRoute("/rights")({
 
 function RightsPage() {
   const search = Route.useSearch();
-  return <RightsCourse search={search} />;
+  const onLanding = search.m === undefined && !search.x;
+  return (
+    <div>
+      {onLanding ? (
+        <div className="mb-6">
+          <IllustrationTrio />
+          <PhoneRow />
+        </div>
+      ) : null}
+      <RightsCourse search={search} />
+    </div>
+  );
 }
