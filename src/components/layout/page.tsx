@@ -10,11 +10,20 @@ import { Card } from "@/components/ui/card";
 import { CodeWordUnlock } from "@/components/code-word";
 import { PageArt, type ArtTopic } from "@/components/illustrations";
 
+const PICTURE_TOPIC: Record<string, ArtTopic> = {
+  "/brand/story-words.jpg": "articles",
+  "/brand/story-rights.jpg": "news",
+  "/brand/story-tick.jpg": "assess",
+  "/brand/story-path.jpg": "nav",
+  "/brand/story-wallet.jpg": "wallet",
+};
+
 export function PageHeader({
   title,
   lede,
   actions,
   art,
+  picture,
 }: {
   title: string;
   lede?: string;
@@ -22,6 +31,7 @@ export function PageHeader({
   picture?: string;
   art?: ArtTopic;
 }) {
+  const topic = art ?? (picture ? PICTURE_TOPIC[picture] : undefined);
   return (
     <header className="mb-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -31,9 +41,9 @@ export function PageHeader({
         </div>
         {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
       </div>
-      {art ? (
+      {topic ? (
         <div className="mt-5">
-          <PageArt topic={art} />
+          <PageArt topic={topic} />
         </div>
       ) : null}
     </header>
