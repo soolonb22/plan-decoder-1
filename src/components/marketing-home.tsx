@@ -6,7 +6,7 @@ import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 import { ACCESS_BOUNDARY } from "@/lib/access-copy";
 import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import { HOME_FAQS, faqJsonLd } from "@/lib/seo-faq";
-import { FeatureArt, IllustrationTrio, PhoneRow } from "@/components/illustrations";
+import { FeatureArt, PageArt } from "@/components/illustrations";
 
 export function MarketingHome() {
   return (
@@ -47,10 +47,10 @@ export function MarketingHome() {
             </Button>
           </div>
         </div>
-        <IllustrationTrio />
+        <PageArt topic="home" showPhones={false} />
       </section>
 
-      <PhoneRow />
+      <PageArt topic="home" showIcons={false} />
 
       <StoryStrip heading="How this works" steps={HOW_OLLIE_WORKS} />
 
