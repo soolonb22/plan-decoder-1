@@ -94,6 +94,23 @@ export function PublicShell({ children }: { children: ReactNode }) {
             Pricing
           </Link>
         </p>
+        <p className="mt-2">
+          <Link to="/privacy" className="text-teal underline-offset-2 hover:underline">
+            Privacy
+          </Link>
+          {" · "}
+          <a href="/privacy#terms" className="text-teal underline-offset-2 hover:underline">
+            Terms
+          </a>
+          {" · "}
+          <a href="/privacy#refunds" className="text-teal underline-offset-2 hover:underline">
+            Refunds and cancellation
+          </a>
+          {" · "}
+          <a href="/privacy#contact" className="text-teal underline-offset-2 hover:underline">
+            Contact
+          </a>
+        </p>
       </footer>
     </div>
   );
