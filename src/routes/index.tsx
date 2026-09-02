@@ -12,9 +12,9 @@ import { daysUntil, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
-import { OllieMark } from "@/components/mark";
 import { LiveNewsStrip } from "@/components/live-news";
 import { MarketingHome } from "@/components/marketing-home";
+import { FeatureArt, IllustrationTrio } from "@/components/illustrations";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 
 export const Route = createFileRoute("/")({
@@ -50,8 +50,7 @@ function WorkspaceHome() {
 
   return (
     <div>
-      <section className="welcome-row">
-        <OllieMark className="size-14 shrink-0" />
+      <section className="ill-hero">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             Let’s take this one step at a time.
@@ -60,6 +59,7 @@ function WorkspaceHome() {
             This is {whose} calm workspace. Evidence stays on this device. Nothing here is an NDIA decision.
           </p>
         </div>
+        <IllustrationTrio />
       </section>
 
       <StoryStrip heading="How this works" steps={HOW_OLLIE_WORKS} />
@@ -96,42 +96,42 @@ function WorkspaceHome() {
           {
             to: "/assessment",
             icon: ClipboardList,
-            image: "/brand/story-tick.jpg",
+            kind: "assess" as const,
             title: "Practice assessment",
             body: "Tick questions about daily life. Practice only — not the NDIA.",
           },
           {
             to: "/navigator",
             icon: Compass,
-            image: "/brand/story-path.jpg",
+            kind: "nav" as const,
             title: "Community navigator",
             body: "Find health, housing, and local doors if NDIS is not the whole picture.",
           },
           {
             to: "/guide",
             icon: Compass,
-            image: "/brand/story-path.jpg",
+            kind: "nav" as const,
             title: "Guided help",
             body: "Letters and meeting notes, one small step at a time.",
           },
           {
             to: "/wallet",
             icon: FolderOpen,
-            image: "/brand/story-wallet.jpg",
+            kind: "wallet" as const,
             title: "Evidence pocket",
             body: "Slips, diary, carer notes, flags, and a weekly chart — on this device.",
           },
           {
             to: "/rights",
             icon: Scale,
-            image: "/brand/story-rights.jpg",
+            kind: "rights" as const,
             title: "Know your rights",
             body: "Eight short modules with quizzes. Progress stays in this browser.",
           },
           {
             to: "/words",
             icon: MessageSquare,
-            image: "/brand/story-words.jpg",
+            kind: "words" as const,
             title: "Find the words",
             body: "Swap harsh words for what actually happens in a day.",
           },
@@ -141,7 +141,7 @@ function WorkspaceHome() {
             to={item.to}
             className="invite-card group rounded-2xl border border-line bg-card p-3 shadow-[var(--shadow-card)] transition-colors hover:border-line-strong hover:bg-primary-soft"
           >
-            <img src={item.image} alt="" width={72} height={72} />
+            <FeatureArt kind={item.kind} />
             <div className="invite-copy">
               <item.icon className="size-4 text-primary" />
               <p className="mt-1 font-semibold">{item.title}</p>
@@ -164,13 +164,7 @@ function WorkspaceHome() {
         </Card>
         <Card>
           <div className="flex items-start gap-3">
-            <img
-              src="/brand/story-together.jpg"
-              alt=""
-              width={56}
-              height={56}
-              className="size-14 rounded-2xl object-cover"
-            />
+            <FeatureArt kind="rights" />
             <div>
               <p className="font-semibold">You do not have to do this alone</p>
               <p className="mt-2 text-sm text-muted">
