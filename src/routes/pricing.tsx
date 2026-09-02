@@ -35,12 +35,12 @@ function PricingPage() {
   const pro = PLANS.find((p) => p.id === "pro")!;
   const coreCta = user ? (
     <Button className="mt-5 w-full" asChild>
-      <Link to="/membership">Start Core on Pay & credits</Link>
+      <Link to="/membership">Start Core on Pay and credits</Link>
     </Button>
   ) : (
     <Button className="mt-5 w-full" asChild>
       <Link to="/login" search={LOGIN_CREATE_SEARCH}>
-        Create a free account
+        Start {CORE_TRIAL_DAYS}-day Core trial
       </Link>
     </Button>
   );
@@ -51,12 +51,7 @@ function PricingPage() {
     name: "Plan Decoder pricing",
     url: "https://www.plandecoder.com/pricing",
     itemListElement: [
-      {
-        "@type": "Offer",
-        name: "Free",
-        price: "0",
-        priceCurrency: "AUD",
-      },
+      { "@type": "Offer", name: "Free", price: "0", priceCurrency: "AUD" },
       {
         "@type": "Offer",
         name: "Core",
@@ -125,6 +120,13 @@ function PricingPage() {
             ))}
           </ul>
           {coreCta}
+          <p className="mt-3 text-xs text-muted">
+            Trial then A${MEMBERSHIP_PRICE_AUD.core}/month until you cancel. Cancel by emailing us. See{" "}
+            <Link to="/privacy" className="underline-offset-2 hover:underline">
+              Refunds and cancellation
+            </Link>
+            .
+          </p>
         </Card>
 
         <Card>
@@ -142,8 +144,7 @@ function PricingPage() {
             ))}
           </ul>
           <p className="mt-5 text-sm text-muted">
-            Professional Stripe checkout is not on this page yet. Start with Core, or open Pay & credits
-            once you have an account.
+            Professional checkout is not live yet. Use Core for one person, or email us if you support more than one.
           </p>
         </Card>
       </div>
@@ -166,11 +167,16 @@ function PricingPage() {
       <Card className="mt-8">
         <p className="text-sm text-muted">
           Independent Australian practice workspace. Not the NDIA, not a diagnosis, and not legal advice.
+          Membership is a personal purchase and cannot be paid from NDIS plan funding.{" "}
+          <Link to="/privacy" className="font-medium text-primary underline-offset-2 hover:underline">
+            Privacy, terms, refunds and contact
+          </Link>
+          .
           {user ? (
             <>
               {" "}
               <Link to="/membership" className="font-medium text-primary underline-offset-2 hover:underline">
-                Pay & credits
+                Pay and credits
               </Link>
             </>
           ) : (
