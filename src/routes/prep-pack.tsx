@@ -19,17 +19,12 @@ export const Route = createFileRoute("/prep-pack")({
   }),
 });
 
-function BuyButton({ className }: { className?: string }) {
-  if (PREP_PACK.link) {
-    return (
-      <a className={className} href={PREP_PACK.link}>
-        Get the Prep Pack
-      </a>
-    );
-  }
+function BuyButton() {
   return (
-    <Button className={className} asChild>
-      <Link to="/unlock">Get the Prep Pack</Link>
+    <Button asChild>
+      <a href={PREP_PACK.link} rel="noreferrer">
+        Get the Prep Pack — ${PREP_PACK.aud}
+      </a>
     </Button>
   );
 }
@@ -58,8 +53,8 @@ function PrepPackPage() {
         <PageArt topic="guide" showPhones={false} />
       </section>
       <Disclaimer>
-        Practice only. Not the NDIA, not I-CAN, not a diagnosis, and not a funding decision. The live Stripe link is
-        added when the product exists. Until then, a code word unlocks the same tools.
+        Practice only. Not the NDIA, not I-CAN, not a diagnosis, and not a funding decision. After you pay, Stripe
+        sends a receipt. Come back to Unlock if you have a code.
       </Disclaimer>
       <h2 className="mt-8 text-xl font-semibold text-primary-deep">Why it helps</h2>
       <p className="mt-2 text-sm text-muted">

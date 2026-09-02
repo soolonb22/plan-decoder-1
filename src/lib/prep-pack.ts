@@ -1,6 +1,5 @@
 export const PREP_PACK = {
   aud: 39,
   days: 90,
-  /** Live Stripe Payment Link. Leave empty until the product exists. */
-  link: "",
+  link: "https://buy.stripe.com/cNi14o0i9bwn7ZB8JI4Ni0S",
 } as const;
