@@ -45,6 +45,7 @@ export const Route = createRootRoute({
       { name: "description", content: DESC },
       { name: "theme-color", content: "#6B2976" },
       { name: "facebook-domain-verification", content: "0q70gmmp6ty8od9vqo7i52ekau460h" },
+      { name: "google-site-verification", content: "1BasneyYoBNTAjvQ02ZD_vOcGuopqF2eQNzbVHOEWKQ" },
       { name: "robots", content: "index,follow,max-image-preview:large" },
       { name: "googlebot", content: "index,follow" },
       { property: "og:type", content: "website" },
