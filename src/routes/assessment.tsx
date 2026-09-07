@@ -32,7 +32,7 @@ export const Route = createFileRoute("/assessment")({
       {
         name: "keywords",
         content:
-          "NDIS practice assessment, WHODAS 2.0 Australia, prepare for I-CAN, NDIS support needs assessment 2026, NDIS eligibility practice, functional assessment NDIS, nominee carer parent questionnaire, NDIS permanency evidence, environmental circumstances NDIS",
+          "NDIS practice rehearsal, WHODAS-inspired snapshot, independent support-needs practice, family carer nominee questionnaire, Australia",
       },
       { name: "robots", content: "index,follow" },
     ],
@@ -54,7 +54,7 @@ const FAQ = [
   },
   {
     q: "Will this tell me if I am eligible, or how much funding I will get?",
-    a: "No. Any “practice indicators” or dollar bands are illustrations from your ticks and from public conversation about plan sizes. They are not a quote, a prediction, or legal advice.",
+    a: "No. Any “practice indicators” are illustrations from your ticks. They are not a quote, a prediction, or legal advice. Only the NDIA decides eligibility and funding.",
   },
   {
     q: "Where is my information stored?",
@@ -85,7 +85,7 @@ function AssessmentLanding() {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "Plan Decoder practice assessment",
-    applicationCategory: "HealthApplication",
+    applicationCategory: "EducationalApplication",
     operatingSystem: "Web",
     offers: { "@type": "Offer", price: String(MEMBERSHIP_PRICE_AUD.core), priceCurrency: "AUD" },
     description: DESC,

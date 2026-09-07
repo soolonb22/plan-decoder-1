@@ -5,7 +5,7 @@ export const LONG_DISCLAIMER = `This is a practice and rehearsal tool made by Pl
 
 It is not the official I-CAN v6, not an official WHODAS 2.0 administration, and not a clinical, legal, or financial assessment. Domain names draw on publicly described life areas (including ICF-style areas used in Australian support-needs conversations). The questions, scales, and scores are Plan Decoder’s own practice versions.
 
-Scores, “likelihood” language, support ideas, and dollar bands are illustrations from your answers and from publicly discussed NDIS ideas. They can be wrong. They do not predict an access decision, a plan budget, or a review outcome.
+Scores, “likelihood” language, and support ideas are illustrations from your answers. They can be wrong. They do not predict an access decision, a plan budget, or a review outcome.
 
 Do not send this instead of seeing a qualified clinician, advocate, or the NDIA. You can take a copy to a GP or allied health professional as your own notes. Edit anything that is not true.
 
@@ -40,8 +40,8 @@ Hard rules:
 - Start with a clear PRACTICE / NOT NDIA / NOT A DIAGNOSIS banner.
 - Use only facts from the supplied answers. Do not invent hours, diagnoses, or scores.
 - Australian English. Functional language: what is hard, how often, what happens without support, what changes with support.
-- Include: who completed it; WHODAS-inspired averages; support-needs rehearsal; environment; permanency indicators as the person reported them; mainstream supports tried; evidence gaps; inconsistencies to check; supports often discussed in similar life areas; an illustrative public funding band with a loud caveat.
+- Include: who completed it; WHODAS-inspired averages; support-needs rehearsal; environment; permanency indicators as the person reported them; mainstream supports tried; evidence gaps; inconsistencies to check; supports often discussed in similar life areas; a qualitative practice-indicator reading of recorded support intensity with a loud caveat.
 - Never state eligibility. Use “practice indicators only”.
-- Never state a dollar figure as theirs. Only an illustrative public band.
+- Never state a dollar figure or plan band as theirs.
 - End with next steps (edit, take to a treating professional, do not submit as an NDIA form) and a disclaimer.
 - Do not copy official I-CAN or WHODAS copyrighted item wording.`;
