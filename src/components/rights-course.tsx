@@ -197,12 +197,17 @@ function RightsCourseBody({ search, signedIn }: { search: CourseSearch; signedIn
         <p className="text-xs font-semibold uppercase tracking-widest text-lavender">
           {signedIn ? "Core membership" : "Free preview"}
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Know Your NDIS Rights</h1>
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Plan Decoder rights course</h1>
         <p className="mt-2 max-w-xl text-sm text-lavender sm:text-base">
           {signedIn
-            ? "Eight short modules. A quiz in each. Progress stays in this browser. Not the NDIA, and not advice about your plan."
+            ? "Eight short modules. A quiz in each. Progress stays in this browser. Not the NDIA. Not legal advice."
             : ACCESS_BOUNDARY}
         </p>
+        {!signedIn ? (
+          <p className="mt-2 max-w-xl text-sm text-lavender sm:text-base">
+            Independent practice tools. Not the NDIA. Not legal advice.
+          </p>
+        ) : null}
         <div className="mt-5">
           <div className="mb-1 flex justify-between text-xs font-medium">
             <span>
@@ -444,7 +449,7 @@ function drawCertificate(c: HTMLCanvasElement, name: string) {
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
   ctx.font = 'bold 44px Figtree, "Segoe UI", sans-serif';
-  ctx.fillText("KNOW YOUR NDIS RIGHTS", W / 2, 92);
+  ctx.fillText("PLAN DECODER RIGHTS COURSE", W / 2, 92);
   ctx.fillStyle = "#4A1C53";
   ctx.font = 'bold 64px Figtree, "Segoe UI", sans-serif';
   ctx.fillText("Certificate of Completion", W / 2, 300);
@@ -471,7 +476,7 @@ function drawCertificate(c: HTMLCanvasElement, name: string) {
   ctx.fillText("has completed all 8 modules of the", W / 2, 640);
   ctx.fillStyle = "#6B2976";
   ctx.font = 'bold 34px Figtree, "Segoe UI", sans-serif';
-  ctx.fillText("Know Your NDIS Rights interactive course", W / 2, 690);
+  ctx.fillText("Plan Decoder rights course", W / 2, 690);
   ctx.fillStyle = "#5c5560";
   ctx.font = '24px Figtree, "Segoe UI", sans-serif';
   const items = MODULES.map((m, i) => `${i}. ${m.title}`);

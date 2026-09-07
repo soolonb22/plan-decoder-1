@@ -136,11 +136,11 @@ export function localReport(draft: AssessmentDraft, score: AssessmentScore) {
     band.body,
     ...score.eligibilityWhy.map((x) => `- ${x}`),
     "",
-    "10. Illustrative public funding band — NOT a quote",
+    "10. Practice support-intensity reading — NOT a quote",
     score.funding.label,
     score.funding.range,
     score.funding.note,
-    "Do not write this dollar language into an NDIA form as if it were evidence of entitlement.",
+    "Do not treat this rehearsal as evidence of entitlement on an NDIA form.",
     "",
     "11. Supports people often discuss in these life areas",
     ...score.supports.flatMap((s) => [

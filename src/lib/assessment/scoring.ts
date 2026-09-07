@@ -45,41 +45,46 @@ function fundingBand(overall: number, overnight: string, living: string): Fundin
     return {
       id: "low",
       label: "Lower recorded support intensity",
-      range: "Often discussed in public reporting as smaller plans, roughly $0–$20,000, or mainly mainstream supports.",
+      range: "These answers describe lighter extra support, or mainly using mainstream services.",
       note:
-        "This band is an illustration from your ticks, not a quote." + silHint,
+        "This is a practice indicator from your ticks, not a quote, not a prediction, and not an eligibility decision." +
+        silHint,
     };
   }
   if (overall < 4) {
     return {
       id: "moderate-low",
       label: "Mild to moderate recorded support intensity",
-      range: "Public conversation about similar day-to-day support often mentions plans in the $15,000–$45,000 area.",
-      note: "Wide variation. Not your budget." + silHint,
+      range: "These answers describe some extra day-to-day support. Individual situations differ a lot.",
+      note: "Not a quote. Not a prediction. Not eligibility." + silHint,
     };
   }
   if (overall < 6) {
     return {
       id: "moderate",
       label: "Moderate recorded support intensity",
-      range: "Public averages for many NDIS plans sit somewhere around the $40,000–$90,000 area. Individuals differ a lot.",
-      note: "Averages are not a quote. Capital items and coordination sit on top of daily support." + silHint,
+      range:
+        "These answers describe regular extra support in daily life. What the NDIA funds, if anything, is decided case by case.",
+      note: "This is not a quote or a plan size." + silHint,
     };
   }
   if (overall < 8) {
     return {
       id: "high",
       label: "High recorded support intensity",
-      range: "People describing substantial daily support sometimes have published plan sizes from about $80,000 into the low hundreds of thousands.",
-      note: "This is not a prediction. Home and living supports change the picture completely." + silHint,
+      range:
+        "These answers describe substantial daily support. Home and living supports, when they apply, sit in a much wider range and are decided case by case.",
+      note: "This is not a prediction. Not eligibility." + silHint,
     };
   }
   return {
     id: "very-high",
     label: "Very high recorded support intensity",
     range:
-      "Very high daily support, including some home and living arrangements, is publicly associated with six-figure plans. Figures over $200,000 exist in published data for a minority of participants.",
-    note: "Plan Decoder cannot estimate a SIL or 24-hour package. That is an NDIA decision with extra evidence." + silHint,
+      "These answers describe very high daily support, including where overnight or home and living supports may be discussed.",
+    note:
+      "Plan Decoder cannot estimate a SIL or 24-hour package. That is an NDIA decision with extra evidence. Not a quote, not a prediction, not eligibility." +
+      silHint,
   };
 }
 
