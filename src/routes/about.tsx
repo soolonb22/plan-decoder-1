@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/layout/page";
 import { Card } from "@/components/ui/card";
+import { FOUNDER_LINE } from "@/lib/founder-copy";
 
 export const Route = createFileRoute("/about")({
   component: AboutPage,
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Plan Decoder (plandecoder.com) is an independent Australian NDIS practice workspace. Not the NDIA. Not a diagnosis. Not legal advice.",
+          "Plan Decoder (plandecoder.com) is an independent Australian NDIS practice workspace built by Fallon in Queensland. Not the NDIA. Not a diagnosis. Not legal advice.",
       },
     ],
   }),
@@ -24,7 +25,8 @@ function AboutPage() {
         lede="An independent website for practising NDIS-style questions, keeping evidence notes on your device, and reading rights in plain English."
       />
       <Card>
-        <p className="text-sm text-muted">
+        <p className="text-sm text-muted">{FOUNDER_LINE}</p>
+        <p className="mt-3 text-sm text-muted">
           Plan Decoder lives at <strong>www.plandecoder.com</strong>. It is made for participants, families, carers,
           nominees, support coordinators, and schools in Australia.
         </p>
