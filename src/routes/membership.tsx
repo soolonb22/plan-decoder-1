@@ -4,6 +4,7 @@ import { PLANS } from "@/lib/membership";
 import { CREDIT_PACKS, CREDIT_PRICE_AUD, CORE_TRIAL_DAYS, MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import {
   confirmPaid,
+  createBillingPortal,
   createCheckout,
   saveAccount,
 } from "@/lib/billing-sync";
@@ -123,6 +124,27 @@ function MembershipPage() {
     }
   }
 
+  async function openPortal() {
+    if (!user) {
+      window.location.assign("/login");
+      return;
+    }
+    setBusy("portal");
+    setMessage(null);
+    try {
+      const res = await createBillingPortal({ data: { origin: window.location.origin } });
+      if (res.url) {
+        window.location.href = res.url;
+        return;
+      }
+      setMessage("Could not open Stripe. Email soolonb22@gmail.com and write Please cancel Core.");
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Could not open Stripe. Email soolonb22@gmail.com.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function activate(kind: "core" | "credits", packCredits?: number) {
     setBusy(`activate-${kind}-${packCredits ?? 0}`);
     setMessage(null);
@@ -184,6 +206,13 @@ function MembershipPage() {
         <p className="mt-3 text-xs text-muted">
           Pay on Stripe. Membership and credits land on this account after Stripe confirms (webhook). Tap refresh if the page still looks old.
         </p>
+        {user && seated ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button variant="secondary" disabled={Boolean(busy)} onClick={() => void openPortal()}>
+              {busy === "portal" ? "Opening Stripe…" : "Cancel Core or update card"}
+            </Button>
+          </div>
+        ) : null}
         {pending ? (
           <div className="mt-4 flex flex-wrap gap-2">
             {pending === "core" ? (
@@ -299,17 +328,6 @@ function MembershipPage() {
         ) : null}
       </Card>
 
-      <Card className="mt-5 space-y-2">
-        <p className="text-sm font-medium text-primary">Send people back after Stripe</p>
-        <p className="text-sm text-muted">
-          In Stripe, open each Payment Link → After payment → Redirect to website. Use your live Plan Decoder address plus <code className="rounded bg-paper-2 px-1">/paid</code>
-          (for example <code className="rounded bg-paper-2 px-1">https://your-site/paid</code>).
-          Do this on all four links: Core, A$5, A$10, and A$25.
-        </p>
-        <p className="text-sm text-muted">
-          When they land back, credits or Core are added automatically. If Stripe still shows its own receipt, they can return here and tap I’ve paid.
-        </p>
-      </Card>
       <Card className="mt-5 space-y-3">
         <p className="text-sm font-medium text-primary">Complimentary code</p>
         <p className="text-sm text-muted">
