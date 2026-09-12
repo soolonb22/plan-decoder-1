@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ACCESS_BOUNDARY } from "@/lib/access-copy";
 import { CREDIT_PRICE_AUD, MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import { canAccess } from "@/lib/membership";
+import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import type { Membership } from "@/lib/types";
 import { useOllie } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -100,10 +101,12 @@ export function MembershipGate({
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <Button asChild>
-          <Link to="/membership">See membership</Link>
+          <Link to="/login" search={LOGIN_CREATE_SEARCH}>
+            Start 3-day Core trial
+          </Link>
         </Button>
         <Button variant="secondary" asChild>
-          <Link to="/pricing">Pricing</Link>
+          <Link to="/pricing">See pricing</Link>
         </Button>
       </div>
     </Card>
