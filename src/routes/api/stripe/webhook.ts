@@ -48,12 +48,31 @@ export const Route = createFileRoute("/api/stripe/webhook")({
         if (!verify(raw, sig, secret)) {
           return new Response("invalid signature", { status: 400 });
         }
-        const event = JSON.parse(raw) as { type: string; data: { object: StripeSession } };
+        const event = JSON.parse(raw) as {
+          type: string;
+          data: { object: StripeSession & { id?: string; customer?: string | null; status?: string } };
+        };
+        const sql = await getSql();
+        if (event.type === "customer.subscription.deleted") {
+          const sub = event.data.object;
+          const customer = sub.customer || "";
+          const subId = sub.id || "";
+          if (customer || subId) {
+            await sql`
+              update profiles
+              set membership = 'free',
+                  subscription_status = 'canceled',
+                  updated_at = now()
+              where (${subId} <> '' and stripe_subscription_id = ${subId})
+                 or (${customer} <> '' and stripe_customer_id = ${customer})
+            `;
+          }
+          return new Response("ok", { status: 200 });
+        }
         if (event.type !== "checkout.session.completed" && event.type !== "checkout.session.async_payment_succeeded") {
           return new Response("ok", { status: 200 });
         }
         const session = event.data.object;
-        const sql = await getSql();
         let userId = session.client_reference_id || session.metadata?.userId || "";
         if (!userId) {
           const email = sessionEmail(session);

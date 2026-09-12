@@ -13,7 +13,9 @@ import {
 } from "@/lib/billing";
 import type { Membership } from "@/lib/types";
 import {
+  publicAppOrigin,
   stripeConfigured,
+  stripeForm,
   stripeGet,
   type StripeSession,
 } from "@/lib/stripe-server";
@@ -140,6 +142,47 @@ export const createCheckout = createServerFn({ method: "POST" })
       values (${context.userId}, 0, ${pendingKey}, ${kind === "credits" ? `credits:${pack.credits}` : "core"})
     `;
     return { ok: true as const, preview: false as const, url, credits: pack.credits };
+  });
+
+export const createBillingPortal = createServerFn({ method: "POST" })
+  .validator((input: { origin: string }) => input)
+  .middleware([authMiddleware])
+  .handler(async ({ context, data }) => {
+    if (!stripeConfigured()) {
+      throw new Error("Payments are not connected yet.");
+    }
+    const origin = publicAppOrigin(data.origin) || "https://www.plandecoder.com";
+    const sql = await getSql();
+    const rows = await sql<{ stripe_customer_id: string | null }>`
+      select stripe_customer_id from profiles where user_id = ${context.userId}
+    `;
+    let customer = (rows[0]?.stripe_customer_id || "").trim();
+    if (!customer) {
+      const users = await sql<{ email: string | null }>`
+        select email from "user" where id = ${context.userId} limit 1
+      `;
+      const email = (users[0]?.email || "").trim();
+      if (!email) {
+        throw new Error("No Stripe customer is on this account yet. Email soolonb22@gmail.com and we will cancel it.");
+      }
+      const found = await stripeGet<{ data?: { id: string }[] }>(
+        `/customers?email=${encodeURIComponent(email)}&limit=1`,
+      );
+      customer = found.data?.[0]?.id || "";
+      if (!customer) {
+        throw new Error("No Stripe customer is on this account yet. Email soolonb22@gmail.com and we will cancel it.");
+      }
+      await sql`
+        update profiles set stripe_customer_id = ${customer}, updated_at = now()
+        where user_id = ${context.userId}
+      `;
+    }
+    const session = await stripeForm<{ url?: string }>("/billing_portal/sessions", {
+      customer,
+      return_url: `${origin}/membership`,
+    });
+    if (!session.url) throw new Error("Could not open the Stripe customer page.");
+    return { ok: true as const, url: session.url };
   });
 
 export const confirmPaid = createServerFn({ method: "POST" })

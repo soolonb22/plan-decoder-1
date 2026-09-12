@@ -25,7 +25,7 @@ export const Route = createFileRoute("/privacy")({
   }),
 });
 
-const UPDATED = "12 September 2026";
+const UPDATED = "13 September 2026";
 const EMAIL = "soolonb22@gmail.com";
 
 function Section({
@@ -97,7 +97,7 @@ function LegalPage() {
     <div>
       <PageHeader
         title="Privacy, terms, refunds and contact"
-        lede="Plain-language rules for using Plan Decoder. Read this before you pay. Last reviewed 12 September 2026."
+        lede="Plain-language rules for using Plan Decoder. Read this before you pay. Last reviewed 13 September 2026."
       />
       <Disclaimer>
         This page is general information about how this website works. It is not legal advice. Plan Decoder is
@@ -190,9 +190,9 @@ function LegalPage() {
           </p>
           <p>
             <strong className="text-ink">How to cancel.</strong> Email {EMAIL} from the address you used at checkout and
-            write Please cancel Core. We cancel the Stripe subscription. You keep access until the end of the period
-            already paid. We do not charge again after cancellation. We will also add an in-account cancel button; until
-            that is live, email is the official way.
+            write Please cancel Core. You can also open Pay and credits while signed in and tap Cancel Core, which
+            opens Stripe. You keep access until the end of the period already paid. We do not charge again after
+            cancellation. Email still works if the Stripe page does not open.
           </p>
           <p>
             <strong className="text-ink">Refunds we will give without argument.</strong>
