@@ -25,7 +25,7 @@ export const Route = createFileRoute("/privacy")({
   }),
 });
 
-const UPDATED = "3 September 2026";
+const UPDATED = "12 September 2026";
 const EMAIL = "soolonb22@gmail.com";
 
 function Section({
@@ -97,7 +97,7 @@ function LegalPage() {
     <div>
       <PageHeader
         title="Privacy, terms, refunds and contact"
-        lede="Plain-language rules for using Plan Decoder. Read this before you pay. Last reviewed 3 September 2026."
+        lede="Plain-language rules for using Plan Decoder. Read this before you pay. Last reviewed 12 September 2026."
       />
       <Disclaimer>
         This page is general information about how this website works. It is not legal advice. Plan Decoder is
@@ -227,10 +227,7 @@ function LegalPage() {
             Use that address for cancel requests, refunds, privacy requests, and anything on the site that is wrong or
             confusing. We answer member messages first.
           </p>
-          <p>
-            If you have an Australian Business Number, add it on this page when you have it. Until then this site is
-            operated by the person behind {EMAIL}.
-          </p>
+          <p>This site is operated by the person behind {EMAIL}.</p>
           <p className="text-xs">Last reviewed: {UPDATED}.</p>
           <p>
             <Link className="font-medium text-teal underline-offset-2 hover:underline" to="/about">
