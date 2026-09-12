@@ -2,10 +2,22 @@ import type { ReactNode } from "react";
 import { SYSTEMS_WALK_PLUM, type NavigatorReport } from "@/lib/systems-walk";
 import { Card } from "@/components/ui/card";
 
+const KEY_LABELS: Record<string, string> = {
+  form11: "Form 11",
+  systemDoor: "Which door",
+  whatThisIs: "What this is",
+  whatThisIsNot: "What this is not",
+  usualWindow: "Usual window",
+  wordsYouCanUse: "Words you can use",
+  notTryingTo: "Not trying to",
+};
+
 function prettyKey(key: string) {
+  if (KEY_LABELS[key]) return KEY_LABELS[key];
   return key
     .replace(/([A-Z])/g, " $1")
     .replace(/_/g, " ")
+    .replace(/^\w/, (c) => c.toLowerCase())
     .replace(/^\w/, (c) => c.toUpperCase());
 }
 
