@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { LiveNewsStrip } from "@/components/live-news";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 import { ACCESS_BOUNDARY } from "@/lib/access-copy";
-import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import { HOME_FAQS, faqJsonLd } from "@/lib/seo-faq";
 import { FeatureArt, PageArt } from "@/components/illustrations";
 
@@ -33,17 +32,12 @@ export function MarketingHome() {
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             <Button asChild>
-              <Link to="/login" search={LOGIN_CREATE_SEARCH}>
-                Create a free account
+              <Link to="/assessment" search={{ tab: "function" }}>
+                Try the 12 questions
               </Link>
             </Button>
             <Button variant="secondary" asChild>
-              <Link to="/assessment" search={{ tab: "about" }}>
-                See the practice assessment
-              </Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link to="/pricing">Pricing</Link>
+              <Link to="/pricing">See pricing</Link>
             </Button>
           </div>
         </div>

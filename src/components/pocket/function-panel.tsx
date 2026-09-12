@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { DOMAINS } from "@/lib/content/language";
 import {
   SCALE,
@@ -10,11 +11,28 @@ import {
 import type { WhodasDomain } from "@/lib/types";
 import { PRACTICE_THRESHOLD, type ResultRow } from "@/lib/assessment/clinical";
 import { DomainAverageBars, LongitudinalLines, PracticeIndexBars } from "@/components/assessment/practice-charts";
+import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import { useOllie, useClientList } from "@/lib/store";
 import { formatDate, todayISO } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer } from "@/components/layout/page";
+
+/** Two items from each of the six life areas. Practice only. Not official WHODAS-12. */
+const SNAPSHOT_12 = new Set([
+  "q1",
+  "q2",
+  "q7",
+  "q8",
+  "q12",
+  "q13",
+  "q16",
+  "q17",
+  "q21",
+  "q22",
+  "q29",
+  "q33",
+]);
 
 function toRows(
   domains: { domain: WhodasDomain; avg: number; answered: number }[],
@@ -36,12 +54,13 @@ function toRows(
   });
 }
 
-export function FunctionPanel() {
+export function FunctionPanel({ preview = false }: { preview?: boolean }) {
   const save = useOllie((s) => s.saveWhodas);
   const history = useClientList("whodas");
   const [items, setItems] = useState<Record<string, number | null>>({});
   const [notes, setNotes] = useState("");
   const [domainFilter, setDomainFilter] = useState<WhodasDomain | "all">("all");
+  const catalogue = preview ? WHODAS_ITEMS.filter((i) => SNAPSHOT_12.has(i.id)) : WHODAS_ITEMS;
   const score = useMemo(() => scoreWhodas(items), [items]);
   const rows = useMemo(() => toRows(score.domains), [score]);
   const series = useMemo(
@@ -54,12 +73,14 @@ export function FunctionPanel() {
         }),
     [history],
   );
-  const visible = WHODAS_ITEMS.filter((i) => domainFilter === "all" || i.domain === domainFilter);
+  const visible = catalogue.filter((i) => domainFilter === "all" || i.domain === domainFilter);
 
   return (
     <div>
       <p className="mb-3 text-sm text-muted">
-        Inspired by WHODAS 2.0 life areas. Skip anything that does not apply. Average scores handle skipped items.
+        {preview
+          ? "Twelve practice questions about a typical hard day. Tick what is true. Skip anything that does not apply. This stays on this device. It is not an NDIA assessment."
+          : "Inspired by WHODAS 2.0 life areas. Skip anything that does not apply. Average scores handle skipped items."}
       </p>
       <Disclaimer>{WHODAS_DISCLAIMER}</Disclaimer>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -111,7 +132,7 @@ export function FunctionPanel() {
         ))}
       </div>
       <Card className="mt-6">
-        <p className="font-semibold">Average scores</p>
+        <p className="font-semibold">{preview ? "A plain picture of this snapshot" : "Average scores"}</p>
         <p className="mt-1 text-sm text-muted">
           Overall average {score.avgOverall.toFixed(2)} ({descriptor(score.avgOverall)}) · simple 0–100 transform{" "}
           {score.simple100} · {score.answered} items answered
@@ -138,22 +159,43 @@ export function FunctionPanel() {
             />
           </div>
         ) : null}
-        <textarea
-          className="mt-4 min-h-20 w-full rounded-lg border border-line p-3 text-sm"
-          placeholder="Notes for a clinician or coordinator"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-        />
-        <Button className="mt-3" onClick={() => save({ date: todayISO(), items, notes })} disabled={score.answered === 0}>
-          Save snapshot
-        </Button>
-        {history.length ? (
-          <p className="mt-3 text-xs text-muted">
-            {history.length} saved snapshot{history.length === 1 ? "" : "s"} on this device.
-          </p>
-        ) : null}
+        {preview ? (
+          <div className="mt-4 rounded-xl bg-paper-2 px-4 py-3 text-sm text-muted">
+            <p>
+              This is a practice picture from the ticks you chose. It does not decide eligibility or funding. The full
+              36-item rehearsal and a printable pack for a GP are part of Core.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button asChild>
+                <Link to="/login" search={LOGIN_CREATE_SEARCH}>
+                  Start 3-day Core trial
+                </Link>
+              </Button>
+              <Button variant="secondary" asChild>
+                <Link to="/pricing">See pricing</Link>
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <textarea
+              className="mt-4 min-h-20 w-full rounded-lg border border-line p-3 text-sm"
+              placeholder="Notes for a clinician or coordinator"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+            <Button className="mt-3" onClick={() => save({ date: todayISO(), items, notes })} disabled={score.answered === 0}>
+              Save snapshot
+            </Button>
+            {history.length ? (
+              <p className="mt-3 text-xs text-muted">
+                {history.length} saved snapshot{history.length === 1 ? "" : "s"} on this device.
+              </p>
+            ) : null}
+          </>
+        )}
       </Card>
-      {series.length > 1 ? (
+      {!preview && series.length > 1 ? (
         <Card className="mt-4">
           <p className="font-semibold">Change over time</p>
           <p className="mt-1 text-sm text-muted">

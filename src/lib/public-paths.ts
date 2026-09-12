@@ -24,6 +24,8 @@ export const PUBLIC_PATHS = new Set([
   "/prep-pack",
   "/prep-pack/success",
   "/unlock",
+  "/membership",
+  "/function",
 ]);
 
 export function isPublicPath(pathname: string) {

@@ -17,7 +17,7 @@ export const Route = createFileRoute("/rights")({
       {
         name: "description",
         content:
-          "Preview NDIS rights in plain English. Module 0 is free without an account. The full course, Easy Read, and certificate are part of Core. Independent of the NDIA. Not legal advice.",
+          "Preview NDIS rights in plain English. Module 0 is free without an account. The full course, Easy Read, and a practice completion note are part of Core. Independent of the NDIA. Not legal advice.",
       },
     ],
   }),

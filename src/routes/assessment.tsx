@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ClipboardList, Lock, Shield, Trash2 } from "lucide-react";
 import { canAccess } from "@/lib/membership";
+import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import { MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import { SHORT_DISCLAIMER } from "@/lib/assessment/disclaimers";
 import { useOllie } from "@/lib/store";
@@ -125,7 +126,7 @@ function AssessmentLanding() {
           </div>
           ) : (
             <Button asChild>
-              <Link to="/membership">Start Core to practise · ${MEMBERSHIP_PRICE_AUD.core} / month</Link>
+              <Link to="/login" search={LOGIN_CREATE_SEARCH}>Start Core to practise · ${MEMBERSHIP_PRICE_AUD.core} / month</Link>
             </Button>
           )
         }
@@ -159,9 +160,7 @@ function AssessmentLanding() {
         </MembershipGate>
       ) : null}
       {tab === "function" ? (
-        <MembershipGate need="core">
-          <FunctionPanel />
-        </MembershipGate>
+        <FunctionPanel preview={!canAccess(membership, "core")} />
       ) : null}
       {tab === "about" ? (
         <>
@@ -169,7 +168,7 @@ function AssessmentLanding() {
       <StoryStrip heading="The rehearsal in four pictures" steps={HOW_OLLIE_WORKS} />
       <div className="mt-4 sm:hidden">
         <Button className="w-full" asChild>
-          <Link to={canAccess(membership, "core") ? "/assessment" : "/membership"} search={canAccess(membership, "core") ? { tab: "practice" } : undefined}>
+          <Link to={canAccess(membership, "core") ? "/assessment" : "/login"} search={canAccess(membership, "core") ? { tab: "practice" } : LOGIN_CREATE_SEARCH}>
             {canAccess(membership, "core") ? "Start practice with Plan Decoder" : "Start Core to practise"}
           </Link>
         </Button>

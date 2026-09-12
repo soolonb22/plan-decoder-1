@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { CREDIT_PRICE_AUD, MEMBERSHIP_PRICE_AUD, OUTCOME_CREDITS, OUTCOME_LABEL, hasPaidSeat, type OutcomeKind, type SubscriptionStatus } from "@/lib/billing";
 import { spendCredit } from "@/lib/billing-sync";
 import { canAccess } from "@/lib/membership";
+import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import { useOllie } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -63,9 +64,16 @@ export function OutcomeUnlock({
         <p className="mt-2 text-sm text-muted">
           Core is ${MEMBERSHIP_PRICE_AUD.core} per month. Then each finished outcome uses 1 credit (${CREDIT_PRICE_AUD}).
         </p>
-        <Button className="mt-4" asChild>
-          <Link to="/membership">Start Core — ${MEMBERSHIP_PRICE_AUD.core} / month</Link>
-        </Button>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button asChild>
+            <Link to="/login" search={LOGIN_CREATE_SEARCH}>
+              Start Core — ${MEMBERSHIP_PRICE_AUD.core} / month
+            </Link>
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link to="/pricing">See pricing</Link>
+          </Button>
+        </div>
       </Card>
     );
   }
@@ -92,7 +100,7 @@ export function OutcomeUnlock({
         </Button>
       ) : (
         <Button className="mt-4" asChild>
-          <Link to="/membership">Buy credits — ${CREDIT_PRICE_AUD} each</Link>
+          <Link to="/pricing">Buy credits — ${CREDIT_PRICE_AUD} each</Link>
         </Button>
       )}
       {error ? <p className="mt-3 text-sm text-alert">{error}</p> : null}

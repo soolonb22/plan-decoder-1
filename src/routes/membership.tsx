@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { PLANS } from "@/lib/membership";
 import { CREDIT_PACKS, CREDIT_PRICE_AUD, CORE_TRIAL_DAYS, MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import {
@@ -9,6 +9,7 @@ import {
 } from "@/lib/billing-sync";
 import { useOllie } from "@/lib/store";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { LOGIN_CREATE_SEARCH } from "@/lib/public-paths";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/input";
@@ -88,6 +89,10 @@ function MembershipPage() {
   }, [search, setBilling]);
 
   async function pay(kind: "core" | "pro" | "credits", packCredits?: number) {
+    if (!user) {
+      window.location.assign("/login?create=1");
+      return;
+    }
     if (kind === "pro") {
       setMessage("Professional is not on this Stripe checkout yet.");
       return;
@@ -147,6 +152,25 @@ function MembershipPage() {
         lede={`Core: ${CORE_TRIAL_DAYS} days free, then $${MEMBERSHIP_PRICE_AUD.core} a month. Each finished report or polished draft uses 1 credit ($${CREDIT_PRICE_AUD}).`}
         picture="/brand/story-path.jpg"
       />
+
+      {!user ? (
+        <Card className="mb-5">
+          <p className="text-sm font-medium text-primary">Start here</p>
+          <p className="mt-2 text-sm text-muted">
+            Create an account, then Stripe opens the {CORE_TRIAL_DAYS}-day Core trial. Nothing is charged during the trial if you cancel first.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button asChild>
+              <Link to="/login" search={LOGIN_CREATE_SEARCH}>
+                Create an account to start the trial
+              </Link>
+            </Button>
+            <Button variant="secondary" asChild>
+              <Link to="/login">I already have an account</Link>
+            </Button>
+          </div>
+        </Card>
+      ) : null}
 
       <Card className="mb-5">
         <p className="text-sm font-medium text-primary">Your account</p>
