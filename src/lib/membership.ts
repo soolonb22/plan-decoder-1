@@ -63,7 +63,7 @@ export const PLANS = [
       "Evidence Wallet",
       "Functional language builder",
       "Impact statements",
-      "Full Know Your Rights course, Easy Read, and certificate",
+      "Full Know Your Rights course, Easy Read, and practice completion note",
       "Fluctuation patterns",
       "Carer impact log",
       "Meeting and appointment prep",
