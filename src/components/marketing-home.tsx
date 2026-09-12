@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { LiveNewsStrip } from "@/components/live-news";
 import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 import { ACCESS_BOUNDARY } from "@/lib/access-copy";
+import { FOUNDER_LINE } from "@/lib/founder-copy";
 import { HOME_FAQS, faqJsonLd } from "@/lib/seo-faq";
 import { FeatureArt, PageArt } from "@/components/illustrations";
 
@@ -115,6 +116,14 @@ export function MarketingHome() {
       </div>
 
       <Card className="mt-8">
+        <p className="font-semibold">Who built this</p>
+        <p className="mt-2 text-sm text-muted">{FOUNDER_LINE}</p>
+        <Button className="mt-4" variant="ghost" size="sm" asChild>
+          <Link to="/about">About</Link>
+        </Button>
+      </Card>
+
+      <Card className="mt-3">
         <p className="font-semibold">Please read this first</p>
         <p className="mt-2 text-sm text-muted">
           Practice answers stay on this device unless you later choose an encrypted copy. This app cannot apply for you,
