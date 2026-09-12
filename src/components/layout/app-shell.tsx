@@ -31,6 +31,7 @@ import {
   BadgeCheck,
   Shield,
   MapPin,
+  Footprints,
   type LucideIcon,
 } from "lucide-react";
 import { signOut } from "@/lib/auth/client";
@@ -47,6 +48,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   "/assessment": ClipboardList,
   "/guide": Compass,
   "/navigator": MapPin,
+  "/systems-walk": Footprints,
   "/wallet": FolderOpen,
   "/carer": HeartHandshake,
   "/fluctuation": Activity,

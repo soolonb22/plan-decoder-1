@@ -70,6 +70,10 @@ export function PublicShell({ children }: { children: ReactNode }) {
             Navigator
           </Link>
           {" · "}
+          <Link to="/systems-walk" className="text-teal underline-offset-2 hover:underline">
+            Systems walk
+          </Link>
+          {" · "}
           <Link to="/assessment" search={{ tab: "about" }} className="text-teal underline-offset-2 hover:underline">
             Practice assessment
           </Link>

@@ -40,6 +40,7 @@ export const PLANS = [
     blurb: "Rights, language you can trust, and a calm place to start.",
     features: [
       "Community navigator (mainstream and local doors)",
+      "Systems walk (housing, NDIS, school, health, Centrelink rehearsal)",
       "Glossary",
       "NDIS News",
       "See what the practice assessment covers",

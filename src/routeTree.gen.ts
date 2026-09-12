@@ -52,6 +52,7 @@ import { Route as RightsRouteImport } from './routes/rights'
 import { Route as SchoolRouteImport } from './routes/school'
 import { Route as ScriptsRouteImport } from './routes/scripts'
 import { Route as ServiceCharterRouteImport } from './routes/service-charter'
+import { Route as SystemsWalkRouteImport } from './routes/systems-walk'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as WordsRouteImport } from './routes/words'
 import { Route as ApiNewsRouteImport } from './routes/api/news'
@@ -277,6 +278,11 @@ const ServiceCharterRoute = ServiceCharterRouteImport.update({
   path: '/service-charter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SystemsWalkRoute = SystemsWalkRouteImport.update({
+  id: '/systems-walk',
+  path: '/systems-walk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WalletRoute = WalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -367,6 +373,7 @@ export interface FileRoutesByFullPath {
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
+  '/systems-walk': typeof SystemsWalkRoute
   '/wallet': typeof WalletRoute
   '/words': typeof WordsRoute
   '/api/news': typeof ApiNewsRoute
@@ -421,6 +428,7 @@ export interface FileRoutesByTo {
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
+  '/systems-walk': typeof SystemsWalkRoute
   '/wallet': typeof WalletRoute
   '/words': typeof WordsRoute
   '/api/news': typeof ApiNewsRoute
@@ -476,6 +484,7 @@ export interface FileRoutesById {
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
+  '/systems-walk': typeof SystemsWalkRoute
   '/wallet': typeof WalletRoute
   '/words': typeof WordsRoute
   '/api/news': typeof ApiNewsRoute
@@ -532,6 +541,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/scripts'
     | '/service-charter'
+    | '/systems-walk'
     | '/wallet'
     | '/words'
     | '/api/news'
@@ -586,6 +596,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/scripts'
     | '/service-charter'
+    | '/systems-walk'
     | '/wallet'
     | '/words'
     | '/api/news'
@@ -640,6 +651,7 @@ export interface FileRouteTypes {
     | '/school'
     | '/scripts'
     | '/service-charter'
+    | '/systems-walk'
     | '/wallet'
     | '/words'
     | '/api/news'
@@ -695,6 +707,7 @@ export interface RootRouteChildren {
   SchoolRoute: typeof SchoolRoute
   ScriptsRoute: typeof ScriptsRoute
   ServiceCharterRoute: typeof ServiceCharterRoute
+  SystemsWalkRoute: typeof SystemsWalkRoute
   WalletRoute: typeof WalletRoute
   WordsRoute: typeof WordsRoute
   ApiNewsRoute: typeof ApiNewsRoute
@@ -1009,6 +1022,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServiceCharterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/systems-walk': {
+      id: '/systems-walk'
+      path: '/systems-walk'
+      fullPath: '/systems-walk'
+      preLoaderRoute: typeof SystemsWalkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/wallet': {
       id: '/wallet'
       path: '/wallet'
@@ -1119,6 +1139,7 @@ const rootRouteChildren: RootRouteChildren = {
   SchoolRoute: SchoolRoute,
   ScriptsRoute: ScriptsRoute,
   ServiceCharterRoute: ServiceCharterRoute,
+  SystemsWalkRoute: SystemsWalkRoute,
   WalletRoute: WalletRoute,
   WordsRoute: WordsRoute,
   ApiNewsRoute: ApiNewsRoute,

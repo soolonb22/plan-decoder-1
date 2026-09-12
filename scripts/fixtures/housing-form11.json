@@ -1,0 +1,30 @@
+{
+  "system": "Housing",
+  "situation": "Form 11 issued; tenant disputes breach",
+  "flags": { "form11": true },
+  "mustInclude": [
+    "Notice to remedy breach",
+    "not an eviction order",
+    "7-day",
+    "read the date",
+    "should not be sent to the RTA",
+    "Talk",
+    "dispute resolution",
+    "Notice of Unresolved Dispute",
+    "Form 2"
+  ],
+  "official": [
+    "https://www.rta.qld.gov.au/forms-resources/forms/forms-for-general-tenancies/notice-to-remedy-breach-form-11",
+    "https://www.rta.qld.gov.au/during-a-tenancy/breach-of-the-agreement"
+  ],
+  "mustNotInclude": [
+    "NDISS",
+    "Government Systems",
+    "official NDIS Navigator",
+    "I-CAN",
+    "eligible",
+    "ineligible",
+    "win rate",
+    "dollar band"
+  ]
+}
