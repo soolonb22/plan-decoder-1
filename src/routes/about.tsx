@@ -43,6 +43,12 @@ function AboutPage() {
           — find mainstream and local doors, with or without NDIS.
         </li>
         <li>
+          <Link className="font-medium text-primary underline-offset-2 hover:underline" to="/systems-walk">
+            Systems walk
+          </Link>{" "}
+          — practise one housing, NDIS, school, health, or Centrelink conversation. Not a government form.
+        </li>
+        <li>
           <Link className="font-medium text-primary underline-offset-2 hover:underline" to="/assessment">
             Practice assessment
           </Link>{" "}

@@ -54,6 +54,16 @@ function NavigatorPage() {
         picture="/brand/story-path.jpg"
       />
       <Disclaimer>{NAVIGATOR_DISCLAIMER}</Disclaimer>
+      <Card className="mt-5">
+        <p className="font-semibold">Systems walk</p>
+        <p className="mt-1 text-sm text-muted">
+          Rehearse one paper or conversation — a housing notice, school meeting, health, Centrelink, or NDIS — without
+          treating it as the official form.
+        </p>
+        <Button className="mt-3" variant="secondary" asChild>
+          <Link to="/systems-walk">Open Systems walk</Link>
+        </Button>
+      </Card>
       <div className="mb-5 mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Navigator">
         {TABS.map((t) => (
           <Link

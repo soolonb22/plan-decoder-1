@@ -12,6 +12,7 @@ Allow: /ndis-changes
 Allow: /about
 Allow: /pricing
 Allow: /navigator
+Allow: /systems-walk
 Disallow: /login
 Disallow: /privacy
 Disallow: /api/
