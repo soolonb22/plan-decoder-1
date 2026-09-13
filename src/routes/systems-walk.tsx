@@ -6,14 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field, Textarea } from "@/components/ui/input";
 import {
-  HOUSING_FORM11_DEMO,
   SYSTEMS,
+  SYSTEM_CHECKBOX,
+  SYSTEM_DEMOS,
   SYSTEMS_WALK_DISCLAIMER,
   SYSTEMS_WALK_PLUM,
   SYSTEMS_WALK_TAGLINE,
   SYSTEMS_WALK_TITLE,
   generateNavigatorReport,
+  primaryDemo,
   type NavigatorFlags,
+  type SystemDemo,
   type SystemName,
 } from "@/lib/systems-walk";
 import { cn } from "@/lib/utils";
@@ -32,27 +35,44 @@ export const Route = createFileRoute("/systems-walk")({
   }),
 });
 
-function SystemsWalkPage() {
-  const [system, setSystem] = useState<SystemName>(HOUSING_FORM11_DEMO.system);
-  const [situation, setSituation] = useState(HOUSING_FORM11_DEMO.situation);
-  const [form11, setForm11] = useState(true);
-  const [walkKey, setWalkKey] = useState(0);
+const PLACEHOLDERS: Record<SystemName, string> = {
+  Housing: "e.g. Form 11 issued; tenant disputes breach",
+  NDIS: "e.g. Written review letter about a plan decision",
+  Providers: "e.g. Provider sent a service agreement to sign",
+  School: "e.g. I need a written classroom adjustment",
+  Health: "e.g. Hospital discharge plan in my hand",
+  Centrelink: "e.g. Services Australia letter about a payment",
+};
 
-  const flags: NavigatorFlags = useMemo(() => {
-    if (system === "Housing" && form11) return { form11: true };
-    return {};
-  }, [system, form11]);
+function SystemsWalkPage() {
+  const start = primaryDemo("Housing");
+  const [system, setSystem] = useState<SystemName>(start.system);
+  const [situation, setSituation] = useState(start.situation);
+  const [flags, setFlags] = useState<NavigatorFlags>({ ...start.flags });
+  const [walkKey, setWalkKey] = useState(0);
 
   const report = useMemo(
     () => generateNavigatorReport(system, situation, flags),
     [system, situation, flags, walkKey],
   );
 
-  function loadHousingDemo() {
-    setSystem(HOUSING_FORM11_DEMO.system);
-    setSituation(HOUSING_FORM11_DEMO.situation);
-    setForm11(true);
+  const checkbox = SYSTEM_CHECKBOX[system];
+  const demos = SYSTEM_DEMOS[system];
+  const primaryFlagOn = flags[checkbox.flag] === true;
+
+  function applyDemo(demo: SystemDemo) {
+    setSystem(demo.system);
+    setSituation(demo.situation);
+    setFlags({ ...demo.flags });
     setWalkKey((n) => n + 1);
+  }
+
+  function chooseSystem(name: SystemName) {
+    applyDemo(primaryDemo(name));
+  }
+
+  function setPrimaryFlag(checked: boolean) {
+    setFlags(checked ? { [checkbox.flag]: true } : {});
   }
 
   return (
@@ -90,10 +110,7 @@ function SystemsWalkPage() {
             <button
               key={name}
               type="button"
-              onClick={() => {
-                setSystem(name);
-                if (name !== "Housing") setForm11(false);
-              }}
+              onClick={() => chooseSystem(name)}
               className={cn(
                 "rounded-2xl border p-4 text-left",
                 system === name ? "bg-primary-soft" : "border-line bg-card",
@@ -114,27 +131,27 @@ function SystemsWalkPage() {
             value={situation}
             onChange={(e) => setSituation(e.target.value)}
             rows={3}
-            placeholder="e.g. Form 11 issued; tenant disputes breach"
+            placeholder={PLACEHOLDERS[system]}
           />
         </Field>
-        {system === "Housing" ? (
-          <label className="mt-3 flex items-start gap-2 text-sm">
-            <input
-              type="checkbox"
-              className="mt-1"
-              checked={form11}
-              onChange={(e) => setForm11(e.target.checked)}
-            />
-            <span>This looks like a Queensland Form 11 (notice to remedy breach)</span>
-          </label>
-        ) : null}
+        <label className="mt-3 flex items-start gap-2 text-sm">
+          <input
+            type="checkbox"
+            className="mt-1"
+            checked={primaryFlagOn}
+            onChange={(e) => setPrimaryFlag(e.target.checked)}
+          />
+          <span>{checkbox.label}</span>
+        </label>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button type="button" onClick={() => setWalkKey((n) => n + 1)} style={{ backgroundColor: SYSTEMS_WALK_PLUM }}>
             Walk this
           </Button>
-          <Button type="button" variant="secondary" onClick={loadHousingDemo}>
-            Try the Housing Form 11 demo
-          </Button>
+          {demos.map((demo) => (
+            <Button key={demo.id} type="button" variant="secondary" onClick={() => applyDemo(demo)}>
+              {demo.label}
+            </Button>
+          ))}
         </div>
       </div>
 

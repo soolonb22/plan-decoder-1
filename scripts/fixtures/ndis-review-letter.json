@@ -1,0 +1,20 @@
+{
+  "system": "NDIS",
+  "situation": "Written review letter about a plan decision; I want to practise what to say",
+  "flags": { "reviewLetter": true },
+  "mustInclude": [
+    "Written NDIS decision or review letter",
+    "review path",
+    "does not start a review",
+    "read the date",
+    "current plan until a new letter"
+  ],
+  "official": [
+    "https://www.ndis.gov.au/participants/changing-your-plan/decision-reviews/how-request-review-decision"
+  ],
+  "mustNotInclude": [
+    "likely eligible",
+    "you will get a plan",
+    "access conversation is about describing daily life"
+  ]
+}

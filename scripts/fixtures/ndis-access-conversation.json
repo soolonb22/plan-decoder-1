@@ -1,0 +1,19 @@
+{
+  "system": "NDIS",
+  "situation": "Access conversation about applying; I want to practise describing a usual day",
+  "flags": { "accessConversation": true },
+  "mustInclude": [
+    "NDIS access conversation",
+    "usual day",
+    "hard day",
+    "does not quote funding",
+    "does not say you will get a plan"
+  ],
+  "official": [
+    "https://www.ndis.gov.au/applying/application-process/how-apply"
+  ],
+  "mustNotInclude": [
+    "likely eligible",
+    "written decision is different from an access conversation"
+  ]
+}

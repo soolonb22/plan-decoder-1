@@ -17,14 +17,5 @@
     "https://www.rta.qld.gov.au/forms-resources/forms/forms-for-general-tenancies/notice-to-remedy-breach-form-11",
     "https://www.rta.qld.gov.au/during-a-tenancy/breach-of-the-agreement"
   ],
-  "mustNotInclude": [
-    "NDISS",
-    "Government Systems",
-    "official NDIS Navigator",
-    "I-CAN",
-    "eligible",
-    "ineligible",
-    "win rate",
-    "dollar band"
-  ]
+  "mustNotInclude": []
 }

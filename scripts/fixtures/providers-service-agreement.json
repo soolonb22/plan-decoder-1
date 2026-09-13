@@ -1,0 +1,18 @@
+{
+  "system": "Providers",
+  "situation": "Provider sent a service agreement and wants me to sign this week",
+  "flags": { "serviceAgreement": true },
+  "mustInclude": [
+    "Service agreement or quote to sign",
+    "not a recommended list",
+    "I will not sign today",
+    "which budget"
+  ],
+  "official": [
+    "https://www.ndis.gov.au/participants/working-providers/arranging-supports/what-service-agreement"
+  ],
+  "mustNotInclude": [
+    "we recommend",
+    "recommended provider"
+  ]
+}

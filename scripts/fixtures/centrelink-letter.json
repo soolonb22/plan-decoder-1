@@ -1,0 +1,17 @@
+{
+  "system": "Centrelink",
+  "situation": "Services Australia letter about a payment; I want to practise what to ask",
+  "flags": { "letter": true },
+  "mustInclude": [
+    "Services Australia or Centrelink letter",
+    "cannot approve a payment",
+    "reference number",
+    "read the date"
+  ],
+  "official": [
+    "https://www.servicesaustralia.gov.au"
+  ],
+  "mustNotInclude": [
+    "wipe a debt"
+  ]
+}
