@@ -13,6 +13,7 @@ Allow: /about
 Allow: /pricing
 Allow: /navigator
 Allow: /systems-walk
+Allow: /case-notes
 Disallow: /login
 Disallow: /privacy
 Disallow: /api/

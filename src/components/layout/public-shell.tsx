@@ -74,6 +74,10 @@ export function PublicShell({ children }: { children: ReactNode }) {
             Systems walk
           </Link>
           {" · "}
+          <Link to="/case-notes" className="text-teal underline-offset-2 hover:underline">
+            Case notes
+          </Link>
+          {" · "}
           <Link to="/assessment" search={{ tab: "about" }} className="text-teal underline-offset-2 hover:underline">
             Practice assessment
           </Link>

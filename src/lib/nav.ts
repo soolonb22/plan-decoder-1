@@ -14,6 +14,7 @@ export const NAV: NavItem[] = [
   { to: "/guide", label: "Guided help", need: "free", group: "Start" },
   { to: "/navigator", label: "Community navigator", need: "free", group: "Start" },
   { to: "/systems-walk", label: "Systems walk", need: "free", group: "Start" },
+  { to: "/case-notes", label: "Case notes", need: "free", group: "Start" },
   { to: "/wallet", label: "Evidence pocket", need: "free", group: "Evidence" },
   { to: "/prep", label: "Prep", need: "core", group: "Evidence" },
   { to: "/words", label: "Words", need: "core", group: "Language" },

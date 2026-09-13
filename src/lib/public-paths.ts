@@ -19,6 +19,7 @@ export const PUBLIC_PATHS = new Set([
   "/privacy",
   "/navigator",
   "/systems-walk",
+  "/case-notes",
   "/sitemap.xml",
   "/health",
   "/get-files",

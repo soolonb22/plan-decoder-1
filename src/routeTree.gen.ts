@@ -16,6 +16,7 @@ import { Route as ArtRouteImport } from './routes/art'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as BudgetRouteImport } from './routes/budget'
 import { Route as CarerRouteImport } from './routes/carer'
+import { Route as CaseNotesRouteImport } from './routes/case-notes'
 import { Route as ChecklistRouteImport } from './routes/checklist'
 import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as ClinicalRouteImport } from './routes/clinical'
@@ -96,6 +97,11 @@ const BudgetRoute = BudgetRouteImport.update({
 const CarerRoute = CarerRouteImport.update({
   id: '/carer',
   path: '/carer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaseNotesRoute = CaseNotesRouteImport.update({
+  id: '/case-notes',
+  path: '/case-notes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChecklistRoute = ChecklistRouteImport.update({
@@ -337,6 +343,7 @@ export interface FileRoutesByFullPath {
   '/assessment': typeof AssessmentRoute
   '/budget': typeof BudgetRoute
   '/carer': typeof CarerRoute
+  '/case-notes': typeof CaseNotesRoute
   '/checklist': typeof ChecklistRoute
   '/clients': typeof ClientsRoute
   '/clinical': typeof ClinicalRoute
@@ -392,6 +399,7 @@ export interface FileRoutesByTo {
   '/assessment': typeof AssessmentRoute
   '/budget': typeof BudgetRoute
   '/carer': typeof CarerRoute
+  '/case-notes': typeof CaseNotesRoute
   '/checklist': typeof ChecklistRoute
   '/clients': typeof ClientsRoute
   '/clinical': typeof ClinicalRoute
@@ -448,6 +456,7 @@ export interface FileRoutesById {
   '/assessment': typeof AssessmentRoute
   '/budget': typeof BudgetRoute
   '/carer': typeof CarerRoute
+  '/case-notes': typeof CaseNotesRoute
   '/checklist': typeof ChecklistRoute
   '/clients': typeof ClientsRoute
   '/clinical': typeof ClinicalRoute
@@ -505,6 +514,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/budget'
     | '/carer'
+    | '/case-notes'
     | '/checklist'
     | '/clients'
     | '/clinical'
@@ -560,6 +570,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/budget'
     | '/carer'
+    | '/case-notes'
     | '/checklist'
     | '/clients'
     | '/clinical'
@@ -615,6 +626,7 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/budget'
     | '/carer'
+    | '/case-notes'
     | '/checklist'
     | '/clients'
     | '/clinical'
@@ -671,6 +683,7 @@ export interface RootRouteChildren {
   AssessmentRoute: typeof AssessmentRoute
   BudgetRoute: typeof BudgetRoute
   CarerRoute: typeof CarerRoute
+  CaseNotesRoute: typeof CaseNotesRoute
   ChecklistRoute: typeof ChecklistRoute
   ClientsRoute: typeof ClientsRoute
   ClinicalRoute: typeof ClinicalRoute
@@ -768,6 +781,13 @@ declare module '@tanstack/react-router' {
       path: '/carer'
       fullPath: '/carer'
       preLoaderRoute: typeof CarerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/case-notes': {
+      id: '/case-notes'
+      path: '/case-notes'
+      fullPath: '/case-notes'
+      preLoaderRoute: typeof CaseNotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checklist': {
@@ -1103,6 +1123,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentRoute: AssessmentRoute,
   BudgetRoute: BudgetRoute,
   CarerRoute: CarerRoute,
+  CaseNotesRoute: CaseNotesRoute,
   ChecklistRoute: ChecklistRoute,
   ClientsRoute: ClientsRoute,
   ClinicalRoute: ClinicalRoute,
