@@ -209,6 +209,19 @@ export function walkSearchFor(draft: CaseDraft): CaseWalkSearch {
   return { system: draft.system, note: draft.id };
 }
 
+export function findMatchingDraft(drafts: CaseDraft[], search: CaseWalkSearch) {
+  if (search.note) {
+    const byId = drafts.find((row) => row.id === search.note);
+    if (byId) return byId;
+  }
+  if (!search.system && search.situation == null) return undefined;
+  return drafts.find((row) => {
+    if (search.system && row.system !== search.system) return false;
+    if (search.situation != null && row.situation !== search.situation) return false;
+    return true;
+  });
+}
+
 export function parseCaseWalkSearch(raw: Record<string, unknown>): CaseWalkSearch {
   const systemRaw = String(raw.system ?? "");
   const system = CASE_NOTE_SYSTEMS.find((name) => name.toLowerCase() === systemRaw.toLowerCase());

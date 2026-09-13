@@ -17,6 +17,7 @@ import {
   addEvidenceNote,
   createEmptyDraft,
   exportDraftJson,
+  findMatchingDraft,
   getDraft,
   loadDrafts,
   removeDraft,
@@ -103,7 +104,18 @@ test("drafts stay in the supplied on-device store and export is a JSON download 
   const search = walkSearchFor(loaded[0]);
   assert.deepEqual(search, { system: "Housing", note: draft.id });
 
+  const match = findMatchingDraft(loadDrafts(storage), { system: "Housing", situation: draft.situation });
+  assert.equal(match?.id, draft.id);
+
+  const again = createEmptyDraft("Housing");
+  again.situation = draft.situation;
+  upsertDraft(again, storage);
+  const still = findMatchingDraft(loadDrafts(storage), { system: "Housing", situation: draft.situation });
+  assert.ok(still);
+  assert.equal(still.situation, draft.situation);
+
   removeDraft(draft.id, storage);
+  removeDraft(again.id, storage);
   assert.equal(loadDrafts(storage).length, 0);
 });
 

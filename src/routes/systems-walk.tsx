@@ -40,11 +40,12 @@ function attachedStart(search: CaseWalkSearch) {
     return { system: note.system, situation: note.situation, noteId: note.id, form11: false };
   }
   if (search.system || search.situation) {
+    const situation = search.situation ?? "";
     return {
       system: search.system ?? HOUSING_FORM11_DEMO.system,
-      situation: search.situation ?? "",
+      situation,
       noteId: undefined,
-      form11: false,
+      form11: /form\s*11/i.test(situation),
     };
   }
   return {

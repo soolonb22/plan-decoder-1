@@ -16,6 +16,7 @@ import {
   addEvidenceNote,
   createEmptyDraft,
   exportDraftJson,
+  findMatchingDraft,
   loadDrafts,
   parseCaseWalkSearch,
   removeDraft,
@@ -54,10 +55,10 @@ function CaseNotesPage() {
 
   useEffect(() => {
     const rows = loadDrafts();
-    setDrafts(rows);
-    const fromNote = search.note ? rows.find((row) => row.id === search.note) : undefined;
-    if (fromNote) {
-      setSelectedId(fromNote.id);
+    const match = findMatchingDraft(rows, search);
+    if (match) {
+      setDrafts(rows);
+      setSelectedId(match.id);
       setReady(true);
       return;
     }
@@ -70,6 +71,7 @@ function CaseNotesPage() {
       setReady(true);
       return;
     }
+    setDrafts(rows);
     setSelectedId(rows[0]?.id ?? "");
     setReady(true);
   }, [search.note, search.situation, search.system]);
