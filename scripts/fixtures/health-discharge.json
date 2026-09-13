@@ -1,0 +1,17 @@
+{
+  "system": "Health",
+  "situation": "Hospital discharge plan in my hand; I need to practise the follow-up conversation",
+  "flags": { "discharge": true },
+  "mustInclude": [
+    "Hospital discharge plan",
+    "not a diagnosis",
+    "discharge plan is not an NDIS plan",
+    "follow-up"
+  ],
+  "official": [
+    "https://www.healthdirect.gov.au"
+  ],
+  "mustNotInclude": [
+    "Mental Health Treatment Plan is a health door"
+  ]
+}

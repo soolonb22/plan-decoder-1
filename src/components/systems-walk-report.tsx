@@ -4,6 +4,16 @@ import { Card } from "@/components/ui/card";
 
 const KEY_LABELS: Record<string, string> = {
   form11: "Form 11",
+  reviewLetter: "Review letter",
+  accessConversation: "Access conversation",
+  serviceAgreement: "Service agreement",
+  unsafe: "Safety concern",
+  adjustment: "Written adjustment",
+  exclusion: "Suspension or exclusion",
+  discharge: "Hospital discharge",
+  gp: "GP conversation",
+  letter: "Services Australia letter",
+  debt: "Debt or overpayment letter",
   systemDoor: "Which door",
   whatThisIs: "What this is",
   whatThisIsNot: "What this is not",

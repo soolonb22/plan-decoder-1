@@ -1,0 +1,15 @@
+{
+  "system": "Housing",
+  "situation": "I need housing help and an accessible option",
+  "flags": {},
+  "mustInclude": [
+    "Housing or tenancy conversation",
+    "does not invent a notice-to-leave clock",
+    "NDIS does not usually pay rent",
+    "read the date"
+  ],
+  "official": [],
+  "mustNotInclude": [
+    "usual 7-day remedy window"
+  ]
+}

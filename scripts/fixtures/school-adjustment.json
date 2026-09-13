@@ -1,0 +1,18 @@
+{
+  "system": "School",
+  "situation": "I need a written classroom adjustment and a named disability liaison",
+  "flags": { "adjustment": true },
+  "mustInclude": [
+    "written classroom or course adjustment",
+    "NDIS does not run the classroom",
+    "disability liaison",
+    "in writing"
+  ],
+  "official": [
+    "https://www.education.gov.au/disability-standards-education-2005",
+    "https://www.ndis.gov.au/understanding/ndis-and-other-government-services/education"
+  ],
+  "mustNotInclude": [
+    "suspension notice is a school paper"
+  ]
+}
