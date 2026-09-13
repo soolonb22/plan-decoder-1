@@ -21,6 +21,7 @@ import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as ClinicalRouteImport } from './routes/clinical'
 import { Route as CodeOfConductRouteImport } from './routes/code-of-conduct'
 import { Route as CompanionRouteImport } from './routes/companion'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CourseRouteImport } from './routes/course'
 import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as FlagsRouteImport } from './routes/flags'
@@ -47,12 +48,14 @@ import { Route as PrepRouteImport } from './routes/prep'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as RefundsRouteImport } from './routes/refunds'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RightsRouteImport } from './routes/rights'
 import { Route as SchoolRouteImport } from './routes/school'
 import { Route as ScriptsRouteImport } from './routes/scripts'
 import { Route as ServiceCharterRouteImport } from './routes/service-charter'
 import { Route as SystemsWalkRouteImport } from './routes/systems-walk'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as WordsRouteImport } from './routes/words'
 import { Route as ApiNewsRouteImport } from './routes/api/news'
@@ -121,6 +124,11 @@ const CodeOfConductRoute = CodeOfConductRouteImport.update({
 const CompanionRoute = CompanionRouteImport.update({
   id: '/companion',
   path: '/companion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CourseRoute = CourseRouteImport.update({
@@ -253,6 +261,11 @@ const ReportsRoute = ReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RefundsRoute = RefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -281,6 +294,11 @@ const ServiceCharterRoute = ServiceCharterRouteImport.update({
 const SystemsWalkRoute = SystemsWalkRouteImport.update({
   id: '/systems-walk',
   path: '/systems-walk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WalletRoute = WalletRouteImport.update({
@@ -342,6 +360,7 @@ export interface FileRoutesByFullPath {
   '/clinical': typeof ClinicalRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
+  '/contact': typeof ContactRoute
   '/course': typeof CourseRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
@@ -368,12 +387,14 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
+  '/refunds': typeof RefundsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
   '/systems-walk': typeof SystemsWalkRoute
+  '/terms': typeof TermsRoute
   '/wallet': typeof WalletRoute
   '/words': typeof WordsRoute
   '/api/news': typeof ApiNewsRoute
@@ -397,6 +418,7 @@ export interface FileRoutesByTo {
   '/clinical': typeof ClinicalRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
+  '/contact': typeof ContactRoute
   '/course': typeof CourseRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
@@ -423,12 +445,14 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
+  '/refunds': typeof RefundsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
   '/systems-walk': typeof SystemsWalkRoute
+  '/terms': typeof TermsRoute
   '/wallet': typeof WalletRoute
   '/words': typeof WordsRoute
   '/api/news': typeof ApiNewsRoute
@@ -453,6 +477,7 @@ export interface FileRoutesById {
   '/clinical': typeof ClinicalRoute
   '/code-of-conduct': typeof CodeOfConductRoute
   '/companion': typeof CompanionRoute
+  '/contact': typeof ContactRoute
   '/course': typeof CourseRoute
   '/diary': typeof DiaryRoute
   '/flags': typeof FlagsRoute
@@ -479,12 +504,14 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/reports': typeof ReportsRoute
+  '/refunds': typeof RefundsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/rights': typeof RightsRoute
   '/school': typeof SchoolRoute
   '/scripts': typeof ScriptsRoute
   '/service-charter': typeof ServiceCharterRoute
   '/systems-walk': typeof SystemsWalkRoute
+  '/terms': typeof TermsRoute
   '/wallet': typeof WalletRoute
   '/words': typeof WordsRoute
   '/api/news': typeof ApiNewsRoute
@@ -510,6 +537,7 @@ export interface FileRouteTypes {
     | '/clinical'
     | '/code-of-conduct'
     | '/companion'
+    | '/contact'
     | '/course'
     | '/diary'
     | '/flags'
@@ -536,12 +564,14 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/reports'
+    | '/refunds'
     | '/reset-password'
     | '/rights'
     | '/school'
     | '/scripts'
     | '/service-charter'
     | '/systems-walk'
+    | '/terms'
     | '/wallet'
     | '/words'
     | '/api/news'
@@ -565,6 +595,7 @@ export interface FileRouteTypes {
     | '/clinical'
     | '/code-of-conduct'
     | '/companion'
+    | '/contact'
     | '/course'
     | '/diary'
     | '/flags'
@@ -591,12 +622,14 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/reports'
+    | '/refunds'
     | '/reset-password'
     | '/rights'
     | '/school'
     | '/scripts'
     | '/service-charter'
     | '/systems-walk'
+    | '/terms'
     | '/wallet'
     | '/words'
     | '/api/news'
@@ -620,6 +653,7 @@ export interface FileRouteTypes {
     | '/clinical'
     | '/code-of-conduct'
     | '/companion'
+    | '/contact'
     | '/course'
     | '/diary'
     | '/flags'
@@ -646,12 +680,14 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/reports'
+    | '/refunds'
     | '/reset-password'
     | '/rights'
     | '/school'
     | '/scripts'
     | '/service-charter'
     | '/systems-walk'
+    | '/terms'
     | '/wallet'
     | '/words'
     | '/api/news'
@@ -676,6 +712,7 @@ export interface RootRouteChildren {
   ClinicalRoute: typeof ClinicalRoute
   CodeOfConductRoute: typeof CodeOfConductRoute
   CompanionRoute: typeof CompanionRoute
+  ContactRoute: typeof ContactRoute
   CourseRoute: typeof CourseRoute
   DiaryRoute: typeof DiaryRoute
   FlagsRoute: typeof FlagsRoute
@@ -702,12 +739,14 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ReportsRoute: typeof ReportsRoute
+  RefundsRoute: typeof RefundsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RightsRoute: typeof RightsRoute
   SchoolRoute: typeof SchoolRoute
   ScriptsRoute: typeof ScriptsRoute
   ServiceCharterRoute: typeof ServiceCharterRoute
   SystemsWalkRoute: typeof SystemsWalkRoute
+  TermsRoute: typeof TermsRoute
   WalletRoute: typeof WalletRoute
   WordsRoute: typeof WordsRoute
   ApiNewsRoute: typeof ApiNewsRoute
@@ -803,6 +842,13 @@ declare module '@tanstack/react-router' {
       path: '/companion'
       fullPath: '/companion'
       preLoaderRoute: typeof CompanionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/course': {
@@ -987,6 +1033,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/refunds': {
+      id: '/refunds'
+      path: '/refunds'
+      fullPath: '/refunds'
+      preLoaderRoute: typeof RefundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -1027,6 +1080,13 @@ declare module '@tanstack/react-router' {
       path: '/systems-walk'
       fullPath: '/systems-walk'
       preLoaderRoute: typeof SystemsWalkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/wallet': {
@@ -1108,6 +1168,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClinicalRoute: ClinicalRoute,
   CodeOfConductRoute: CodeOfConductRoute,
   CompanionRoute: CompanionRoute,
+  ContactRoute: ContactRoute,
   CourseRoute: CourseRoute,
   DiaryRoute: DiaryRoute,
   FlagsRoute: FlagsRoute,
@@ -1134,12 +1195,14 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ReportsRoute: ReportsRoute,
+  RefundsRoute: RefundsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RightsRoute: RightsRoute,
   SchoolRoute: SchoolRoute,
   ScriptsRoute: ScriptsRoute,
   ServiceCharterRoute: ServiceCharterRoute,
   SystemsWalkRoute: SystemsWalkRoute,
+  TermsRoute: TermsRoute,
   WalletRoute: WalletRoute,
   WordsRoute: WordsRoute,
   ApiNewsRoute: ApiNewsRoute,

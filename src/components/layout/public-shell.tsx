@@ -103,17 +103,17 @@ export function PublicShell({ children }: { children: ReactNode }) {
             Privacy
           </Link>
           {" · "}
-          <a href="/privacy#terms" className="text-teal underline-offset-2 hover:underline">
+          <Link to="/terms" className="text-teal underline-offset-2 hover:underline">
             Terms
-          </a>
+          </Link>
           {" · "}
-          <a href="/privacy#refunds" className="text-teal underline-offset-2 hover:underline">
+          <Link to="/refunds" className="text-teal underline-offset-2 hover:underline">
             Refunds and cancellation
-          </a>
+          </Link>
           {" · "}
-          <a href="/privacy#contact" className="text-teal underline-offset-2 hover:underline">
+          <Link to="/contact" className="text-teal underline-offset-2 hover:underline">
             Contact
-          </a>
+          </Link>
         </p>
       </footer>
     </div>
