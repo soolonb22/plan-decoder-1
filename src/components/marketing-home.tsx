@@ -34,7 +34,7 @@ export function MarketingHome() {
           <div className="mt-5 flex flex-wrap gap-2">
             <Button asChild>
               <Link to="/assessment" search={{ tab: "function" }}>
-                Try the 12 questions
+                Try the 9 life areas
               </Link>
             </Button>
             <Button variant="secondary" asChild>

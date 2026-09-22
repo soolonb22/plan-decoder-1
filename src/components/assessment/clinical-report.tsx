@@ -102,7 +102,7 @@ export function ClinicalReport({
 
       <p className="clinical-banner">{SHORT_DISCLAIMER} Independent of the NDIA, NDIS, WHO, and any official I-CAN tool. Not a diagnosis. Not a funding quote.</p>
 
-      <ResultTable title="Results — WHODAS-inspired function" rows={whoTable} />
+      <ResultTable title="Results — ICF functioning" rows={whoTable} />
       {supportShown.length ? (
         <ResultTable title="Results — support rehearsal" rows={[...supportShown, model.overallSupport]} />
       ) : null}
@@ -114,7 +114,7 @@ export function ClinicalReport({
       <section className="clinical-block">
         <h2>Interpretation</h2>
         <p className="clinical-note">
-          Practice index is a simple 0–100 transform of answered items. It is not a normative percentile and not official WHODAS IRT scoring. The practice threshold is a rehearsal line at Moderate (average {PRACTICE_THRESHOLD.toFixed(1)} / 4).
+          Practice index is a simple 0–100 transform of answered items. It is not a normative percentile and not official ICF scoring. The practice threshold is a rehearsal line at Moderate (average {PRACTICE_THRESHOLD.toFixed(1)} / 4).
         </p>
         {model.narratives.map((n) => (
           <div key={n.id} className="clinical-narrative">
@@ -153,7 +153,7 @@ export function ClinicalReport({
         <ol className="clinical-ol">
           <li>Averages use only the items that were answered.</li>
           <li>Higher averages mean more difficulty (function) or more extra support (support rehearsal), as described in this rehearsal.</li>
-          <li>Official WHODAS 2.0 IRT percentiles are not calculated.</li>
+          <li>Official ICF scoring is not calculated.</li>
           <li>Support questions are original rehearsal items, not I-CAN v6.</li>
           <li>
             “Above practice threshold” means average ≥ {PRACTICE_THRESHOLD.toFixed(1)} on function items, or intensity ≥ 5.5 on support rehearsal. That is not an NDIA rule.

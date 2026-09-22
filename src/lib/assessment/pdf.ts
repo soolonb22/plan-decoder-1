@@ -208,7 +208,7 @@ export async function downloadPracticePdf(draft: AssessmentDraft, client?: Clien
     y += 8;
   };
 
-  drawTable("Results — WHODAS-inspired function", [...model.whodasRows, model.overallWho]);
+  drawTable("Results — ICF functioning", [...model.whodasRows, model.overallWho]);
   const supportShown = model.supportRows.filter((r) => r.answered);
   if (supportShown.length) {
     drawTable("Results — support rehearsal", [...supportShown, model.overallSupport]);
@@ -269,7 +269,7 @@ export async function downloadPracticePdf(draft: AssessmentDraft, client?: Clien
 
   heading("Interpretation");
   para(
-    "Practice index is a simple 0–100 transform of answered items. It is not a normative percentile and not official WHODAS IRT scoring. The practice threshold is an Plan Decoder rehearsal line at Moderate (average 2.0 / 4).",
+    "Practice index is a simple 0–100 transform of answered items. It is not a normative percentile and not official ICF scoring. The practice threshold is an Plan Decoder rehearsal line at Moderate (average 2.0 / 4).",
     { size: 9, color: MUTED },
   );
   for (const nara of model.narratives) {
@@ -295,7 +295,7 @@ export async function downloadPracticePdf(draft: AssessmentDraft, client?: Clien
 
   heading("Scoring and interpretation information");
   para(
-    "Plan Decoder uses average scores across answered items. Higher averages mean more difficulty (function) or more extra support (support rehearsal) as you described it. Official WHODAS 2.0 IRT percentiles are not calculated. Support questions are Plan Decoder’s original rehearsal, not I-CAN v6. “Above practice threshold” means average ≥ 2.0 on function items, or intensity ≥ 5.5 on support rehearsal. That is not an NDIA rule.",
+    "Plan Decoder uses average scores across answered items. Higher averages mean more difficulty (function) or more extra support (support rehearsal) as you described it. Official ICF scoring is not calculated. Support questions are Plan Decoder’s original rehearsal, not I-CAN v6. “Above practice threshold” means average ≥ 2.0 on function items, or intensity ≥ 5.5 on support rehearsal. That is not an NDIA rule.",
   );
 
   for (const grid of model.grids) {

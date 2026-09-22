@@ -1,4 +1,4 @@
-import { WHODAS_ITEMS, SCALE } from "../whodas";
+import { ICF_ITEMS, ICF_SCALE } from "../icf";
 import { DOMAINS } from "../content/language";
 import type { Client } from "../types";
 import { formatDate } from "../utils";
@@ -78,6 +78,10 @@ const RESPONDENT: Record<Respondent, string> = {
 
 const num = (v: AnswerVal) => (typeof v === "number" ? v : null);
 
+function icfVal(answers: Record<string, AnswerVal>, id: string) {
+  return num(answers[`${id}-p`]) ?? num(answers[id]);
+}
+
 function indexFrom4(avg: number) {
   return Math.round((avg / 4) * 100);
 }
@@ -99,12 +103,12 @@ export function buildClinicalModel(
   const clientName = client?.preferredName || client?.name || "Not named on this device";
 
   const whodasRows: ResultRow[] = score.whodas.domains.map((d) => {
-    const items = WHODAS_ITEMS.filter((i) => i.domain === d.id);
+    const items = ICF_ITEMS.filter((i) => i.domain === d.id);
     const elevated = items.filter((i) => {
-      const v = num(answers[i.id]);
+      const v = icfVal(answers, i.id);
       return v !== null && v >= 2;
     }).length;
-    const total = items.filter((i) => num(answers[i.id]) !== null).length;
+    const total = items.filter((i) => icfVal(answers, i.id) !== null).length;
     const raw = d.avg;
     return {
       id: d.id,
@@ -122,15 +126,15 @@ export function buildClinicalModel(
 
   const overallWho: ResultRow = {
     id: "who-total",
-    title: "WHODAS-inspired total (average)",
+    title: "ICF functioning total (performance average)",
     raw: score.whodas.avgOverall,
     rawMax: 4,
     practiceIndex: score.whodas.simple100,
     aboveThreshold: score.whodas.answered > 0 && score.whodas.avgOverall >= PRACTICE_THRESHOLD,
     descriptor: score.whodas.descriptor,
     answered: score.whodas.answered,
-    elevated: WHODAS_ITEMS.filter((i) => {
-      const v = num(answers[i.id]);
+    elevated: ICF_ITEMS.filter((i) => {
+      const v = icfVal(answers, i.id);
       return v !== null && v >= 2;
     }).length,
     total: score.whodas.answered,
@@ -163,12 +167,12 @@ export function buildClinicalModel(
   };
 
   const narratives: NarrativeBlock[] = whodasRows.map((row) => {
-    const items = WHODAS_ITEMS.filter((i) => i.domain === row.id);
+    const items = ICF_ITEMS.filter((i) => i.domain === row.id);
     const endorsed: Endorsed[] = items
       .map((i) => {
-        const v = num(answers[i.id]);
+        const v = icfVal(answers, i.id);
         if (v === null || v < 2) return null;
-        return { text: i.text, label: scaleLabel(v, SCALE), value: v };
+        return { text: i.text, label: scaleLabel(v, ICF_SCALE), value: v };
       })
       .filter((x): x is Endorsed => Boolean(x))
       .sort((a, b) => b.value - a.value);
@@ -178,7 +182,7 @@ export function buildClinicalModel(
     if (!row.answered) {
       body = "This domain was not answered in this rehearsal.";
     } else if (row.aboveThreshold) {
-      body = `The average on this domain is above Plan Decoder’s practice threshold of ${PRACTICE_THRESHOLD}.0 (Moderate). ${row.elevated} of ${row.total} answered items were rated Moderate or higher. In this rehearsal that is consistent with reduced function in this life area. ${domainHint} This is not a diagnosis and not an official WHODAS score.`;
+      body = `The average on this domain is above Plan Decoder’s practice threshold of ${PRACTICE_THRESHOLD}.0 (Moderate). ${row.elevated} of ${row.total} answered items were rated Moderate or higher. In this rehearsal that is consistent with reduced function in this life area. ${domainHint} This is not a diagnosis and not an official ICF score.`;
     } else if (row.practiceIndex >= 50) {
       body = `The practice index sits at mid-scale or above, but the average does not meet the practice threshold of Moderate. That can happen when a few items are high and others are low, or when impact on daily life was not described. A clinician may still want examples. ${domainHint}`;
     } else {
@@ -224,13 +228,13 @@ export function buildClinicalModel(
       : "This rehearsal did not clearly flag reduced function across the six NDIS access areas. That may mean incomplete answers, a good-day snapshot, or supports that already cover daily life.";
 
   const whoGrid: GridSection = {
-    title: "Function items (WHODAS-inspired 0–4)",
+    title: "Function items (ICF-inspired 0–4, performance)",
     labels: WHODAS_SCALE.map((s) => s.label),
-    rows: WHODAS_ITEMS.map((item, i) => ({
+    rows: ICF_ITEMS.map((item, i) => ({
       n: i + 1,
       id: item.id,
       prompt: item.text,
-      value: num(answers[item.id]),
+      value: icfVal(answers, item.id),
       labels: WHODAS_SCALE.map((s) => s.label),
     })).filter((r) => r.value !== null),
   };
@@ -273,7 +277,7 @@ export function buildClinicalModel(
 
   const extra: { label: string; value: string }[] = [];
   const interfere = num(answers["h-interfere"]);
-  if (interfere !== null) extra.push({ label: "Overall interference", value: scaleLabel(interfere, SCALE) });
+  if (interfere !== null) extra.push({ label: "Overall interference", value: scaleLabel(interfere, ICF_SCALE) });
   const daysUnable = num(answers["h-days-unable"]);
   if (daysUnable !== null) extra.push({ label: "Days unable (approx.)", value: `${daysUnable} in last 30` });
   const daysCut = num(answers["h-days-cut"]);

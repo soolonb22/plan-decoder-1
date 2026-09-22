@@ -1,4 +1,5 @@
 import { uid } from "../utils";
+import { ICF_ITEMS } from "../icf";
 import { localReport } from "./report";
 import { scoreAssessment } from "./scoring";
 import type { AnswerVal, AssessmentDraft } from "./types";
@@ -10,38 +11,7 @@ export function makeSampleAssessment(clientId: string): AssessmentDraft {
     ageBand: "18-24",
     ndisStatus: "participant",
     disabilityWords: "Autism and ADHD. Shutdowns after busy shops. Needs a known person for morning care.",
-    "whodas-length": "full",
-    q1: 3,
-    q2: 3,
-    q3: 2,
-    q4: 3,
-    q5: 1,
-    q6: 2,
-    q7: 1,
-    q8: 1,
-    q9: 0,
-    q10: 3,
-    q11: 3,
-    q12: 3,
-    q13: 3,
-    q14: 1,
-    q15: 4,
-    q16: 3,
-    q17: 2,
-    q18: 1,
-    q19: 3,
-    q21: 3,
-    q22: 3,
-    q23: 4,
-    q24: 3,
-    q25: 3,
-    q26: 2,
-    q29: 3,
-    q30: 3,
-    q31: 2,
-    q32: 3,
-    q33: 3,
-    q36: 2,
+    "icf-length": "full",
     "h-interfere": 3,
     "h-days-unable": 9,
     "h-days-cut": 15,
@@ -73,6 +43,52 @@ export function makeSampleAssessment(clientId: string): AssessmentDraft {
     ndisFunctions: ["self-care", "social", "learning", "self-management"],
     "ms-why-ndis": "Health and education adjustments do not cover the morning routine or community access after shutdowns.",
   };
+
+  const samplePerf: Record<string, number> = {
+    d110: 2,
+    d160: 3,
+    d163: 3,
+    d175: 3,
+    d210: 3,
+    d220: 4,
+    d230: 3,
+    d240: 3,
+    d310: 1,
+    d330: 2,
+    d350: 2,
+    d360: 1,
+    d450: 0,
+    d410: 1,
+    d420: 1,
+    d470: 3,
+    d510: 3,
+    d540: 3,
+    d550: 1,
+    d570: 3,
+    d620: 3,
+    d630: 4,
+    d640: 3,
+    d660: 2,
+    d710: 2,
+    d750: 3,
+    d760: 1,
+    d730: 3,
+    d820: 3,
+    d850: 3,
+    d860: 2,
+    d870: 2,
+    d910: 3,
+    d920: 2,
+    d930: 1,
+    d950: 2,
+  };
+  for (const item of ICF_ITEMS) {
+    const p = samplePerf[item.id];
+    if (p === undefined) continue;
+    answers[`${item.id}-p`] = p;
+    answers[`${item.id}-c`] = Math.max(0, p - 1);
+  }
+
   const respondent = "carer";
   const score = scoreAssessment(respondent, answers);
   const id = uid("assess");

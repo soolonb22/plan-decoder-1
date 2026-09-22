@@ -15,9 +15,9 @@ import { AssessmentWizard } from "@/components/assessment/wizard";
 import { FunctionPanel } from "@/components/pocket/function-panel";
 
 const TITLE =
-  "NDIS practice assessment (WHODAS-inspired) — prepare for support needs conversations | Plan Decoder";
+  "NDIS practice assessment (ICF functioning map) — prepare for support needs conversations | Plan Decoder";
 const DESC =
-  "Private practice questionnaire to rehearse NDIS-style functional questions, environment, permanency and mainstream supports. Inspired by WHODAS 2.0 life areas and publicly described 2026 support-needs assessment themes. Not the NDIA. Not I-CAN. Not a diagnosis.";
+  "Private practice questionnaire to rehearse NDIS-style functional questions, environment, permanency and mainstream supports. Functioning uses ICF life areas d1–d9 with performance and capacity. Not the NDIA. Not I-CAN. Not a diagnosis.";
 
 export const Route = createFileRoute("/assessment")({
   validateSearch: (raw: Record<string, unknown>): { tab: "about" | "practice" | "function" } => {
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/assessment")({
       {
         name: "keywords",
         content:
-          "NDIS practice rehearsal, WHODAS-inspired snapshot, independent support-needs practice, family carer nominee questionnaire, Australia",
+          "NDIS practice rehearsal, ICF functioning snapshot, independent support-needs practice, family carer nominee questionnaire, Australia",
       },
       { name: "robots", content: "index,follow" },
     ],
@@ -51,7 +51,7 @@ const FAQ = [
   },
   {
     q: "What does the scoring mean?",
-    a: "Plan Decoder uses WHODAS-style average scores (none through extreme) and a simple 0–100 transform of answered items. Support-needs questions use Plan Decoder’s own frequency and intensity scales. Official WHODAS IRT percentiles and official I-CAN scores are not calculated.",
+    a: "Plan Decoder uses ICF-style 0–4 qualifiers (none through complete) on performance, and a simple 0–100 transform of answered items. Support-needs questions use Plan Decoder’s own frequency and intensity scales. Official ICF scoring, WHODAS IRT percentiles, and official I-CAN scores are not calculated.",
   },
   {
     q: "Will this tell me if I am eligible, or how much funding I will get?",
@@ -261,7 +261,7 @@ function AssessmentLanding() {
             Plan Decoder does not copy those instruments. This rehearsal uses original questions in the same <em>kinds</em> of life areas people are being asked to think about: daily function, support needed, who is around you, whether a treating professional has already described the impairment as ongoing, and whether other systems (health, school, housing, employment) have already been tried.
           </p>
           <p>
-            WHODAS 2.0 is a World Health Organization schedule of functioning across six domains. Plan Decoder offers a WHODAS-inspired snapshot with WHO-style average descriptors (none, mild, moderate, severe, extreme) and a simple 0–100 transform. It is not an official WHODAS administration and does not compute item-response-theory percentiles.
+            The function section maps WHO ICF activities and participation chapters d1–d9, with the generic 0–4 qualifier (none, mild, moderate, severe, complete). You can rate performance — what happens in real life with the usual help and environment — and capacity — what is possible in a more standard setting. The gap often lives in the environment. It is not an official ICF assessment, not WHODAS, and not I-CAN.
           </p>
         </div>
       </section>
@@ -282,7 +282,7 @@ function AssessmentLanding() {
           <li>What is the NDIS — official-scheme explainer, then confirm this is only practice.</li>
           <li>Who is answering — participant, parent, carer, nominee, or professional.</li>
           <li>About the person — living situation, NDIS status, and the six NDIS-style function areas.</li>
-          <li>WHODAS-inspired function (12 or 36 items) plus how many days life was interrupted.</li>
+          <li>ICF functioning (9 or 36 items) with performance and capacity, plus how many days life was interrupted.</li>
           <li>Support-needs rehearsal across 12 everyday life areas (frequency and intensity).</li>
           <li>Environment — who is in the home, unpaid hours, what happens if that person is away.</li>
           <li>Permanency module — duration, clinician view as you already know it, treatments tried, evidence on hand.</li>

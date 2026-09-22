@@ -197,4 +197,8 @@ export function scoreIcf(items: Record<string, number | null>) {
 
 export const SCALE = ICF_SCALE;
 
-export const ICF_DISCLAIMER = `This is an ICF-inspired functioning snapshot for self-reflection and evidence gathering. It is not a clinical diagnosis, not an official ICF assessment, not WHODAS, and not an NDIA assessment.\n\nPlan Decoder uses the ICF 0–4 qualifier (none / mild / moderate / severe / complete) and a simple average of answered items. Performance is what happens in real life with the usual help and environment. Capacity is what is possible in a more standard setting. The gap often lives in the environment.\n\nDo not submit this as a substitute for a qualified clinician’s assessment. You can take the notes to a clinician or support coordinator.`;
+export const ICF_DISCLAIMER = `This is an ICF-inspired functioning snapshot for self-reflection and evidence gathering. It is not a clinical diagnosis, not an official ICF assessment, not WHODAS, and not an NDIA assessment.
+
+Plan Decoder uses the ICF 0–4 qualifier (none / mild / moderate / severe / complete) and a simple average of answered items. Performance is what happens in real life with the usual help and environment. Capacity is what is possible in a more standard setting. The gap often lives in the environment.
+
+Do not submit this as a substitute for a qualified clinician’s assessment. You can take the notes to a clinician or support coordinator.`;

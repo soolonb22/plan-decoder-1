@@ -20,6 +20,7 @@ const MODULE_PIC: Record<string, string> = {
   who: "/brand/story-together.jpg",
   about: "/brand/story-sit.jpg",
   pace: "/brand/story-tick.jpg",
+  icf: "/brand/story-tick.jpg",
   whodas: "/brand/story-tick.jpg",
   needs: "/brand/story-together.jpg",
   environment: "/brand/story-device.jpg",
@@ -115,7 +116,7 @@ function FieldControl({
       </fieldset>
     );
   }
-  const opts = scaleOptions(field.scale ?? "whodas");
+  const opts = scaleOptions(field.scale ?? "icf");
   return (
     <fieldset>
       <legend className="text-sm font-medium">{prompt}</legend>

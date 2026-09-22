@@ -1,4 +1,4 @@
-import { WHODAS_ITEMS, descriptor, scoreWhodas } from "../whodas";
+import { ICF_ITEMS, descriptor, scoreIcf } from "../icf";
 import { DOMAINS } from "../content/language";
 import type {
   AnswerVal,
@@ -11,7 +11,7 @@ import type {
   Respondent,
   SupportIdea,
 } from "./types";
-import { NEED_DOMAINS, WHODAS12_IDS, visibleScreens } from "./screens";
+import { NEED_DOMAINS, ICF_SHORT_IDS, visibleScreens } from "./screens";
 
 const num = (v: AnswerVal) => (typeof v === "number" ? v : null);
 const str = (v: AnswerVal) => (typeof v === "string" ? v : "");
@@ -125,18 +125,18 @@ export function scoreAssessment(
     return true;
   }).length;
 
-  const whodasItems: Record<string, number | null> = {};
-  for (const item of WHODAS_ITEMS) {
-    const v = num(answers[item.id]);
-    if (v !== null) whodasItems[item.id] = v;
+  const icfItems: Record<string, number | null> = {};
+  for (const item of ICF_ITEMS) {
+    const v = num(answers[`${item.id}-p`]);
+    if (v !== null) icfItems[item.id] = v;
   }
-  const short = answers["whodas-length"] === "short";
+  const short = answers["icf-length"] !== "full" && answers["whodas-length"] !== "full";
   if (short) {
-    for (const item of WHODAS_ITEMS) {
-      if (!WHODAS12_IDS.includes(item.id)) delete whodasItems[item.id];
+    for (const item of ICF_ITEMS) {
+      if (!ICF_SHORT_IDS.includes(item.id)) delete icfItems[item.id];
     }
   }
-  const w = scoreWhodas(whodasItems);
+  const w = scoreIcf(icfItems);
   const whodasDomains = w.domains.map((d) => ({
     id: d.domain,
     title: DOMAINS.find((x) => x.id === d.domain)?.title ?? d.domain,
@@ -230,7 +230,7 @@ export function scoreAssessment(
     gaps.push({
       severity: "watch",
       title: "Few function items answered",
-      detail: "The WHODAS-inspired snapshot is thin. Completing more items (or the 12-item set) gives a clearer picture to take to a clinician.",
+      detail: "The ICF snapshot is thin. Completing more ICF items (or the 9-area snapshot) gives a clearer picture to take to a clinician.",
     });
   }
   if (supportAnswered.length < 4 && str(answers["needs-ready"]) !== "later") {
@@ -268,11 +268,11 @@ export function scoreAssessment(
       detail: "NDIS access is generally before age 65. If this is a new request, a local aged-care or advocacy service may be the first call. This is general information, not advice for your case.",
     });
   }
-  const extremeWho = WHODAS_ITEMS.filter((i) => num(answers[i.id]) === 4);
+  const extremeWho = ICF_ITEMS.filter((i) => num(answers[`${i.id}-p`]) === 4);
   if (extremeWho.length >= 3) {
     gaps.push({
       severity: "info",
-      title: "Several “extreme / cannot do” ratings",
+      title: "Several “complete” ratings",
       detail: "A one-line example for each (what happens, how often) makes those ratings usable for a doctor. Plan Decoder will not change your ticks.",
     });
   }
@@ -287,7 +287,7 @@ export function scoreAssessment(
     if (whoDomains.some((x) => x.answered) && Math.abs(whoAvg / 4 * 10 - pair.score) >= 4.5) {
       inconsistencies.push({
         title: `${d.title}: function and support ticks sit far apart`,
-        detail: `WHODAS-inspired average in related areas is ${whoAvg.toFixed(1)} / 4, while the support rehearsal is ${pair.score.toFixed(1)} / 10. That can be true (for example equipment hides difficulty). A sentence of context will help a clinician.`,
+        detail: `ICF performance average in related areas is ${whoAvg.toFixed(1)} / 4, while the support rehearsal is ${pair.score.toFixed(1)} / 10. That can be true (for example equipment hides difficulty). A sentence of context will help a clinician.`,
       });
     }
   }
