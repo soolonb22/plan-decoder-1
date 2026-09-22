@@ -13,7 +13,7 @@ export type A11yPrefs = {
   hide3d: boolean;
 };
 
-export type ScaleKind = "whodas" | "freq" | "intensity" | "days" | "interfere";
+export type ScaleKind = "icf" | "whodas" | "freq" | "intensity" | "days" | "interfere";
 
 export type Field = {
   id: string;

@@ -35,7 +35,7 @@ const SHORT: Record<string, string> = {
 };
 
 function labelOf(row: ResultRow) {
-  return SHORT[row.id] ?? row.title.replace("WHODAS-inspired ", "").replace(" (average)", "");
+  return SHORT[row.id] ?? row.title.replace("ICF functioning ", "").replace(" (average)", "");
 }
 
 function ChartFrame({
@@ -70,7 +70,7 @@ export function DomainAverageBars({ rows }: { rows: ResultRow[] }) {
     fill: r.aboveThreshold ? PRIMARY : LAVENDER,
   }));
   return (
-    <ChartFrame title="WHODAS-inspired domain averages compared with the practice threshold" height={320}>
+    <ChartFrame title="ICF-mapped domain averages compared with the practice threshold" height={320}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} layout="vertical" margin={{ top: 8, right: 24, left: 8, bottom: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={PAPER} />

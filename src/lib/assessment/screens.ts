@@ -1,22 +1,9 @@
-import { WHODAS_ITEMS } from "../whodas";
-import { DOMAINS } from "../content/language";
+import { CHAPTERS, ICF_ITEMS, ICF_SHORT_IDS } from "../icf";
 import type { NeedDomainId, Respondent, ScaleKind, Screen } from "./types";
 import { fill } from "./voice";
 
-export const WHODAS12_IDS = [
-  "q1",
-  "q4",
-  "q7",
-  "q11",
-  "q12",
-  "q13",
-  "q16",
-  "q17",
-  "q21",
-  "q25",
-  "q29",
-  "q33",
-];
+export const WHODAS12_IDS = ICF_SHORT_IDS; // kept alias for older scoring imports
+export { ICF_SHORT_IDS };
 
 export const FREQ_SCALE = [
   { value: 0, label: "Never" },
@@ -39,7 +26,7 @@ export const WHODAS_SCALE = [
   { value: 1, label: "Mild" },
   { value: 2, label: "Moderate" },
   { value: 3, label: "Severe" },
-  { value: 4, label: "Extreme or cannot do" },
+  { value: 4, label: "Complete" },
 ];
 
 export const INTERFERE_SCALE = [
@@ -60,7 +47,7 @@ export function scaleOptions(kind: ScaleKind) {
       label: i === 10 ? "Every day" : i === 0 ? "0 days" : `About ${i * 3} days`,
     }));
   }
-  return WHODAS_SCALE;
+  return WHODAS_SCALE; // ICF 0–4 qualifier (none → complete)
 }
 
 export const NEED_DOMAINS: {
@@ -213,26 +200,41 @@ const CHOICE = {
 
 export function buildScreens(r: Respondent): Screen[] {
   const t = (s: string) => fill(s, r);
-  const whodasScreens: Screen[] = DOMAINS.map((d) => ({
-    id: `whodas-${d.id}`,
-    module: "whodas",
-    title: d.title,
-    lede: t(
-      "Think about the last 30 days. Include the help and equipment {who} usually {have}. Skip anything that does not apply.",
-    ),
-    ollie: t(
-      "There are no trick answers. If it changes day to day, choose what is true on a typical harder day, then you can note the good days.",
-    ),
-    need: "free",
-    fields: WHODAS_ITEMS.filter((i) => i.domain === d.id).map((i) => ({
-      id: i.id,
-      type: "scale" as const,
-      scale: "whodas" as const,
-      optional: i.optional,
-      prompt: t(`In the last 30 days, how much difficulty did {who} have with: ${i.text.toLowerCase()}?`),
-      easy: t(`How hard was this for {who}: ${i.text.toLowerCase()}?`),
-    })),
-  }));
+  const icfScreens: Screen[] = CHAPTERS.map((ch) => {
+    const items = ICF_ITEMS.filter((i) => i.chapter === ch.id);
+    return {
+      id: `icf-${ch.id}`,
+      module: "icf",
+      title: `${ch.code} · ${ch.title}`,
+      lede: t(
+        `${ch.summary} Tick what is true on a typical hard day. Skip anything that does not apply.`,
+      ),
+      ollie: t(
+        "Performance is what actually happens in the current world. Capacity is what is possible in a more standard setting. The gap often lives in the environment.",
+      ),
+      need: "free",
+      fields: items.flatMap((i) => [
+        {
+          id: `${i.id}-p`,
+          type: "scale" as const,
+          scale: "icf" as const,
+          optional: !i.short,
+          prompt: t(`Performance — in real life, with the usual help and environment, how much difficulty {do} {who} have with: ${i.text.toLowerCase()}?`),
+          easy: t(`In real life, how hard is this: ${i.text.toLowerCase()}?`),
+          hint: "Performance is what actually happens in the current world.",
+        },
+        {
+          id: `${i.id}-c`,
+          type: "scale" as const,
+          scale: "icf" as const,
+          optional: !i.short,
+          prompt: t(`Capacity — in a more standard setting, how much difficulty {do} {who} have with: ${i.text.toLowerCase()}?`),
+          easy: t(`If the setting were more supportive, how hard is this: ${i.text.toLowerCase()}?`),
+          hint: "Capacity is what is possible without this week’s extra barriers.",
+        },
+      ]),
+    };
+  });
 
   const needScreens: Screen[] = NEED_DOMAINS.map((d) => ({
     id: `need-${d.id}`,
@@ -404,31 +406,31 @@ export function buildScreens(r: Respondent): Screen[] {
       ],
     },
     {
-      id: "whodas-intro",
-      module: "whodas",
-      title: "Function in daily life",
+      id: "icf-intro",
+      module: "icf",
+      title: "Functioning — ICF map",
       lede: t(
-        "This section is inspired by WHODAS 2.0 life areas. It is not an official WHO questionnaire. It asks how much difficulty {who} {have} had.",
+        "This section maps functioning using WHO ICF life areas (d1–d9). It is not an official ICF assessment. For each item you can rate performance (what happens in real life) and capacity (what is possible in a more standard setting).",
       ),
       ollie:
-        "Official WHODAS scoring has two methods. Plan Decoder uses average scores (none to extreme) and a simple 0–100 transform of answered items. It does not compute official IRT percentiles.",
+        "Plan Decoder uses the ICF 0–4 qualifier (none, mild, moderate, severe, complete) and a simple average of answered items. It is not an official ICF scoring, not WHODAS, and not I-CAN.",
       need: "free",
       fields: [
         {
-          id: "whodas-length",
+          id: "icf-length",
           type: "choice",
           prompt: "How many function questions today?",
           options: [
-            { value: "short", label: "Shorter set (12 questions) — a snapshot" },
-            { value: "full", label: "Full set (36 questions) — more detail for a GP" },
+            { value: "short", label: "Shorter set (9 life areas) — a snapshot" },
+            { value: "full", label: "Full set (36 items) — more detail for a GP" },
           ],
         },
       ],
     },
-    ...whodasScreens,
+    ...icfScreens,
     {
-      id: "whodas-h",
-      module: "whodas",
+      id: "icf-h",
+      module: "icf",
       title: "How much this got in the way",
       lede: t("These extra questions sit beside the life-area scores. Approximate is fine."),
       ollie: t("If you are not sure of exact days, pick the closest band. Skipping is allowed."),
@@ -741,18 +743,17 @@ export function visibleScreens(
   answers: Record<string, string | number | string[] | null>,
 ): Screen[] {
   const all = buildScreens(r);
-  const short = answers["whodas-length"] === "short";
+  const short = answers["icf-length"] !== "full" && answers["whodas-length"] !== "full";
   const skipNeeds = answers["needs-ready"] === "later";
   return all.filter((s) => {
     if (skipNeeds && (s.module === "needs" && s.id !== "needs-intro")) return false;
-    if (short && s.id.startsWith("whodas-")) {
-      if (s.id === "whodas-intro" || s.id === "whodas-h") return true;
-      return s.fields.some((f) => WHODAS12_IDS.includes(f.id));
-    }
     return true;
   }).map((s) => {
-    if (short && s.id.startsWith("whodas-") && s.id !== "whodas-intro" && s.id !== "whodas-h") {
-      return { ...s, fields: s.fields.filter((f) => WHODAS12_IDS.includes(f.id)) };
+    if (short && s.id.startsWith("icf-") && s.id !== "icf-intro" && s.id !== "icf-h") {
+      return {
+        ...s,
+        fields: s.fields.filter((f) => ICF_SHORT_IDS.some((id) => f.id.startsWith(`${id}-`))),
+      };
     }
     return s;
   });

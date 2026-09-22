@@ -2,12 +2,13 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { DOMAINS } from "@/lib/content/language";
 import {
-  SCALE,
-  WHODAS_DISCLAIMER,
-  WHODAS_ITEMS,
+  ICF_DISCLAIMER,
+  ICF_ITEMS,
+  ICF_SCALE,
+  ICF_SHORT_IDS,
   descriptor,
-  scoreWhodas,
-} from "@/lib/whodas";
+  scoreIcf,
+} from "@/lib/icf";
 import type { WhodasDomain } from "@/lib/types";
 import { PRACTICE_THRESHOLD, type ResultRow } from "@/lib/assessment/clinical";
 import { DomainAverageBars, LongitudinalLines, PracticeIndexBars } from "@/components/assessment/practice-charts";
@@ -18,21 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Disclaimer } from "@/components/layout/page";
 
-/** Two items from each of the six life areas. Practice only. Not official WHODAS-12. */
-const SNAPSHOT_12 = new Set([
-  "q1",
-  "q2",
-  "q7",
-  "q8",
-  "q12",
-  "q13",
-  "q16",
-  "q17",
-  "q21",
-  "q22",
-  "q29",
-  "q33",
-]);
+const SNAPSHOT_9 = new Set(ICF_SHORT_IDS);
 
 function toRows(
   domains: { domain: WhodasDomain; avg: number; answered: number }[],
@@ -60,15 +47,15 @@ export function FunctionPanel({ preview = false }: { preview?: boolean }) {
   const [items, setItems] = useState<Record<string, number | null>>({});
   const [notes, setNotes] = useState("");
   const [domainFilter, setDomainFilter] = useState<WhodasDomain | "all">("all");
-  const catalogue = preview ? WHODAS_ITEMS.filter((i) => SNAPSHOT_12.has(i.id)) : WHODAS_ITEMS;
-  const score = useMemo(() => scoreWhodas(items), [items]);
+  const catalogue = preview ? ICF_ITEMS.filter((i) => SNAPSHOT_9.has(i.id)) : ICF_ITEMS;
+  const score = useMemo(() => scoreIcf(items), [items]);
   const rows = useMemo(() => toRows(score.domains), [score]);
   const series = useMemo(
     () =>
       [...history]
         .sort((a, b) => a.date.localeCompare(b.date))
         .map((h) => {
-          const s = scoreWhodas(h.items);
+          const s = scoreIcf(h.items);
           return { date: formatDate(h.date), total: s.avgOverall, support: 0 };
         }),
     [history],
@@ -79,10 +66,10 @@ export function FunctionPanel({ preview = false }: { preview?: boolean }) {
     <div>
       <p className="mb-3 text-sm text-muted">
         {preview
-          ? "Twelve practice questions about a typical hard day. Tick what is true. Skip anything that does not apply. This stays on this device. It is not an NDIA assessment."
-          : "Inspired by WHODAS 2.0 life areas. Skip anything that does not apply. Average scores handle skipped items."}
+          ? "Nine practice questions, one from each ICF life area. Tick what is true on a typical hard day. Skip anything that does not apply. This stays on this device. It is not an NDIA assessment."
+          : "ICF life areas d1–d9. Skip anything that does not apply. Average scores handle skipped items. Performance — what happens in real life."}
       </p>
-      <Disclaimer>{WHODAS_DISCLAIMER}</Disclaimer>
+      <Disclaimer>{ICF_DISCLAIMER}</Disclaimer>
       <div className="mt-4 flex flex-wrap gap-2">
         <Button size="sm" variant={domainFilter === "all" ? "primary" : "secondary"} onClick={() => setDomainFilter("all")}>
           All
@@ -101,12 +88,9 @@ export function FunctionPanel({ preview = false }: { preview?: boolean }) {
       <div className="mt-5 space-y-4">
         {visible.map((item) => (
           <Card key={item.id}>
-            <p className="text-sm font-medium">
-              {item.text}
-              {item.optional ? <span className="text-muted"> (optional)</span> : null}
-            </p>
+            <p className="text-sm font-medium">{item.text}</p>
             <div className="mt-3 flex flex-wrap gap-2">
-              {SCALE.map((s) => (
+              {ICF_SCALE.map((s) => (
                 <button
                   key={s.value}
                   type="button"
