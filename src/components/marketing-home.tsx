@@ -23,24 +23,25 @@ export function MarketingHome() {
 
       <section className="ill-hero">
         <div>
-          <p className="ill-kicker">Independent NDIS practice tools</p>
+          <p className="ill-kicker">For NDIS participants, carers and families</p>
           <h1 className="text-3xl font-semibold tracking-tight text-primary-deep sm:text-4xl">
-            Plan Decoder
+            Understand your NDIS plan. Prove what you need.
           </h1>
           <p className="mt-3 max-w-xl text-sm text-muted sm:text-base">
-            For families, carers, and coordinators in Australia. Rehearse functional questions, keep evidence on this
-            device, and read rights in plain language. Not the NDIA. Does not decide eligibility or funding.
+            Plain-English tools to decode your plan, log daily evidence, and walk into your review prepared.
+            Independent. Not the NDIA. Does not decide eligibility or funding.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             <Button asChild>
-              <Link to="/assessment" search={{ tab: "function" }}>
-                Try the 12 questions
-              </Link>
+              <Link to="/login">Start free</Link>
             </Button>
             <Button variant="secondary" asChild>
-              <Link to="/pricing">See pricing</Link>
+              <Link to="/assessment" search={{ tab: "about" }}>
+                See how it works
+              </Link>
             </Button>
           </div>
+          <p className="mt-4 text-xs text-muted">Independent · Plain language · Built by a support worker</p>
         </div>
         <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-[var(--shadow-card)]">
           <img
