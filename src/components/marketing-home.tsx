@@ -6,7 +6,7 @@ import { HOW_OLLIE_WORKS, StoryStrip } from "@/components/story";
 import { ACCESS_BOUNDARY } from "@/lib/access-copy";
 import { FOUNDER_LINE } from "@/lib/founder-copy";
 import { HOME_FAQS, faqJsonLd } from "@/lib/seo-faq";
-import { FeatureArt, PageArt } from "@/components/illustrations";
+import { FeatureArt } from "@/components/illustrations";
 
 export function MarketingHome() {
   return (
@@ -42,10 +42,18 @@ export function MarketingHome() {
             </Button>
           </div>
         </div>
-        <PageArt topic="home" showPhones={false} />
+        <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-[var(--shadow-card)]">
+          <img
+            src="/brand/hero-banner.png"
+            alt="Plan Decoder on a laptop: Evidence Wallet, Behaviour Log, and I-CAN Prep in plain English."
+            className="h-auto w-full"
+            width={1890}
+            height={945}
+          />
+        </div>
       </section>
 
-      <PageArt topic="home" showIcons={false} />
+      <p className="sr-only">Social cover art is at /brand/facebook-cover.png for Facebook and share cards.</p>
 
       <StoryStrip heading="How this works" steps={HOW_OLLIE_WORKS} />
 
