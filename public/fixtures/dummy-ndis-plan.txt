@@ -1,0 +1,82 @@
+National Disability Insurance Agency
+Plan letter — practice sample only
+This is a fictional letter for testing Plan Decoder. Not a real plan. Not the NDIA.
+
+This plan is for
+Alex River
+NDIS number 430 221 198
+Nominee: Sam River (parent)
+Email alex.river.test@example.com
+Mobile 0412 345 678
+
+Plan period
+12 March 2026 to 11 March 2027
+Start date 12 March 2026
+End date 11 March 2027
+
+How your plan is managed
+Assistance with daily life is self-managed.
+Support coordination is plan-managed.
+Assistive technology is NDIA-managed.
+You can have a mix. Confirm who each provider should bill before the first invoice.
+
+Your goals
+Leave the house three days a week with support nearby.
+Sleep through most nights and keep a morning routine that does not fall over.
+Finish one TAFE term with notes that a support worker can help organise.
+These goals belong to Alex. Clinic words are not required.
+
+Your funding
+
+Core supports
+Assistance with daily life
+This is a flexible support
+Self-managed
+$28,400.00
+
+Assistance with social and community participation
+This is a flexible support
+Self-managed
+$6,100.00
+
+Consumables
+This is a flexible support
+$1,200.00
+
+Capacity building
+Improved daily living
+This is a stated support
+Plan-managed
+$4,800.00
+
+Support coordination
+This is a stated support
+Plan-managed
+$3,918.72
+
+Capital supports
+Assistive technology
+This is a stated support
+NDIA-managed
+$2,450.00
+
+Recurring supports
+Transport
+This is a stated support
+$1,560.00
+
+Informal support
+Family help with nights and school pickup. This is unpaid. If that load increases, write down frequency and what happens without them.
+
+Mainstream
+School learning support and Medicare remain responsible for education and health. NDIS is not a substitute for those systems.
+
+Scheduled review
+We will contact you before the end date about a reassessment.
+Next review around December 2026.
+You can bring your own evidence.
+
+Total funded (for checking the table only): $48,428.72
+
+This sample is for reading practice in Plan Decoder.
+Check a real letter and the my NDIS app. This file cannot decide eligibility or funding.
