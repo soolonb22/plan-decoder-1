@@ -8,6 +8,9 @@ import { FOUNDER_LINE } from "@/lib/founder-copy";
 import { HOME_FAQS, faqJsonLd } from "@/lib/seo-faq";
 import { FeatureArt } from "@/components/illustrations";
 
+const HERO_SRC = encodeURI("/brand/Plan Decoder website hero banner.png");
+const COVER_SRC = encodeURI("/brand/Plan Decoder Facebook cover.png");
+
 export function MarketingHome() {
   return (
     <div>
@@ -45,7 +48,7 @@ export function MarketingHome() {
         </div>
         <div className="overflow-hidden rounded-2xl border border-line bg-card shadow-[var(--shadow-card)]">
           <img
-            src="/brand/hero-banner.png"
+            src={HERO_SRC}
             alt="Plan Decoder on a laptop: Evidence Wallet, Behaviour Log, and I-CAN Prep in plain English."
             className="h-auto w-full"
             width={1890}
@@ -54,7 +57,7 @@ export function MarketingHome() {
         </div>
       </section>
 
-      <p className="sr-only">Social cover art is at /brand/facebook-cover.png for Facebook and share cards.</p>
+      <p className="sr-only">Social cover art is at {COVER_SRC} for Facebook and share cards.</p>
 
       <StoryStrip heading="How this works" steps={HOW_OLLIE_WORKS} />
 
