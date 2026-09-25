@@ -4,6 +4,7 @@ import { FileUp, Sparkles } from "lucide-react";
 import type { PlanRead } from "@/lib/plan-reader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { PlanStructureDiagram } from "@/components/plan-diagram";
 
 const MGMT: Record<PlanRead["management"], { label: string; tone: "primary" | "ok" | "warn" | "neutral" }> = {
