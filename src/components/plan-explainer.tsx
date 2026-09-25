@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { FileUp, Sparkles } from "lucide-react";
 import type { PlanRead } from "@/lib/plan-reader";
+import { graphOrBuild } from "@/lib/plan-graph";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -105,7 +106,8 @@ export function PlanExplainer({
   read: PlanRead;
   onClear: () => void;
 }) {
-  const mgmt = MGMT[read.management] ?? MGMT.unknown;
+  const graph = graphOrBuild(read);
+  const mgmt = MGMT[graph.management] ?? MGMT[read.management] ?? MGMT.unknown;
   const found = read.pieces.filter((p) => p.present);
   const extra = read.pieces.filter((p) => !p.present);
   return (
@@ -122,6 +124,9 @@ export function PlanExplainer({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone={mgmt.tone}>{mgmt.label}</Badge>
+          <Badge tone={graph.confidence === "high" ? "ok" : graph.confidence === "low" ? "warn" : "neutral"}>
+            {graph.confidence} confidence
+          </Badge>
           <Button size="sm" variant="ghost" onClick={onClear}>
             Remove this reading
           </Button>
@@ -136,14 +141,43 @@ export function PlanExplainer({
         </p>
       ))}
 
-      {read.dates.length ? (
+      {graph.dates.raw.length ? (
         <p className="text-sm text-muted">
           <span className="font-medium text-ink">Dates noticed: </span>
-          {read.dates.join(" · ")}
+          {graph.dates.start ?? graph.dates.raw[0]}
+          {graph.dates.end ? ` to ${graph.dates.end}` : ""}
         </p>
       ) : null}
 
-      {read.money.length ? (
+      {graph.goals.length ? (
+        <Card>
+          <p className="text-sm font-medium">Goals from the letter</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
+            {graph.goals.map((g) => (
+              <li key={g}>{g}</li>
+            ))}
+          </ul>
+        </Card>
+      ) : null}
+
+      {graph.lines.length ? (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {graph.lines.map((line) => (
+            <Card key={`${line.path}-${line.item}-${line.amountText}`} className="flex gap-3">
+              <img src="/brand/story-wallet.jpg" alt="" width={56} height={56} className="size-14 rounded-xl object-cover" />
+              <div>
+                <p className="text-xs capitalize text-muted">
+                  {line.pot} · {line.item.replace(/_/g, " ")}
+                </p>
+                <p className="mt-1 text-lg font-semibold tabular-nums">{line.amountText}</p>
+                <p className="mt-1 text-xs text-muted">
+                  {line.lock === "unknown" ? "Stated or flexible not clear on this line." : `Looks ${line.lock}.`}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      ) : read.money.length ? (
         <div className="grid gap-3 sm:grid-cols-2">
           {read.money.map((m) => (
             <Card key={`${m.label}-${m.amount}`} className="flex gap-3">
@@ -157,6 +191,8 @@ export function PlanExplainer({
           ))}
         </div>
       ) : null}
+
+      <p className="text-xs text-muted">{graph.disclaimer}</p>
 
       <div className="space-y-4">
         <p className="text-sm font-medium">Sections we found in your file</p>
