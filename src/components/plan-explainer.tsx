@@ -25,6 +25,26 @@ export function PlanUploadHero({
   busy: boolean;
 }) {
   const [paste, setPaste] = useState("");
+  const [sampleBusy, setSampleBusy] = useState(false);
+  const [sampleNote, setSampleNote] = useState<string | null>(null);
+
+  async function loadSample() {
+    if (!onPaste) return;
+    setSampleBusy(true);
+    setSampleNote(null);
+    try {
+      const res = await fetch("/fixtures/dummy-ndis-plan.txt");
+      if (!res.ok) throw new Error("missing");
+      const text = await res.text();
+      onPaste(text);
+      setSampleNote("Loaded a fictional practice letter. Not a real plan. Not the NDIA.");
+    } catch {
+      setSampleNote("Could not load the sample. Try paste instead.");
+    } finally {
+      setSampleBusy(false);
+    }
+  }
+
   return (
     <Card className="mb-5 border-primary/30 bg-primary-soft/50">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -36,11 +56,19 @@ export function PlanUploadHero({
             without mixing funds. Nothing is sent to the NDIA.
           </p>
         </div>
-        <Button size="lg" disabled={busy} onClick={onPick}>
-          <FileUp />
-          {busy ? "Reading…" : "Upload plan (PDF)"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button size="lg" disabled={busy} onClick={onPick}>
+            <FileUp />
+            {busy ? "Reading…" : "Upload plan (PDF)"}
+          </Button>
+          {onPaste ? (
+            <Button size="lg" variant="secondary" disabled={busy || sampleBusy} onClick={() => void loadSample()}>
+              {sampleBusy ? "Loading sample…" : "Try a sample plan"}
+            </Button>
+          ) : null}
+        </div>
       </div>
+      {sampleNote ? <p className="mt-3 text-sm text-muted">{sampleNote}</p> : null}
       {onPaste ? (
         <details className="mt-4">
           <summary className="cursor-pointer text-sm font-medium">Or paste text from the plan</summary>
@@ -77,7 +105,7 @@ export function PlanExplainer({
   read: PlanRead;
   onClear: () => void;
 }) {
-  const mgmt = MGMT[read.management];
+  const mgmt = MGMT[read.management] ?? MGMT.unknown;
   const found = read.pieces.filter((p) => p.present);
   const extra = read.pieces.filter((p) => !p.present);
   return (
@@ -102,7 +130,7 @@ export function PlanExplainer({
 
       <PlanStructureDiagram read={read} />
 
-      {read.warnings.map((w) => (
+      {(read.warnings ?? []).map((w) => (
         <p key={w} className="rounded-xl bg-warn-soft px-4 py-3 text-sm">
           {w}
         </p>
@@ -118,7 +146,7 @@ export function PlanExplainer({
       {read.money.length ? (
         <div className="grid gap-3 sm:grid-cols-2">
           {read.money.map((m) => (
-            <Card key={m.label} className="flex gap-3">
+            <Card key={`${m.label}-${m.amount}`} className="flex gap-3">
               <img src="/brand/story-wallet.jpg" alt="" width={56} height={56} className="size-14 rounded-xl object-cover" />
               <div>
                 <p className="text-xs text-muted">{m.label}</p>
