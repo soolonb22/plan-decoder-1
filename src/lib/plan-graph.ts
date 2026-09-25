@@ -83,7 +83,7 @@ function potFrom(path: string, label: string): PlanLine["pot"] {
 
 function itemFrom(path: string, label: string): string {
   const last = path.split(".").filter(Boolean).pop();
-  if (last && last !== "funding" && last !== "core" && last !== "capacity" && last !== "capital" && last !== "recurring") {
+  if (last && !["funding", "core", "capacity", "capital", "recurring"].includes(last)) {
     return last;
   }
   const l = label.toLowerCase();
@@ -127,11 +127,10 @@ function goalLines(sections: PlanSection[] | undefined): string[] {
     .slice(0, 12);
 }
 
-function confidenceOf(flags: string[], lineCount: number, textHint: number): PlanGraph["confidence"] {
+function confidenceOf(flags: string[], lineCount: number, sectionCount: number): PlanGraph["confidence"] {
   if (flags.includes("no_funding_heading") || lineCount === 0) return "low";
   if (flags.includes("dollars_in_goals") || flags.includes("no_pot_headings")) return "medium";
-  if (lineCount >= 3) return "high";
-  if (textHint < 80) return "low";
+  if (lineCount >= 3 && sectionCount > 0) return "high";
   return "medium";
 }
 
@@ -147,7 +146,7 @@ export function toPlanGraph(read: ReadLike): PlanGraph {
   const lines: PlanLine[] = [];
 
   for (const row of read.money ?? []) {
-    if (!row.amount || / · | · /.test(row.amount) || row.amount.includes(" · ")) {
+    if (!row.amount || row.amount.includes(" · ")) {
       flags.push("unscoped_amount_list");
       continue;
     }
