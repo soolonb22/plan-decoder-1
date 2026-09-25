@@ -1,4 +1,13 @@
 import type { EvidenceType } from "./types";
+import {
+  amountsInSection,
+  flattenSections,
+  fundingSubtree,
+  mapPlanSections,
+  sectionText,
+  statedOrFlexible,
+  type PlanSection,
+} from "./plan-section-map";
 
 export type PlanPiece = {
   id: string;
@@ -22,6 +31,8 @@ export type PlanMoney = {
   label: string;
   amount: string;
   note: string;
+  lock?: "stated" | "flexible" | "unknown";
+  sectionPath?: string;
 };
 
 export type PlanRead = {
@@ -34,6 +45,8 @@ export type PlanRead = {
   lessons: PlanLesson[];
   warnings: string[];
   textLength: number;
+  sections: PlanSection[];
+  mapFlags: string[];
 };
 
 type Catalog = {
@@ -44,6 +57,7 @@ type Catalog = {
   details: string[];
   howToUse: string;
   image: string;
+  sectionIds?: string[];
   moneyHint?: RegExp;
 };
 
@@ -51,6 +65,7 @@ const CATALOG: Catalog[] = [
   {
     id: "who",
     match: /participant|about you|your name|this plan is for/i,
+    sectionIds: ["who"],
     title: "Who this plan is for",
     easy: "This page is about one person. Supports should fit their life, not a generic list.",
     details: [
@@ -63,6 +78,7 @@ const CATALOG: Catalog[] = [
   {
     id: "dates",
     match: /plan period|plan start|plan end|start date|end date|plan dates|duration of your plan/i,
+    sectionIds: ["dates"],
     title: "How long the plan lasts",
     easy: "A plan has a start and an end. Supports are meant to be used in that window.",
     details: [
@@ -76,6 +92,7 @@ const CATALOG: Catalog[] = [
   {
     id: "management",
     match: /self[-\s]?manag|plan[-\s]?manag|ndia[-\s]?manag|agency[-\s]?manag|how your plan is managed|plan managed by/i,
+    sectionIds: ["management"],
     title: "Who pays the bills",
     easy: "Self-managed: you pay, then claim. Plan-managed: a plan manager pays. NDIA-managed: the Agency pays registered providers.",
     details: [
@@ -89,6 +106,7 @@ const CATALOG: Catalog[] = [
   {
     id: "goals",
     match: /\bgoals?\b|what I want|my goal/i,
+    sectionIds: ["goals"],
     title: "Goals — the “why”",
     easy: "Goals are what you want life to look like. Money is meant to help those goals, not to replace ordinary living costs.",
     details: [
@@ -102,6 +120,7 @@ const CATALOG: Catalog[] = [
   {
     id: "core",
     match: /core supports|assistance with daily life|consumables|social and community participation|assistance with social/i,
+    sectionIds: ["core", "daily_living", "community", "consumables"],
     title: "Core — everyday support",
     easy: "Core is the everyday pot: help at home, getting out, some consumables. It is often the most flexible pot.",
     details: [
@@ -117,6 +136,7 @@ const CATALOG: Catalog[] = [
   {
     id: "capacity",
     match: /capacity building|improved daily living|support coordination|finding and keeping a job|increased social|improved relationships|improved health|improved learning|improved life choices|recovery coach/i,
+    sectionIds: ["capacity", "idl", "coord", "work", "relationships", "health", "learning", "life_choices"],
     title: "Capacity building — skills over time",
     easy: "This pot is for building skills: therapy, coordination, work, learning. It is often less flexible.",
     details: [
@@ -132,6 +152,7 @@ const CATALOG: Catalog[] = [
   {
     id: "capital",
     match: /capital supports|assistive technology|home modification|vehicle modification/i,
+    sectionIds: ["capital", "at", "home_mod", "vehicle_mod"],
     title: "Capital — equipment and home changes",
     easy: "Capital is for bigger items: equipment, home or vehicle modifications. It is usually stated.",
     details: [
@@ -146,6 +167,7 @@ const CATALOG: Catalog[] = [
   {
     id: "recurring",
     match: /recurring supports|\btransport\b|assistance with travel/i,
+    sectionIds: ["recurring", "transport"],
     title: "Recurring — regular things like transport",
     easy: "Recurring is a fourth pot on current NDIA pages. Transport is the common example. It cannot be topped up from Core.",
     details: [
@@ -160,6 +182,7 @@ const CATALOG: Catalog[] = [
   {
     id: "stated",
     match: /stated support|flexible support|this is a stated|this is a flexible/i,
+    sectionIds: ["funding"],
     title: "Flexible or stated",
     easy: "Flexible: you can often choose NDIS supports inside that pot. Stated: only the named support.",
     details: [
@@ -173,6 +196,7 @@ const CATALOG: Catalog[] = [
   {
     id: "coord",
     match: /support coordinat|recovery coach|local area coordinat|my ndis contact/i,
+    sectionIds: ["coord", "management"],
     title: "People who can help you use the plan",
     easy: "A coordinator, recovery coach, or my NDIS contact can explain pots and providers. They do not replace your say.",
     details: [
@@ -212,6 +236,7 @@ const CATALOG: Catalog[] = [
   {
     id: "sil",
     match: /supported independent living|\bSIL\b|specialist disability accommodation|\bSDA\b|medium term accommodation|\bMTA\b/i,
+    sectionIds: ["sil", "sda", "funding"],
     title: "Living supports (SIL / SDA / MTA)",
     easy: "If these words are in the plan, they are usually stated and tightly described. They are not extra Core hours.",
     details: [
@@ -225,6 +250,7 @@ const CATALOG: Catalog[] = [
   {
     id: "review",
     match: /scheduled review|reassessment|plan review|next review/i,
+    sectionIds: ["review"],
     title: "When the plan will be looked at again",
     easy: "There is usually a scheduled reassessment. You can also ask for a change if life changes a lot.",
     details: [
@@ -323,39 +349,79 @@ function detectManagement(lower: string): PlanRead["management"] {
   return "unknown";
 }
 
+function moneyFromMap(sections: PlanSection[]): PlanMoney[] {
+  const rows: PlanMoney[] = [];
+  for (const node of fundingSubtree(sections)) {
+    if (node.level < 2) continue;
+    const amounts = amountsInSection(node);
+    if (!amounts.length) continue;
+    const lock = statedOrFlexible(`${node.heading}\n${node.text}`);
+    rows.push({
+      label: node.heading || node.id,
+      amount: amounts[amounts.length - 1],
+      note: lock === "unknown" ? "Check stated or flexible on this line in the letter or the my NDIS app." : `This line looks ${lock}.`,
+      lock,
+      sectionPath: node.path,
+    });
+  }
+  return rows;
+}
+
 export function parseNdisPlan(text: string, fileName: string): PlanRead {
   const t = text.replace(/\u0000/g, " ");
-  const lower = t.toLowerCase();
-  const warnings: string[] = [];
+  const mapped = mapPlanSections(t);
+  const warnings: string[] = [...mapped.flags];
   if (t.replace(/\s/g, "").length < 80) {
     warnings.push(
       "This file did not give enough readable text (it may be a photo). Use “paste text”, or type the headings you can see. The pictures and self-manage steps still help.",
     );
   }
+  if (mapped.flags.includes("no_funding_heading")) {
+    warnings.push("No ‘your funding’ heading found. Amounts below may be less certain. Check the letter table and the my NDIS app.");
+  }
 
-  const management = detectManagement(lower);
-  const dates = allDates(t);
+  const managementSource = sectionText(mapped.sections, "management") || t;
+  const management = detectManagement(managementSource.toLowerCase());
+  const dateSource = sectionText(mapped.sections, "dates") || t;
+  const dates = allDates(dateSource).length ? allDates(dateSource) : allDates(t);
 
-  const money: PlanMoney[] = [];
-  for (const row of CATALOG) {
-    if (!row.moneyHint) continue;
-    const amount = moneyNear(t, row.moneyHint);
-    if (amount) money.push({ label: row.title, amount, note: row.easy });
+  let money = moneyFromMap(mapped.sections);
+  if (!money.length) {
+    for (const row of CATALOG) {
+      if (!row.moneyHint) continue;
+      const amount = moneyNear(t, row.moneyHint);
+      if (amount) money.push({ label: row.title, amount, note: row.easy, lock: "unknown" });
+    }
   }
   if (!money.length) {
     const dollars = [...new Set([...t.matchAll(/\$\s?[\d,]{3,}(?:\.\d{2})?/g)].map((m) => m[0].replace(/\s/g, "")))].slice(0, 8);
-    if (dollars.length) money.push({ label: "Amounts noticed on the page", amount: dollars.join(" · "), note: "Check which pot each belongs to in the my NDIS app." });
+    if (dollars.length) {
+      money.push({
+        label: "Amounts noticed on the page",
+        amount: dollars.join(" · "),
+        note: "Check which pot each belongs to in the my NDIS app.",
+        lock: "unknown",
+      });
+    }
   }
 
   const pieces: PlanPiece[] = CATALOG.map((row) => {
-    const idx = firstIndex(t, row.match);
-    const present = idx >= 0;
+    const scoped =
+      row.sectionIds?.map((id) => sectionText(mapped.sections, id)).find((s) => s.trim().length) ?? "";
+    const search = scoped || t;
+    const idx = firstIndex(search, row.match);
+    const present = idx >= 0 || Boolean(scoped);
+    const found = scoped
+      ? redact(scoped).slice(0, 420)
+      : present
+        ? windowAround(search, idx)
+        : "";
     return {
       id: row.id,
       title: row.title,
       easy: row.easy,
       details: row.details,
-      found: present ? windowAround(t, idx) : "",
+      found,
       howToUse: row.howToUse,
       image: row.image,
       present,
@@ -418,15 +484,21 @@ export function parseNdisPlan(text: string, fileName: string): PlanRead {
     lessons: lessons.map((l, i) => ({ ...l, n: i + 1 })),
     warnings,
     textLength: t.trim().length,
+    sections: mapped.sections,
+    mapFlags: mapped.flags,
   };
 }
 
 export function planSlipBody(read: PlanRead): string {
+  const tree = flattenSections(read.sections ?? [])
+    .map((s) => `${s.path}${s.text ? ` — ${redact(s.text).slice(0, 80)}` : ""}`)
+    .join("\n");
   return [
     `Plan reading aid for ${read.fileName}`,
     `How it looks managed: ${read.management}`,
     read.dates.length ? `Dates noticed: ${read.dates.join(", ")}` : "",
     read.money.length ? `Amounts: ${read.money.map((m) => `${m.label} ${m.amount}`).join("; ")}` : "",
+    tree ? `Sections:\n${tree}` : "",
     "",
     ...read.pieces.map((p) => [p.title, p.easy, ...p.details, p.howToUse, p.found ? `From the plan: ${p.found}` : ""].filter(Boolean).join("\n")),
     "",
