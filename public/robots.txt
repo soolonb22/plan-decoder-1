@@ -13,6 +13,9 @@ Allow: /about
 Allow: /pricing
 Allow: /navigator
 Allow: /systems-walk
+Allow: /terms
+Allow: /refunds
+Allow: /contact
 Disallow: /login
 Disallow: /privacy
 Disallow: /api/

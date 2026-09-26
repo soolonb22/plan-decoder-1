@@ -122,7 +122,7 @@ function PricingPage() {
           {coreCta}
           <p className="mt-3 text-xs text-muted">
             Trial then A${MEMBERSHIP_PRICE_AUD.core}/month until you cancel. Cancel in your account, or email us. See{" "}
-            <Link to="/privacy" className="underline-offset-2 hover:underline">
+            <Link to="/refunds" className="underline-offset-2 hover:underline">
               Refunds and cancellation
             </Link>
             .
