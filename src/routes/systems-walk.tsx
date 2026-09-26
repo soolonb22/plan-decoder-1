@@ -5,6 +5,7 @@ import { Disclaimer } from "@/components/layout/page";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field, Textarea } from "@/components/ui/input";
+import { getDraft, parseCaseWalkSearch, type CaseWalkSearch } from "@/lib/case-notes";
 import {
   HOUSING_FORM11_DEMO,
   SYSTEMS,
@@ -19,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/systems-walk")({
+  validateSearch: (raw: Record<string, unknown>): CaseWalkSearch => parseCaseWalkSearch(raw),
   component: SystemsWalkPage,
   head: () => ({
     meta: [
@@ -32,10 +34,34 @@ export const Route = createFileRoute("/systems-walk")({
   }),
 });
 
+function attachedStart(search: CaseWalkSearch) {
+  const note = search.note ? getDraft(search.note) : undefined;
+  if (note) {
+    return { system: note.system, situation: note.situation, noteId: note.id, form11: false };
+  }
+  if (search.system || search.situation) {
+    const situation = search.situation ?? "";
+    return {
+      system: search.system ?? HOUSING_FORM11_DEMO.system,
+      situation,
+      noteId: undefined,
+      form11: /form\s*11/i.test(situation),
+    };
+  }
+  return {
+    system: HOUSING_FORM11_DEMO.system,
+    situation: HOUSING_FORM11_DEMO.situation,
+    noteId: undefined,
+    form11: true,
+  };
+}
+
 function SystemsWalkPage() {
-  const [system, setSystem] = useState<SystemName>(HOUSING_FORM11_DEMO.system);
-  const [situation, setSituation] = useState(HOUSING_FORM11_DEMO.situation);
-  const [form11, setForm11] = useState(true);
+  const search = Route.useSearch();
+  const start = attachedStart(search);
+  const [system, setSystem] = useState<SystemName>(start.system);
+  const [situation, setSituation] = useState(start.situation);
+  const [form11, setForm11] = useState(start.form11);
   const [walkKey, setWalkKey] = useState(0);
 
   const flags: NavigatorFlags = useMemo(() => {
@@ -78,6 +104,27 @@ function SystemsWalkPage() {
         <Button className="mt-3" variant="secondary" asChild>
           <Link to="/navigator" search={{ tab: "walk" }}>
             Open Community navigator
+          </Link>
+        </Button>
+      </Card>
+
+      <Card className="mt-5">
+        <p className="text-sm font-medium">Keep case notes on this device</p>
+        <p className="mt-1 text-sm text-muted">
+          {start.noteId
+            ? "This walk is attached to an on-device draft. Notes are not a government form and are not filed with anyone."
+            : "Case notes are a practice draft you can attach to this walk. Title, situation, and evidence labels only — no file upload."}
+        </p>
+        <Button className="mt-3" variant="secondary" asChild>
+          <Link
+            to="/case-notes"
+            search={{
+              system,
+              situation,
+              ...(start.noteId ? { note: start.noteId } : {}),
+            }}
+          >
+            {start.noteId ? "Open attached case notes" : "Open Case notes"}
           </Link>
         </Button>
       </Card>

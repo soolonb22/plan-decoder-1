@@ -49,6 +49,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   "/guide": Compass,
   "/navigator": MapPin,
   "/systems-walk": Footprints,
+  "/case-notes": NotebookPen,
   "/wallet": FolderOpen,
   "/carer": HeartHandshake,
   "/fluctuation": Activity,

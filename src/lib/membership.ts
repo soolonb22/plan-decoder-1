@@ -41,6 +41,7 @@ export const PLANS = [
     features: [
       "Community navigator (mainstream and local doors)",
       "Systems walk (housing, NDIS, school, health, Centrelink rehearsal)",
+      "Case notes (on-device draft you can attach to a Systems walk)",
       "Glossary",
       "NDIS News",
       "See what the practice assessment covers",
