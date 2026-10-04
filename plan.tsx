@@ -1,5 +1,3 @@
-
-Plan tsx copy all · TXT
 import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { FUNDING_BUDGETS } from "@/lib/content/funding";
