@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+
+Plan tsx copy all · TXT
+import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { FUNDING_BUDGETS } from "@/lib/content/funding";
 import { PLAN_CHECKLIST } from "@/lib/content/checklist";
@@ -15,7 +17,9 @@ import { FUNDING_VIDEO, IMPLEMENTATION_VIDEO, YoutubeEmbed } from "@/components/
 import { RoomTabs } from "@/components/room-tabs";
 import { PeoplePanel } from "@/components/plan/people-panel";
 import { FitPanel } from "@/components/plan/fit-panel";
-
+import { PlanExplainer } from "@/components/plan-explainer";
+import { fileToPlanText, parseNdisPlan } from "@/lib/plan-reader";
+ 
 const TABS = [
   { id: "pots", label: "Pots" },
   { id: "spend", label: "Spend" },
@@ -27,11 +31,11 @@ const TABS = [
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
 type Cat = "core" | "capacity" | "capital" | "recurring";
-
+ 
 function money(n: number) {
   return n.toLocaleString("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 });
 }
-
+ 
 export const Route = createFileRoute("/plan")({
   validateSearch: (raw: Record<string, unknown>): { tab: Tab } => {
     const tab = String(raw.tab ?? "");
@@ -59,7 +63,7 @@ export const Route = createFileRoute("/plan")({
     ],
   }),
 });
-
+ 
 function PlanPage() {
   const { tab } = Route.useSearch();
   return (
@@ -100,7 +104,68 @@ function PlanPage() {
     </div>
   );
 }
-
+ 
+/** Upload-my-plan card: reads the PDF on this device (no upload, no AI) and shows the explainer. */
+function PlanUploadCard() {
+  const planRead = useOllie((s) => s.planRead);
+  const setPlanRead = useOllie((s) => s.setPlanRead);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+ 
+  async function readFile(file: File) {
+    setBusy(true);
+    setNote(null);
+    try {
+      const text = await fileToPlanText(file);
+      setPlanRead(parseNdisPlan(text, file.name));
+      setNote("Read on this device. Nothing was uploaded. Check each part against your plan.");
+    } catch {
+      setNote("We couldn't read that file. Try the PDF from the my NDIS app (not a photo or scan).");
+    } finally {
+      setBusy(false);
+    }
+  }
+ 
+  return (
+    <div className="mt-4">
+      <Card className="space-y-2">
+        <p className="text-base font-semibold">{planRead ? "Your plan is loaded" : "Start here: upload your plan"}</p>
+        <p className="text-sm text-muted">
+          Choose your NDIS plan PDF. We read it on this device and explain your pots, dates and stated supports in plain
+          words. It is not uploaded or sent to the NDIA.
+        </p>
+        <input
+          ref={fileRef}
+          type="file"
+          className="sr-only"
+          accept=".pdf,.txt,application/pdf,text/plain"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = "";
+            if (file) void readFile(file);
+          }}
+        />
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => fileRef.current?.click()} disabled={busy}>
+            {busy ? "Reading your plan…" : planRead ? "Upload a different plan" : "Upload my plan (PDF)"}
+          </Button>
+        </div>
+        {note ? (
+          <p className="text-sm" role="status" aria-live="polite">
+            {note}
+          </p>
+        ) : null}
+      </Card>
+      {planRead ? (
+        <div className="mt-4">
+          <PlanExplainer read={planRead} onClear={() => setPlanRead(null)} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+ 
 function PotsPanel() {
   const client = useActiveClient();
   const upsert = useOllie((s) => s.upsertClient);
@@ -111,6 +176,7 @@ function PotsPanel() {
       <Disclaimer>
         Plan Decoder is not affiliated with the NDIA. Check your plan and ndis.gov.au before you spend.
       </Disclaimer>
+      <PlanUploadCard />
       <Card className="mt-4 space-y-3">
         <p className="text-sm font-medium">Dates on this device</p>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -165,7 +231,7 @@ function PotsPanel() {
     </div>
   );
 }
-
+ 
 function SpendPanel() {
   const rows = useClientList("budgets");
   const upsert = useOllie((s) => s.upsertBudget);
@@ -179,7 +245,7 @@ function SpendPanel() {
     const spentSum = rows.reduce((a, b) => a + b.spent, 0);
     return { allocatedSum, spentSum, left: allocatedSum - spentSum };
   }, [rows]);
-
+ 
   return (
     <div>
       <p className="mb-3 text-sm text-muted">Your notes only — check the my NDIS app for official balances.</p>
@@ -260,7 +326,7 @@ function SpendPanel() {
     </div>
   );
 }
-
+ 
 function ChecklistPanel() {
   const rows = useClientList("checklist");
   const setItem = useOllie((s) => s.setChecklist);
@@ -268,7 +334,7 @@ function ChecklistPanel() {
     rows.find((r) => r.key === i.key && r.done),
   ).length;
   const total = PLAN_CHECKLIST.flatMap((g) => g.items).length;
-
+ 
   return (
     <div>
       <YoutubeEmbed id={IMPLEMENTATION_VIDEO.id} title={IMPLEMENTATION_VIDEO.title} credit={IMPLEMENTATION_VIDEO.credit} />
@@ -304,7 +370,7 @@ function ChecklistPanel() {
     </div>
   );
 }
-
+ 
 function GoalsPanel() {
   const add = useOllie((s) => s.addGoal);
   const update = useOllie((s) => s.updateGoal);
@@ -313,7 +379,7 @@ function GoalsPanel() {
   const [title, setTitle] = useState("");
   const [why, setWhy] = useState("");
   const [supports, setSupports] = useState("");
-
+ 
   return (
     <div>
       <p className="mb-3 text-sm text-muted">Goals that sound like a life. Pair each wish with the support that would make it possible.</p>
@@ -368,7 +434,7 @@ function GoalsPanel() {
     </div>
   );
 }
-
+ 
 function ClaimsPanel() {
   const add = useOllie((s) => s.upsertClaim);
   const remove = useOllie((s) => s.removeClaim);
@@ -381,9 +447,9 @@ function ClaimsPanel() {
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState<"quote" | "invoice" | "claimed" | "paid">("invoice");
   const [notes, setNotes] = useState("");
-
+ 
   const open = items.filter((i) => i.status === "invoice" || i.status === "claimed");
-
+ 
   return (
     <div>
       <p className="mb-3 text-sm text-muted">
@@ -518,3 +584,5 @@ function ClaimsPanel() {
     </div>
   );
 }
+ 
+
