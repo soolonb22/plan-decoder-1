@@ -1,0 +1,14 @@
+@tanstack/react-router
+@/lib/content/funding
+@/lib/content/checklist
+@/lib/claims
+@/lib/store
+@/lib/utils
+@/components/layout/page
+@/components/plan-diagram
+@/components/youtube-embed
+@/components/room-tabs
+@/components/plan/people-panel
+@/components/plan/fit-panel
+@/components/plan-explainer
+@/lib/plan-reader
