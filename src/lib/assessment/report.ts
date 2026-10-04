@@ -18,7 +18,7 @@ export function digestForAi(draft: AssessmentDraft, score: AssessmentScore) {
   };
   return [
     `Respondent: ${draft.respondent}`,
-    `Name/nickname: ${pick("name") || "(not given)"}`,
+    `Name/nickname: not included in this send`,
     `Age band: ${pick("ageBand")}`,
     `NDIS status: ${pick("ndisStatus")}`,
     `Living: ${pick("living")}`,

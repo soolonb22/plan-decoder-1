@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { authMiddleware } from "@/lib/auth/middleware";
 import { OLLIE_ASSESS_SYSTEM, REPORT_SYSTEM } from "./assessment/disclaimers";
+import { stripIdentifiers } from "./strip-identifiers";
 
 async function chat(apiKey: string, system: string, user: string, maxTokens: number) {
   const res = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -40,15 +41,16 @@ export const askOllieGuide = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false as const, error: "Plan Decoder chat is not available in this environment." };
+    const question = stripIdentifiers(data.question).slice(0, 600);
+    const context = stripIdentifiers(data.context).slice(0, 1800);
+    const history = data.history.map((m) => ({ ...m, content: stripIdentifiers(m.content).slice(0, 500) }));
     const user = [
       "Current practice screen:",
-      data.context || "(none)",
+      context || "(none)",
       "",
-      data.history
-        .map((m) => `${m.role === "assistant" ? "Plan Decoder" : "Person"}: ${m.content}`)
-        .join("\n"),
+      history.map((m) => `${m.role === "assistant" ? "Plan Decoder" : "Person"}: ${m.content}`).join("\n"),
       "",
-      `Person: ${data.question}`,
+      `Person: ${question}`,
       "",
       "Ask at most one clarifying question if their answer is vague. Do not lead. Do not score them.",
     ].join("\n");
@@ -64,6 +66,13 @@ export const writeAiPracticeReport = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false as const, error: "Plan Decoder drafting is not available in this environment." };
+    const digest = stripIdentifiers(data.digest).slice(0, 10000);
+    if (!digest.trim()) {
+      return {
+        ok: false as const,
+        error: "Nothing left to send after names and numbers were removed. Your notes are still on this device.",
+      };
+    }
     const { consumeOutcome, refundOutcome } = await import("@/lib/billing-sync");
     const subject = `ai:${data.assessmentId || "practice"}`;
     const paid = await consumeOutcome(context.userId, "practice_report", subject);
@@ -71,7 +80,7 @@ export const writeAiPracticeReport = createServerFn({ method: "POST" })
     const result = await chat(
       apiKey,
       REPORT_SYSTEM,
-      `Write the practice report from this digest. Keep every number exactly as given. Australian English.\n\n${data.digest}`,
+      `Write the practice report from this digest. Keep every number exactly as given. Australian English.\n\n${digest}`,
       1800,
     );
     if (!result.ok) {
@@ -81,7 +90,6 @@ export const writeAiPracticeReport = createServerFn({ method: "POST" })
     return { ...result, credits: paid.credits };
   });
 
-
 export const speakOllie = createServerFn({ method: "POST" })
   .validator((input: { text: string }) => ({
     text: String(input.text || "").slice(0, 360),
@@ -89,14 +97,15 @@ export const speakOllie = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const apiKey = process.env.XAI_API_KEY;
     if (!apiKey) return { ok: false as const, error: "Voice is not available in this environment." };
-    if (!data.text.trim()) return { ok: false as const, error: "Nothing to read." };
+    const text = stripIdentifiers(data.text).slice(0, 360);
+    if (!text.trim()) return { ok: false as const, error: "Nothing to read." };
     const res = await fetch("https://api.x.ai/v1/tts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify({ text: data.text.trim(), voice_id: "eve" }),
+      body: JSON.stringify({ text, voice_id: "eve" }),
     });
     if (!res.ok) {
       return { ok: false as const, error: `Plan Decoder could not speak just now (${res.status}).` };
