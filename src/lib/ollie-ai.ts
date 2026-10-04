@@ -3,6 +3,7 @@ import { authMiddleware } from "@/lib/auth/middleware";
 import { consumeOutcome, refundOutcome } from "@/lib/billing-sync";
 import { creditSubject, type OutcomeKind } from "@/lib/billing";
 import { SYSTEM_GUARD } from "./report-engine";
+import { stripIdentifiers } from "./strip-identifiers";
 
 const KIND_MAP: Record<string, OutcomeKind> = {
   language: "language_draft",
@@ -30,8 +31,15 @@ export const draftWithOllie = createServerFn({ method: "POST" })
     if (!apiKey) {
       return { ok: false as const, error: "Plan Decoder drafting is not available in this environment." };
     }
+    const notes = stripIdentifiers(data.notes).slice(0, 8000);
+    if (!notes.trim()) {
+      return {
+        ok: false as const,
+        error: "Nothing left to send after names and numbers were removed. Your notes are still on this device.",
+      };
+    }
     const outcome = KIND_MAP[data.kind] ?? "language_draft";
-    const subject = creditSubject(outcome, data.notes.slice(0, 80));
+    const subject = creditSubject(outcome, notes.slice(0, 80));
     const paid = await consumeOutcome(context.userId, outcome, subject);
     if (!paid.ok) return { ok: false as const, error: paid.error, credits: paid.credits };
     try {
@@ -49,14 +57,18 @@ export const draftWithOllie = createServerFn({ method: "POST" })
             { role: "system", content: SYSTEM_GUARD },
             {
               role: "user",
-              content: `Kind of draft: ${data.kind}\n\nInstructions:\n${data.prompt}\n\nNotes from the person (treat as their words, do not add new facts):\n${data.notes || "(none)"}`,
+              content: `Kind of draft: ${data.kind}\n\nInstructions:\n${data.prompt}\n\nNotes from the person (treat as their words, do not add new facts):\n${notes}`,
             },
           ],
         }),
       });
       if (!res.ok) {
         await refundOutcome(context.userId, outcome, subject);
-        return { ok: false as const, error: `Plan Decoder could not draft just now (${res.status}). Try the structured draft instead.`, credits: paid.credits + 1 };
+        return {
+          ok: false as const,
+          error: `Plan Decoder could not draft just now (${res.status}). Your notes are still on this device. No credit was used.`,
+          credits: paid.credits + 1,
+        };
       }
       const body = (await res.json()) as {
         choices: { message: { content: string } }[];
@@ -69,6 +81,9 @@ export const draftWithOllie = createServerFn({ method: "POST" })
       return { ok: true as const, text, credits: paid.credits };
     } catch {
       await refundOutcome(context.userId, outcome, subject);
-      return { ok: false as const, error: "Plan Decoder could not draft just now. Your structured notes are still saved." };
+      return {
+        ok: false as const,
+        error: "Plan Decoder could not draft just now. Your notes are still saved on this device. No credit was used.",
+      };
     }
   });

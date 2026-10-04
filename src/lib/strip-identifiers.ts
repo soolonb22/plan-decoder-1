@@ -15,14 +15,12 @@ export function stripIdentifiers(input: string): string {
     /\b\d{1,5}\s+[A-Za-z]+(?:\s+[A-Za-z]+){0,3}\s+(?:Street|St|Road|Rd|Avenue|Ave|Drive|Dr|Court|Ct|Crescent|Cres|Lane|Ln|Parade|Pde|Place|Pl|Way|Boulevard|Blvd|Terrace|Tce)\b\.?/gi,
     REMOVED,
   );
-  text = text.replace(/\blives at\s+[^.
-]{0,80}/gi, `lives at ${REMOVED}`);
+  text = text.replace(/\blives at\s+[^.\n]{0,80}/gi, `lives at ${REMOVED}`);
   text = text.replace(
     /\b(?:at|from)\s+[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+){0,3}\s+(?:School|High|College|University|Preschool|Kindergarten)\b/g,
     `at ${REMOVED}`,
   );
-  text = text.replace(/\b(?:works at|working at|employer is)\s+[^.
-,]{0,60}/gi, `works at ${REMOVED}`);
+  text = text.replace(/\b(?:works at|working at|employer is)\s+[^.\n,]{0,60}/gi, `works at ${REMOVED}`);
   text = text.replace(/\b(?:Dr|Doctor|Mr|Mrs|Ms)\.?\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?/g, REMOVED);
   text = text.replace(
     /\b(mum|mom|dad|mother|father|partner|husband|wife|worker|support worker|carer|doctor|gp)\s+[A-Z][a-z]+\b/gi,

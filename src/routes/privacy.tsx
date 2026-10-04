@@ -25,7 +25,7 @@ export const Route = createFileRoute("/privacy")({
   }),
 });
 
-const UPDATED = "13 September 2026";
+const UPDATED = "4 October 2026";
 const EMAIL = "soolonb22@gmail.com";
 
 function Section({
@@ -97,7 +97,7 @@ function LegalPage() {
     <div>
       <PageHeader
         title="Privacy, terms, refunds and contact"
-        lede="Plain-language rules for using Plan Decoder. Read this before you pay. Last reviewed 13 September 2026."
+        lede={`Plain-language rules for using Plan Decoder. Read this before you pay. Last reviewed ${UPDATED}.`}
       />
       <Disclaimer>
         This page is general information about how this website works. It is not legal advice. Plan Decoder is
@@ -144,8 +144,10 @@ function LegalPage() {
           <p>
             <strong className="text-ink">Optional extras you switch on.</strong> An encrypted notes copy is off unless
             you save one. Draft with Plan Decoder only runs when you press the button. It sends the notes already on
-            screen so a language model can polish wording. Do not include extra identifiers you would not put in an
-            email. Drafts can be wrong. You edit before you share.
+            screen so a language model can polish wording. Before a draft is sent, Plan Decoder removes emails, phone
+            numbers, NDIS numbers, dates of birth, and street addresses it can see. You can read the stripped text and
+            cancel. We do not keep the notes or the draft on our servers. Do not add extra identifiers you would not put
+            in an email. Drafts can be wrong. You edit before you share.
           </p>
           <p>
             <strong className="text-ink">The news page.</strong> Opening NDIS news fetches public headlines. That

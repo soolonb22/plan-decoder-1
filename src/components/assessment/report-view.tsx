@@ -6,6 +6,7 @@ import { SHORT_DISCLAIMER } from "@/lib/assessment/disclaimers";
 import { BAND_COPY } from "@/lib/assessment/scoring";
 import { writeAiPracticeReport } from "@/lib/ollie-assess";
 import { digestForAi } from "@/lib/assessment/report";
+import { stripIdentifiers } from "@/lib/strip-identifiers";
 import { ONE_OFF, canViewFullReport } from "@/lib/membership";
 import { useActiveClient, useOllie } from "@/lib/store";
 import { downloadText } from "@/lib/utils";
@@ -33,6 +34,7 @@ export function ReportView({
   const [busy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const body = draft.reportAi || draft.reportLocal;
   const history = assessments.filter((a) => a.clientId === draft.clientId);
 
@@ -40,13 +42,30 @@ export function ReportView({
     upsert({ id: draft.id, unlocked: true, score, status: "complete" });
   }
 
-  async function polish() {
+  function showPreview() {
     if (!score || !open) return;
+    const stripped = stripIdentifiers(digestForAi(draft, score));
+    if (!stripped.trim()) {
+      setPreview(null);
+      setError("Nothing left to send. Your notes are still on this device.");
+      return;
+    }
+    setError(null);
+    setPreview(stripped);
+  }
+
+  async function polish() {
+    if (!score || !open || preview == null || busy) return;
+    const outgoing = stripIdentifiers(preview);
+    if (!outgoing.trim()) {
+      setError("Nothing left to send. Your notes are still on this device.");
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
       const res = await writeAiPracticeReport({
-        data: { digest: digestForAi(draft, score), assessmentId: draft.id },
+        data: { digest: outgoing, assessmentId: draft.id },
       });
       if (!res.ok) setError(res.error);
       else {
@@ -59,6 +78,7 @@ export function ReportView({
       setError("Plan Decoder could not polish just now. Your structured report is still here.");
     } finally {
       setBusy(false);
+      setPreview(null);
     }
   }
 
@@ -174,10 +194,29 @@ export function ReportView({
             <Button variant="ghost" onClick={() => window.print()}>
               <Printer className="size-4" /> Print
             </Button>
-            <Button variant="secondary" disabled={busy} onClick={() => void polish()}>
-              {busy ? "Writing…" : draft.reportAi ? "Rewrite with Plan Decoder" : "Polish with Plan Decoder"}
+            <Button variant="secondary" disabled={busy} onClick={showPreview}>
+              {draft.reportAi ? "Show rewrite text" : "Show what will be sent"}
             </Button>
           </div>
+          {preview != null ? (
+            <div className="mt-4">
+              <p className="text-sm font-medium text-ink">This is what will leave this device</p>
+              <textarea
+                className="mt-2 min-h-32 w-full rounded-xl border border-border bg-paper p-3 text-sm leading-relaxed"
+                value={preview}
+                onChange={(e) => setPreview(e.target.value)}
+                aria-label="This is what will leave this device"
+              />
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button disabled={busy || !preview.trim()} onClick={() => void polish()}>
+                  {busy ? "Writing a draft…" : "Send this and use 1 credit"}
+                </Button>
+                <Button variant="secondary" disabled={busy} onClick={() => setPreview(null)}>
+                  Keep it on this device
+                </Button>
+              </div>
+            </div>
+          ) : null}
           {error ? <p className="mt-3 text-sm text-alert">{error}</p> : null}
         </Card>
       </div>
