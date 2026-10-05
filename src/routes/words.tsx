@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState, MembershipGate, PageHeader } from "@/components/layout/page";
 import { DraftWithOllie } from "@/components/draft-with-ollie";
 import { RoomTabs } from "@/components/room-tabs";
+import { doorById, doorFrom, type DoorId } from "@/lib/doors";
 
 const TABS = [
   { id: "everyday", label: "Everyday" },
@@ -22,10 +23,11 @@ const TABS = [
 type Tab = (typeof TABS)[number]["id"];
 
 export const Route = createFileRoute("/words")({
-  validateSearch: (raw: Record<string, unknown>): { tab: Tab } => {
+  validateSearch: (raw: Record<string, unknown>): { tab: Tab; door: DoorId | "" } => {
     const tab = String(raw.tab ?? "");
-    if (tab === "impact" || tab === "scripts" || tab === "clinical" || tab === "everyday") return { tab };
-    return { tab: "everyday" };
+    const door = doorFrom(raw.door);
+    if (tab === "impact" || tab === "scripts" || tab === "clinical" || tab === "everyday") return { tab, door };
+    return { tab: "everyday", door };
   },
   component: WordsPage,
   head: () => ({
@@ -40,33 +42,37 @@ export const Route = createFileRoute("/words")({
 });
 
 function WordsPage() {
-  const { tab } = Route.useSearch();
+  const { tab, door } = Route.useSearch();
+  const chosen = door ? doorById(door) : null;
   return (
     <div>
       <PageHeader
-        title="Words"
-        lede="Describe function, not character. Everyday language, impact, scripts, and (for professionals) clinical notes."
+        title={chosen ? chosen.label : "Say it in your words"}
+        lede="Fill the blanks with your own facts. The sentence is yours. It is not an assessment and it does not predict funding."
         picture="/brand/story-words.jpg"
       />
-      <RoomTabs to="/words" tab={tab} items={[...TABS]} label="Words" />
+      {tab === "everyday" ? <LanguagePanel door={door} /> : null}
+      {tab !== "everyday" ? <RoomTabs to="/words" tab={tab} items={[...TABS]} label="Words" /> : null}
       {tab === "clinical" ? (
         <MembershipGate need="pro">
           <ClinicalPanel />
         </MembershipGate>
-      ) : (
+      ) : null}
+      {tab === "impact" || tab === "scripts" ? (
         <MembershipGate need="core">
-          {tab === "everyday" ? <LanguagePanel /> : null}
           {tab === "impact" ? <ImpactPanel /> : null}
           {tab === "scripts" ? <ScriptsPanel /> : null}
         </MembershipGate>
-      )}
+      ) : null}
     </div>
   );
 }
 
-function LanguagePanel() {
+function LanguagePanel({ door }: { door: DoorId | "" }) {
   const add = useOllie((s) => s.addEvidence);
-  const [domain, setDomain] = useState<string>(DOMAINS[0].id);
+  const chosen = door ? doorById(door) : null;
+  const script = chosen ? SCRIPT_LIBRARY.find((s) => s.id === chosen.scriptId) : undefined;
+  const [domain, setDomain] = useState<string>(door === "carer" ? "participation" : DOMAINS[0].id);
   const [task, setTask] = useState("");
   const [without, setWithout] = useState("");
   const [frequency, setFrequency] = useState("");
@@ -122,14 +128,30 @@ function LanguagePanel() {
                   body: paragraph,
                   type: "observation",
                   domain: domain as never,
-                  tags: ["language"],
+                  tags: ["language", door || "pack"],
                   date: todayISO(),
                   source: "Functional language builder",
                 })
               }
             >
-              Add to Evidence pocket
+              Add this to my pack
             </Button>
+            <p className="mt-3 text-sm text-muted">
+              Saved on this device. Next,{" "}
+              <Link
+                to="/wallet"
+                search={{ tab: chosen?.pattern === "carer" ? "carer" : "diary" }}
+                className="font-medium text-primary underline-offset-2 hover:underline"
+              >
+                {chosen?.pattern === "carer" ? "add a carer entry" : "add how often this happens"}
+              </Link>
+              .
+            </p>
+            {script ? (
+              <p className="mt-4 text-sm text-muted">
+                You can say: “{script.body.split("\n")[0]}”
+              </p>
+            ) : null}
           </Card>
           <Card>
             <p className="font-semibold">Words to swap</p>
@@ -153,13 +175,13 @@ function LanguagePanel() {
           </Card>
         </div>
       </div>
-      <div className="mt-5">
-        <DraftWithOllie
-          kind="functional-language"
-          notes={paragraph}
-          prompt="Rewrite this functional paragraph in calm plain language. Keep facts. Add no diagnosis."
-        />
-      </div>
+      <p className="mt-5 text-sm text-muted">
+        After your pack is printed, polish this draft uses 1 credit (A$5).{" "}
+        <Link to="/pricing" className="font-medium text-primary underline-offset-2 hover:underline">
+          Core is A$12 a month after a 3-day trial
+        </Link>
+        .
+      </p>
     </div>
   );
 }

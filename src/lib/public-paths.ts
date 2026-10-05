@@ -17,6 +17,7 @@ export const PUBLIC_PATHS = new Set([
   "/about",
   "/pricing",
   "/privacy",
+  "/words",
   "/navigator",
   "/systems-walk",
   "/sitemap.xml",
@@ -42,17 +43,10 @@ export function isPublicPath(pathname: string) {
 export const SITE_URL = "https://www.plandecoder.com";
 
 export const PUBLIC_NAV = [
-  { to: "/", label: "Home" },
-  { to: "/assessment", label: "Practice assessment" },
-  { to: "/navigator", label: "Navigator" },
-  { to: "/rights", label: "Know your rights" },
-  { to: "/articles", label: "Articles" },
-  { to: "/prep-pack", label: "Prep Pack" },
-  { to: "/news", label: "NDIS news" },
-  { to: "/glossary", label: "Glossary" },
-  { to: "/service-agreement", label: "Service agreement" },
-  { to: "/before-you-hire", label: "Before you hire" },
+  { to: "/", label: "Start" },
+  { to: "/words", label: "My pack" },
   { to: "/pricing", label: "Pricing" },
+  { to: "/about", label: "About" },
 ] as const;
 
 export const LOGIN_CREATE_SEARCH = { create: 1 } as const;

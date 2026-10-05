@@ -237,8 +237,8 @@ function MembershipPage() {
         )}
       </Card>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        {PLANS.filter((p) => p.id !== "free").map((p) => {
+      <div className="grid gap-4 lg:grid-cols-2">
+        {PLANS.filter((p) => p.id === "core").map((p) => {
           const active = membership === p.id;
           const id = p.id as "core" | "pro";
           return (
