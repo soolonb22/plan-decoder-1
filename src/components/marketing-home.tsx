@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FOUNDER_LINE } from "@/lib/founder-copy";
 import { HOME_FAQS, faqJsonLd } from "@/lib/seo-faq";
@@ -7,6 +6,25 @@ import { CORE_TRIAL_DAYS, MEMBERSHIP_PRICE_AUD } from "@/lib/billing";
 import { DOORS } from "@/lib/doors";
 
 const COVER_SRC = encodeURI("/brand/Plan Decoder Facebook cover.png");
+
+const DOOR_WELCOME: Record<(typeof DOORS)[number]["id"], { hello: string; next: string }> = {
+  applying: {
+    hello: "I am getting ready to apply.",
+    next: "Start with one ordinary sentence about a hard part of the day.",
+  },
+  planning: {
+    hello: "I have a planning meeting.",
+    next: "Start with what a usual day and a hard day actually look like.",
+  },
+  reassessment: {
+    hello: "My plan no longer fits, or I disagree with a decision.",
+    next: "Start with what changed, in your own words.",
+  },
+  carer: {
+    hello: "I am the one who helps.",
+    next: "Start with what you do, and what you have to set aside.",
+  },
+};
 
 export function MarketingHome() {
   return (
@@ -20,37 +38,45 @@ export function MarketingHome() {
         </p>
       </noscript>
 
-      <section>
-        <p className="text-sm font-semibold text-primary">Plan Decoder</p>
-        <h1 className="mt-2 max-w-2xl text-3xl font-semibold tracking-tight text-primary-deep sm:text-4xl">
-          Get ready for one conversation.
-        </h1>
-        <p className="mt-3 max-w-2xl text-base text-muted">
-          For participants, families, and carers. Your notes stay on this device. Independent. Not the NDIA. Not a
-          funding decision.
+      <section className="welcome-band">
+        <p className="welcome-kicker">A calm place to start</p>
+        <h1>Get ready for one conversation.</h1>
+        <p className="welcome-lede">
+          For participants, families, and carers. You say it how you would say it. The page helps you keep the facts in
+          the sentence. Your notes stay on this device.
         </p>
-        <h2 className="mt-8 text-xl font-semibold text-ink">What are you getting ready for?</h2>
+        <p className="welcome-trust">Independent. Not the NDIA. Not a funding decision.</p>
+      </section>
+
+      <section className="mt-8" aria-labelledby="door-question">
+        <h2 id="door-question" className="text-xl font-semibold">
+          What are you getting ready for?
+        </h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted">Pick one. You can change your mind. Nothing is sent.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {DOORS.map((door) => (
-            <Link
-              key={door.id}
-              to="/words"
-              search={{ tab: "everyday", door: door.id }}
-              className="rounded-2xl border border-line bg-card p-5 shadow-[var(--shadow-card)] hover:border-line-strong hover:bg-primary-soft"
-            >
-              <p className="text-lg font-semibold text-ink">{door.label}</p>
-              <p className="mt-1 text-sm text-muted">{door.detail}</p>
-              <p className="mt-3 text-sm font-semibold text-primary">Say it in your words →</p>
+            <Link key={door.id} to="/words" search={{ tab: "everyday", door: door.id }} className="door-card">
+              <p className="door-hello">{DOOR_WELCOME[door.id].hello}</p>
+              <p className="door-next">{DOOR_WELCOME[door.id].next}</p>
+              <p className="door-go">Start with my words</p>
             </Link>
           ))}
         </div>
-        <p className="mt-4 max-w-2xl text-sm text-muted">
-          Clear facts are less likely to get lost. NDIS decisions are made by the NDIA and are discretionary.
+      </section>
+
+      <section className="welcome-note">
+        <p>
+          Clear facts are less likely to get lost. NDIS decisions are made by the NDIA and are discretionary. Check{" "}
+          <a href="https://www.ndis.gov.au" rel="noopener">
+            ndis.gov.au
+          </a>{" "}
+          for the current rules.
         </p>
-        <p className="mt-3 text-sm">
-          <Link to="/pricing" className="font-semibold text-primary underline-offset-2 hover:underline">
+        <p className="mt-2">
+          <Link to="/pricing">
             Core is A${MEMBERSHIP_PRICE_AUD.core} a month after a {CORE_TRIAL_DAYS}-day trial
           </Link>
+          . You can look around first.
         </p>
       </section>
 
@@ -69,9 +95,11 @@ export function MarketingHome() {
       <Card className="mt-8">
         <p className="font-semibold">Who built this</p>
         <p className="mt-2 text-sm text-muted">{FOUNDER_LINE}</p>
-        <Button className="mt-4" variant="ghost" size="sm" asChild>
-          <Link to="/about">About</Link>
-        </Button>
+        <p className="mt-3 text-sm">
+          <Link to="/about" className="font-semibold text-primary underline-offset-2 hover:underline">
+            About Fallon
+          </Link>
+        </p>
       </Card>
     </div>
   );
