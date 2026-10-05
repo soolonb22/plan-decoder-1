@@ -154,6 +154,10 @@ function LegalPage() {
             request does not include your practice answers.
           </p>
           <p>
+            <strong className="text-ink">Videos.</strong> Some pages play a public YouTube video. That player is
+            YouTube's, not ours. It does not receive what you type into the tools.
+          </p>
+          <p>
             <strong className="text-ink">Your rights.</strong> You can ask what we hold, ask us to correct it, or ask us
             to delete your login. Use the buttons on this page while signed in, or email {EMAIL}. Australian Privacy
             Principle rights apply to personal information we hold.
