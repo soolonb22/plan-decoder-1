@@ -62,42 +62,39 @@ export function PublicShell({ children }: { children: ReactNode }) {
           advice.
         </p>
         <p className="mt-2">
-          <Link to="/about" className="text-teal underline-offset-2 hover:underline">
-            About
-          </Link>
-          {" · "}
-          <Link to="/navigator" search={{ tab: "walk" }} className="text-teal underline-offset-2 hover:underline">
-            Navigator
-          </Link>
-          {" · "}
-          <Link to="/systems-walk" className="text-teal underline-offset-2 hover:underline">
-            Systems walk
-          </Link>
-          {" · "}
-          <Link to="/assessment" search={{ tab: "about" }} className="text-teal underline-offset-2 hover:underline">
-            Practice assessment
-          </Link>
-          {" · "}
-          <Link to="/rights" className="text-teal underline-offset-2 hover:underline">
-            Know your rights
-          </Link>
-          {" · "}
-          <Link to="/articles" className="text-teal underline-offset-2 hover:underline">
-            Articles
+          <Link to="/glossary" className="text-teal underline-offset-2 hover:underline">
+            Glossary
           </Link>
           {" · "}
           <Link to="/news" className="text-teal underline-offset-2 hover:underline">
             News
           </Link>
           {" · "}
-          <Link to="/glossary" className="text-teal underline-offset-2 hover:underline">
-            Glossary
+          <Link to="/rights" className="text-teal underline-offset-2 hover:underline">
+            Rights Module 0
           </Link>
           {" · "}
-          <Link to="/pricing" className="text-teal underline-offset-2 hover:underline">
-            Pricing
+          <Link to="/articles" className="text-teal underline-offset-2 hover:underline">
+            How the NDIS works
           </Link>
+          {" · "}
+          <Link to="/navigator" search={{ tab: "walk" }} className="text-teal underline-offset-2 hover:underline">
+            Community navigator
+          </Link>
+          {" · "}
+          <Link to="/systems-walk" className="text-teal underline-offset-2 hover:underline">
+            Systems walk
+          </Link>
+          {" · "}
+          <Link to="/privacy" className="text-teal underline-offset-2 hover:underline">
+            Privacy
+          </Link>
+          {" · "}
+          <a href="/privacy#contact" className="text-teal underline-offset-2 hover:underline">
+            Contact
+          </a>
         </p>
+        <p className="mt-2">Community navigator is not the official Navigator. Systems walk is not a government form.</p>
         <p className="mt-2">
           <Link to="/privacy" className="text-teal underline-offset-2 hover:underline">
             Privacy

@@ -13,9 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/layout/page";
 
-const TITLE = "Pricing — Core, credits, and Professional | Plan Decoder";
+const TITLE = "Pricing — Free and Core | Plan Decoder";
 const DESC =
-  "Plan Decoder pricing in Australian dollars. Free tools to look around, Core after a short trial, credits for finished reports, and Professional for coordinators working with more than one person. Not the NDIA.";
+  "Plan Decoder pricing in Australian dollars. Look around free. Core is A$12 a month after a 3-day trial. A polished draft uses 1 credit. Not the NDIA. Not payable from NDIS plan funding.";
 
 export const Route = createFileRoute("/pricing")({
   component: PricingPage,
@@ -32,7 +32,6 @@ function PricingPage() {
   const { user } = useCurrentUserState();
   const free = PLANS.find((p) => p.id === "free")!;
   const core = PLANS.find((p) => p.id === "core")!;
-  const pro = PLANS.find((p) => p.id === "pro")!;
   const coreCta = user ? (
     <Button className="mt-5 w-full" asChild>
       <Link to="/membership">Start Core on Pay and credits</Link>
@@ -59,18 +58,6 @@ function PricingPage() {
         priceCurrency: "AUD",
         description: `${CORE_TRIAL_DAYS}-day trial, then monthly`,
       },
-      {
-        "@type": "Offer",
-        name: "Professional",
-        price: String(MEMBERSHIP_PRICE_AUD.pro),
-        priceCurrency: "AUD",
-      },
-      ...CREDIT_PACKS.map((pack) => ({
-        "@type": "Offer",
-        name: pack.label,
-        price: String(pack.aud),
-        priceCurrency: "AUD",
-      })),
     ],
   };
 
@@ -84,7 +71,7 @@ function PricingPage() {
 
       <p className="mb-6 max-w-2xl text-sm text-muted">{ACCESS_BOUNDARY}</p>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <p className="text-sm text-muted">{free.name}</p>
           <p className="mt-1 text-3xl font-semibold">$0</p>
@@ -129,40 +116,14 @@ function PricingPage() {
           </p>
         </Card>
 
-        <Card>
-          <p className="text-sm text-muted">{pro.name}</p>
-          <p className="mt-1 text-3xl font-semibold">
-            ${MEMBERSHIP_PRICE_AUD.pro}
-            <span className="ml-1 text-sm font-normal text-muted">per month</span>
-          </p>
-          <p className="mt-2 text-sm text-muted">
-            For coordinators and clinicians working with more than one person.
-          </p>
-          <ul className="mt-4 space-y-1.5 text-sm">
-            {pro.features.map((f) => (
-              <li key={f}>{f}</li>
-            ))}
-          </ul>
-          <p className="mt-5 text-sm text-muted">
-            Professional checkout is not live yet. Use Core for one person, or email us if you support more than one.
-          </p>
-        </Card>
       </div>
 
-      <h2 className="mt-10 text-lg font-semibold">Credits for finished outcomes</h2>
-      <p className="mt-1 text-sm text-muted">
-        Core (or Professional) is needed before credits can be spent. Each finished practice report or
-        polished draft uses 1 credit (${CREDIT_PRICE_AUD}).
+      <h2 className="mt-10 text-lg font-semibold">Credits sit under Core</h2>
+      <p className="mt-1 max-w-2xl text-sm text-muted">
+        Credits are not a separate membership. Core is needed before a credit can be spent. Each finished practice
+        report or polished draft uses 1 credit (A${CREDIT_PRICE_AUD}). Packs:{" "}
+        {CREDIT_PACKS.map((pack) => `${pack.label} A$${pack.aud}`).join(", ")}.
       </p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        {CREDIT_PACKS.map((pack) => (
-          <Card key={pack.credits}>
-            <p className="font-semibold">{pack.label}</p>
-            <p className="mt-1 text-2xl font-semibold">${pack.aud}</p>
-            <p className="text-sm text-muted">${CREDIT_PRICE_AUD} each</p>
-          </Card>
-        ))}
-      </div>
 
       <Card className="mt-8">
         <p className="text-sm text-muted">
