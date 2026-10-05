@@ -68,7 +68,11 @@ export function PlanStructureDiagram({
       <div className="mt-4 flex flex-col items-center gap-2">
         <div className="w-full max-w-md rounded-xl bg-primary px-4 py-3 text-center text-sm font-medium text-primary-fg">
           Your NDIS plan
-          {read?.dates?.length ? <span className="mt-1 block text-xs font-normal opacity-90">{read.dates[0]}</span> : null}
+          {read?.planDates?.start || read?.planDates?.end ? (
+            <span className="mt-1 block text-xs font-normal opacity-90">
+              {[read.planDates.start, read.planDates.end].filter(Boolean).join(" to ")}
+            </span>
+          ) : null}
         </div>
         <ArrowDown />
         <div className="flex w-full max-w-md items-center gap-3 rounded-xl border border-line bg-primary-soft px-3 py-3">

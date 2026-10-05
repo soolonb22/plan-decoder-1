@@ -27,6 +27,8 @@ export const PUBLIC_PATHS = new Set([
   "/unlock",
   "/membership",
   "/function",
+  "/service-agreement",
+  "/before-you-hire",
 ]);
 
 export function isPublicPath(pathname: string) {
@@ -48,6 +50,8 @@ export const PUBLIC_NAV = [
   { to: "/prep-pack", label: "Prep Pack" },
   { to: "/news", label: "NDIS news" },
   { to: "/glossary", label: "Glossary" },
+  { to: "/service-agreement", label: "Service agreement" },
+  { to: "/before-you-hire", label: "Before you hire" },
   { to: "/pricing", label: "Pricing" },
 ] as const;
 

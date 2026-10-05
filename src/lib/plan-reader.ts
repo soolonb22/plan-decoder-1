@@ -8,6 +8,7 @@ import {
   statedOrFlexible,
   type PlanSection,
 } from "./plan-section-map";
+import { friendlyWarnings, pickPlanDates, tidyExcerpt, type PlanDates } from "./plan-clean";
 
 export type PlanPiece = {
   id: string;
@@ -40,6 +41,8 @@ export type PlanRead = {
   extractedAt: string;
   management: "self" | "plan" | "ndia" | "mix" | "unknown";
   dates: string[];
+  /** Start and end/reassessment date, labelled when the letter says which is which. */
+  planDates?: PlanDates;
   money: PlanMoney[];
   pieces: PlanPiece[];
   lessons: PlanLesson[];
@@ -196,7 +199,7 @@ const CATALOG: Catalog[] = [
   {
     id: "coord",
     match: /support coordinat|recovery coach|local area coordinat|my ndis contact/i,
-    sectionIds: ["coord", "management"],
+    sectionIds: ["coord"],
     title: "People who can help you use the plan",
     easy: "A coordinator, recovery coach, or my NDIS contact can explain pots and providers. They do not replace your say.",
     details: [
@@ -236,7 +239,7 @@ const CATALOG: Catalog[] = [
   {
     id: "sil",
     match: /supported independent living|\bSIL\b|specialist disability accommodation|\bSDA\b|medium term accommodation|\bMTA\b/i,
-    sectionIds: ["sil", "sda", "funding"],
+    sectionIds: ["sil", "sda"],
     title: "Living supports (SIL / SDA / MTA)",
     easy: "If these words are in the plan, they are usually stated and tightly described. They are not extra Core hours.",
     details: [
@@ -274,8 +277,14 @@ function redact(s: string) {
     .replace(/\b(?:04\d{8}|04\d{2}\s\d{3}\s\d{3})\b/g, "[phone removed]");
 }
 
-function windowAround(text: string, index: number, after = 420) {
-  return redact(text.slice(index, index + after));
+/** The sentence (or line) that holds the match, redacted — never a blind 420-character window. */
+function sentenceAround(text: string, index: number) {
+  const before = text.slice(0, index);
+  const startCut = Math.max(before.lastIndexOf(". "), before.lastIndexOf("\n"));
+  const rest = text.slice(index);
+  const endRel = rest.search(/\.\s|\n/);
+  const end = endRel < 0 ? Math.min(text.length, index + 300) : index + endRel + 1;
+  return redact(text.slice(startCut + 1, end));
 }
 
 function firstIndex(text: string, re: RegExp) {
@@ -370,7 +379,8 @@ function moneyFromMap(sections: PlanSection[]): PlanMoney[] {
 export function parseNdisPlan(text: string, fileName: string): PlanRead {
   const t = text.replace(/\u0000/g, " ");
   const mapped = mapPlanSections(t);
-  const warnings: string[] = [...mapped.flags];
+  // Raw parser flags stay internal (mapFlags). Only plain-language notes are shown.
+  const warnings: string[] = friendlyWarnings(mapped.flags);
   if (t.replace(/\s/g, "").length < 80) {
     warnings.push(
       "This file did not give enough readable text (it may be a photo). Use “paste text”, or type the headings you can see. The pictures and self-manage steps still help.",
@@ -384,6 +394,7 @@ export function parseNdisPlan(text: string, fileName: string): PlanRead {
   const management = detectManagement(managementSource.toLowerCase());
   const dateSource = sectionText(mapped.sections, "dates") || t;
   const dates = allDates(dateSource).length ? allDates(dateSource) : allDates(t);
+  const planDates = pickPlanDates(dateSource.length > 20 ? dateSource : t, dates);
 
   let money = moneyFromMap(mapped.sections);
   if (!money.length) {
@@ -405,17 +416,17 @@ export function parseNdisPlan(text: string, fileName: string): PlanRead {
     }
   }
 
+  // Budget pieces only quote the plan when that budget's own heading was found.
+  // (Bug fix: Recurring used to quote Core text because "transport" appeared elsewhere.)
+  const POT_PIECES = new Set(["core", "capacity", "capital", "recurring", "sil"]);
   const pieces: PlanPiece[] = CATALOG.map((row) => {
     const scoped =
       row.sectionIds?.map((id) => sectionText(mapped.sections, id)).find((s) => s.trim().length) ?? "";
-    const search = scoped || t;
-    const idx = firstIndex(search, row.match);
-    const present = idx >= 0 || Boolean(scoped);
-    const found = scoped
-      ? redact(scoped).slice(0, 420)
-      : present
-        ? windowAround(search, idx)
-        : "";
+    const idx = scoped ? 0 : firstIndex(t, row.match);
+    const present = Boolean(scoped) || idx >= 0;
+    let found = "";
+    if (scoped) found = tidyExcerpt(redact(scoped));
+    else if (idx >= 0 && !POT_PIECES.has(row.id)) found = tidyExcerpt(sentenceAround(t, idx));
     return {
       id: row.id,
       title: row.title,
@@ -479,6 +490,7 @@ export function parseNdisPlan(text: string, fileName: string): PlanRead {
     extractedAt: new Date().toISOString(),
     management,
     dates,
+    planDates,
     money,
     pieces,
     lessons: lessons.map((l, i) => ({ ...l, n: i + 1 })),

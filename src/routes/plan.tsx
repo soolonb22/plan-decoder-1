@@ -10,16 +10,15 @@ import { Card } from "@/components/ui/card";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Disclaimer, EmptyState, MembershipGate, PageHeader } from "@/components/layout/page";
-import { PlanStructureDiagram } from "@/components/plan-diagram";
-import { FUNDING_VIDEO, IMPLEMENTATION_VIDEO, YoutubeEmbed } from "@/components/youtube-embed";
+import { IMPLEMENTATION_VIDEO, YoutubeEmbed } from "@/components/youtube-embed";
 import { RoomTabs } from "@/components/room-tabs";
 import { PeoplePanel } from "@/components/plan/people-panel";
 import { FitPanel } from "@/components/plan/fit-panel";
-import { PlanExplainer } from "@/components/plan-explainer";
+import { PlanExplainer, PlanUploadHero } from "@/components/plan-explainer";
 import { fileToPlanText, parseNdisPlan } from "@/lib/plan-reader";
  
 const TABS = [
-  { id: "pots", label: "Pots" },
+  { id: "pots", label: "Understand" },
   { id: "spend", label: "Spend" },
   { id: "claims", label: "Claims" },
   { id: "people", label: "People" },
@@ -68,8 +67,7 @@ function PlanPage() {
     <div>
       <PageHeader
         title="My plan"
-        lede="The four pots, spend notes, a claiming book, a checklist, and a wish list. Official balances live in the my NDIS app."
-        picture="/brand/story-wallet.jpg"
+        lede="Upload your plan. We explain it in plain words, step by step. Official balances live in the my NDIS app."
       />
       <RoomTabs to="/plan" tab={tab} items={[...TABS]} label="My plan" />
       {tab === "pots" ? <PotsPanel /> : null}
@@ -103,67 +101,60 @@ function PlanPage() {
   );
 }
  
-/** Upload-my-plan card: reads the PDF on this device (no upload, no AI) and shows the explainer. */
+/** Upload first. Before a plan is loaded, the upload hero is the only thing on the page. */
 function PlanUploadCard() {
   const planRead = useOllie((s) => s.planRead);
   const setPlanRead = useOllie((s) => s.setPlanRead);
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
- 
+
   async function readFile(file: File) {
     setBusy(true);
     setNote(null);
     try {
       const text = await fileToPlanText(file);
       setPlanRead(parseNdisPlan(text, file.name));
-      setNote("Read on this device. Nothing was uploaded. Check each part against your plan.");
+      setNote("Read on this device. Nothing was uploaded.");
     } catch {
       setNote("We couldn't read that file. Try the PDF from the my NDIS app (not a photo or scan).");
     } finally {
       setBusy(false);
     }
   }
- 
+
   return (
     <div className="mt-4">
-      <Card className="space-y-2">
-        <p className="text-base font-semibold">{planRead ? "Your plan is loaded" : "Start here: upload your plan"}</p>
-        <p className="text-sm text-muted">
-          Choose your NDIS plan PDF. We read it on this device and explain your pots, dates and stated supports in plain
-          words. It is not uploaded or sent to the NDIA.
-        </p>
-        <input
-          ref={fileRef}
-          type="file"
-          className="sr-only"
-          accept=".pdf,.txt,application/pdf,text/plain"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            e.target.value = "";
-            if (file) void readFile(file);
-          }}
+      <input
+        ref={fileRef}
+        type="file"
+        className="sr-only"
+        accept=".pdf,.txt,application/pdf,text/plain"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = "";
+          if (file) void readFile(file);
+        }}
+      />
+      {planRead ? null : (
+        <PlanUploadHero
+          busy={busy}
+          onPick={() => fileRef.current?.click()}
+          onPaste={(text) => setPlanRead(parseNdisPlan(text, "pasted-plan.txt"))}
         />
-        <div className="flex flex-wrap gap-2">
-          <Button onClick={() => fileRef.current?.click()} disabled={busy}>
-            {busy ? "Reading your plan…" : planRead ? "Upload a different plan" : "Upload my plan (PDF)"}
-          </Button>
-        </div>
-        {note ? (
-          <p className="text-sm" role="status" aria-live="polite">
-            {note}
-          </p>
-        ) : null}
-      </Card>
+      )}
+      {note ? (
+        <p className="mb-3 text-sm" role="status" aria-live="polite">
+          {note}
+        </p>
+      ) : null}
       {planRead ? (
-        <div className="mt-4">
-          <PlanExplainer read={planRead} onClear={() => setPlanRead(null)} />
-        </div>
+        <PlanExplainer read={planRead} onClear={() => setPlanRead(null)} onReplace={() => fileRef.current?.click()} />
       ) : null}
     </div>
   );
 }
- 
+
 function PotsPanel() {
   const client = useActiveClient();
   const upsert = useOllie((s) => s.upsertClient);
@@ -171,65 +162,50 @@ function PotsPanel() {
   const endDays = daysUntil(client?.planEnd);
   return (
     <div>
-      <Disclaimer>
-        Plan Decoder is not affiliated with the NDIA. Check your plan and ndis.gov.au before you spend.
-      </Disclaimer>
       <PlanUploadCard />
-      <Card className="mt-4 space-y-3">
-        <p className="text-sm font-medium">Dates on this device</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Plan end">
-            <Input
-              type="date"
-              value={client?.planEnd || ""}
-              onChange={(e) => client && upsert({ id: client.id, planEnd: e.target.value })}
-            />
-          </Field>
-          <Field label="Decision letter received">
-            <Input
-              type="date"
-              value={client?.letterReceived || ""}
-              onChange={(e) => client && upsert({ id: client.id, letterReceived: e.target.value })}
-            />
-          </Field>
+      <details className="mt-4 rounded-2xl border border-line bg-card p-4">
+        <summary className="cursor-pointer text-sm font-medium">Reminders: plan end and letter dates</summary>
+        <div className="mt-3 space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Plan end">
+              <Input
+                type="date"
+                value={client?.planEnd || ""}
+                onChange={(e) => client && upsert({ id: client.id, planEnd: e.target.value })}
+              />
+            </Field>
+            <Field label="Decision letter received">
+              <Input
+                type="date"
+                value={client?.letterReceived || ""}
+                onChange={(e) => client && upsert({ id: client.id, letterReceived: e.target.value })}
+              />
+            </Field>
+          </div>
+          {client?.planEnd ? (
+            <p className="text-sm">
+              Plan end {formatDate(client.planEnd)}
+              {endDays != null ? ` · ${endDays >= 0 ? `${endDays} days away` : `${Math.abs(endDays)} days ago`}` : ""}
+            </p>
+          ) : null}
+          {client?.letterReceived ? (
+            <p className="text-sm">
+              Letter received {formatDate(client.letterReceived)}
+              {letterDays != null ? ` (${Math.abs(letterDays)} days ${letterDays > 0 ? "from now" : "ago"})` : ""}.
+              Review clocks often start from when you received the letter — check your letter, not this note.
+            </p>
+          ) : null}
         </div>
-        {client?.planEnd ? (
-          <p className="text-sm">
-            Plan end {formatDate(client.planEnd)}
-            {endDays != null ? ` · ${endDays >= 0 ? `${endDays} days away` : `${Math.abs(endDays)} days ago`}` : ""}
-          </p>
-        ) : null}
-        {client?.letterReceived ? (
-          <p className="text-sm">
-            Letter received {formatDate(client.letterReceived)}
-            {letterDays != null ? ` (${Math.abs(letterDays)} days ${letterDays > 0 ? "from now" : "ago"})` : ""}.
-            Review clocks often start from when you received the letter — check your letter, not this note.
-          </p>
-        ) : (
-          <p className="text-sm text-muted">Add the letter date if you want a reminder. This is not legal advice.</p>
-        )}
-      </Card>
-      <div className="mt-5">
-        <PlanStructureDiagram />
-      </div>
-      <YoutubeEmbed id={FUNDING_VIDEO.id} title={FUNDING_VIDEO.title} credit={FUNDING_VIDEO.credit} />
-      <h2 className="mt-8 text-lg font-semibold">The four support budgets</h2>
-      <p className="mt-2 text-sm text-muted">
-        NDIA guide, current 9 June 2026. You cannot pour one pot into another.
-      </p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {FUNDING_BUDGETS.map((b) => (
-          <Card key={b.id}>
-            <p className="text-sm font-medium text-primary">{b.name}</p>
-            <p className="mt-1 text-sm">{b.easy}</p>
-            <p className="mt-2 text-sm text-muted">{b.body}</p>
-          </Card>
-        ))}
+      </details>
+      <div className="mt-4">
+        <Disclaimer>
+          Plan Decoder is not affiliated with the NDIA. Check your plan and ndis.gov.au before you spend.
+        </Disclaimer>
       </div>
     </div>
   );
 }
- 
+
 function SpendPanel() {
   const rows = useClientList("budgets");
   const upsert = useOllie((s) => s.upsertBudget);
