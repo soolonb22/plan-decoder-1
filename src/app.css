@@ -1,3 +1,77 @@
 @import "./styles.css";
 @import "./ndis-palette.css";
 @import "./illustration.css";
+
+/* Participant welcome. Calm, large targets, no banner to decode. */
+.welcome-band {
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, #f7eef8 0%, #fff 70%);
+  border: 1px solid #e8d5ee;
+  padding: 1.75rem 1.5rem 1.5rem;
+}
+.welcome-kicker {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #6b2976;
+}
+.welcome-band h1 {
+  margin-top: 0.4rem;
+  max-width: 18ch;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.15;
+  font-weight: 650;
+}
+.welcome-lede {
+  margin-top: 0.8rem;
+  max-width: 38rem;
+  font-size: 1.05rem;
+  color: #3d1650;
+}
+.welcome-trust {
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+  color: #5a3d63;
+}
+.door-card {
+  display: block;
+  min-height: 8.5rem;
+  border-radius: 1.1rem;
+  border: 1.5px solid #e8d5ee;
+  background: #fff;
+  padding: 1.15rem 1.2rem 1rem;
+  box-shadow: 0 1px 0 rgba(61, 22, 80, 0.04);
+  text-decoration: none;
+}
+.door-card:hover {
+  border-color: #6b2976;
+  background: #fbf7fc;
+}
+.door-hello {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2a1633;
+}
+.door-next {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #5a3d63;
+}
+.door-go {
+  margin-top: 0.8rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #6b2976;
+}
+.welcome-note {
+  margin-top: 1.25rem;
+  max-width: 40rem;
+  font-size: 0.92rem;
+  color: #5a3d63;
+}
+.welcome-note a {
+  font-weight: 650;
+  color: #6b2976;
+  text-underline-offset: 2px;
+}

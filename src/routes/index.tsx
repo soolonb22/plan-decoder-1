@@ -37,11 +37,14 @@ function WorkspaceHome() {
   return (
     <div>
       <section>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">My pack</h1>
-        <p className="mt-2 max-w-xl text-sm text-muted sm:text-base">
-          Four steps for {name === "there" ? "this conversation" : name}. Empty steps are fine. Notes stay on this device.
-          Nothing here is an NDIA decision.
-        </p>
+        <div className="welcome-band">
+          <p className="welcome-kicker">You are in the right place</p>
+          <h1>My pack</h1>
+          <p className="welcome-lede">
+            Four small steps for {name === "there" ? "this conversation" : name}. Empty steps are fine. Notes stay on this device.
+          </p>
+          <p className="welcome-trust">Nothing here is an NDIA decision.</p>
+        </div>
       </section>
 
       {until !== null && until <= 90 ? (
