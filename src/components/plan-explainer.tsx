@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { FileUp, Sparkles } from "lucide-react";
+import { FileUp } from "lucide-react";
 import type { PlanRead } from "@/lib/plan-reader";
-import { graphOrBuild } from "@/lib/plan-graph";
+import { graphOrBuild, type PlanLine } from "@/lib/plan-graph";
+import { friendlyFlag, matchGoalsToSupports, tidyExcerpt, type SupportRef } from "@/lib/plan-clean";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -92,183 +93,316 @@ export function PlanUploadHero({
           </Button>
         </details>
       ) : null}
-      <div className="mt-4">
-        <PlanStructureDiagram compact />
-      </div>
+      <details className="mt-4">
+        <summary className="cursor-pointer text-sm font-medium">What is inside an NDIS plan?</summary>
+        <div className="mt-3">
+          <PlanStructureDiagram compact />
+        </div>
+      </details>
     </Card>
+  );
+}
+
+const POT_NAME: Record<PlanLine["pot"], string> = {
+  core: "Core",
+  capacity: "Capacity Building",
+  capital: "Capital",
+  recurring: "Recurring",
+  unknown: "Budget not clear",
+};
+
+const ITEM_NAME: Record<string, string> = {
+  daily_living: "Help with daily life",
+  community: "Social and community participation",
+  consumables: "Consumables",
+  transport: "Transport",
+  idl: "Improved daily living (therapy)",
+  coord: "Support coordination",
+  work: "Finding and keeping a job",
+  relationships: "Improved relationships",
+  health: "Improved health and wellbeing",
+  learning: "Improved learning",
+  life_choices: "Improved life choices",
+  at: "Assistive technology",
+  home_mod: "Home modifications",
+  vehicle_mod: "Vehicle modifications",
+  sil: "Supported independent living",
+  sda: "Specialist disability accommodation",
+};
+
+const CONFIDENCE: Record<string, string> = {
+  high: "Read clearly",
+  medium: "Mostly read — check the amounts",
+  low: "Hard to read — check everything",
+};
+
+/** Who the person can pay, by how the plan is managed. Kept short on purpose. */
+const WHO_CAN_PROVIDE: Record<PlanRead["management"], { title: string; body: string }> = {
+  self: {
+    title: "Self-managed: you choose",
+    body: "You can use registered or unregistered providers, as long as the support is an NDIS support and fits the budget. You pay, then claim. Keep every invoice.",
+  },
+  plan: {
+    title: "Plan-managed: registered or unregistered",
+    body: "You can use registered or unregistered providers. Ask them to send invoices to your plan manager, who pays them.",
+  },
+  ndia: {
+    title: "NDIA-managed: registered providers only",
+    body: "Providers must be NDIS-registered. They claim from the NDIA directly. Ask “Are you registered?” before you book.",
+  },
+  mix: {
+    title: "Mixed: it depends on the line",
+    body: "Each budget can be managed a different way. Check who manages each line, then follow that rule: NDIA-managed lines need registered providers.",
+  },
+  unknown: {
+    title: "Check how your plan is managed",
+    body: "Your letter says who pays the bills. NDIA-managed lines need registered providers. Plan- and self-managed lines can use registered or unregistered providers.",
+  },
+};
+
+const PROVIDER_TYPES: { pot: string; who: string }[] = [
+  { pot: "Core", who: "Support workers, community access, cleaning and gardening (if disability-related), continence and other consumables." },
+  { pot: "Capacity Building", who: "OTs, speech pathologists, psychologists, physios, support coordinators, employment supports." },
+  { pot: "Capital", who: "Equipment suppliers and builders — usually after a quote or assessment." },
+  { pot: "Recurring", who: "Transport — taxi, rideshare or kilometres, as the plan says." },
+];
+
+const THIRTY_DAYS = [
+  "Find who manages each budget (you, a plan manager, or the NDIA).",
+  "Save the plan PDF and the my NDIS app login somewhere safe.",
+  "Read your goals. Mark which ones matter most right now.",
+  "If you have support coordination, book a first meeting.",
+  "Pick one provider for the most urgent goal and ask for a service agreement.",
+  "Start a spend log in the Spend tab so you can see what is left.",
+];
+
+function cleanWarning(w: string): string | null {
+  // Older saved readings stored raw parser flags (e.g. "old_three_pot_or_partial").
+  if (/^[a-z_]+(:[a-z_]+)?$/.test(w)) return friendlyFlag(w);
+  return w;
+}
+
+function money(n: number) {
+  return n.toLocaleString("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 });
+}
+
+function Step({ n, title, children, open = false }: { n: number; title: string; children: ReactNode; open?: boolean }) {
+  return (
+    <details open={open} className="group rounded-2xl border border-line bg-card">
+      <summary className="flex cursor-pointer list-none items-center gap-3 p-4">
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-fg">
+          {n}
+        </span>
+        <span className="font-semibold">{title}</span>
+        <span className="ml-auto text-xs text-muted group-open:hidden">Open</span>
+      </summary>
+      <div className="space-y-3 px-4 pb-4">{children}</div>
+    </details>
   );
 }
 
 export function PlanExplainer({
   read,
   onClear,
+  onReplace,
 }: {
   read: PlanRead;
   onClear: () => void;
+  onReplace?: () => void;
 }) {
   const graph = graphOrBuild(read);
   const mgmt = MGMT[graph.management] ?? MGMT[read.management] ?? MGMT.unknown;
-  const found = read.pieces.filter((p) => p.present);
-  const extra = read.pieces.filter((p) => !p.present);
+  const warnings = (read.warnings ?? []).map(cleanWarning).filter((w): w is string => Boolean(w));
+  const pieces = read.pieces.filter((p) => p.present);
+
+  // Budget totals for the at-a-glance bars.
+  const byPot = new Map<PlanLine["pot"], number>();
+  for (const l of graph.lines) byPot.set(l.pot, (byPot.get(l.pot) ?? 0) + l.amount);
+  const total = [...byPot.values()].reduce((a, b) => a + b, 0);
+
+  const supports: SupportRef[] = graph.lines.map((l) => ({
+    key: l.item,
+    label: ITEM_NAME[l.item] ?? l.label,
+    pot: POT_NAME[l.pot],
+  }));
+  const map = matchGoalsToSupports(graph.goals, supports);
+  const who = WHO_CAN_PROVIDE[graph.management] ?? WHO_CAN_PROVIDE.unknown;
+
   return (
-    <section className="mb-6 space-y-5" aria-labelledby="plan-explainer-h">
-      <div className="flex flex-wrap items-start justify-between gap-2">
+    <section className="mb-6 space-y-4" aria-labelledby="plan-explainer-h">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 id="plan-explainer-h" className="text-lg font-semibold">
-            Your plan, in pieces
+            Your plan
           </h2>
-          <p className="mt-1 text-sm text-muted">
-            From {read.fileName}. Scraped on this device. Each section has a picture so the pots are easier to hold. The
-            letter and the my NDIS app still win.
+          <p className="text-sm text-muted">
+            {read.fileName} · read on this device · {CONFIDENCE[graph.confidence]}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge tone={mgmt.tone}>{mgmt.label}</Badge>
-          <Badge tone={graph.confidence === "high" ? "ok" : graph.confidence === "low" ? "warn" : "neutral"}>
-            {graph.confidence} confidence
-          </Badge>
+        <div className="flex flex-wrap gap-2">
+          {onReplace ? (
+            <Button size="sm" variant="secondary" onClick={onReplace}>
+              Upload a different plan
+            </Button>
+          ) : null}
           <Button size="sm" variant="ghost" onClick={onClear}>
-            Remove this reading
+            Remove
           </Button>
         </div>
       </div>
 
-      <PlanStructureDiagram read={read} />
-
-      {(read.warnings ?? []).map((w) => (
+      {warnings.map((w) => (
         <p key={w} className="rounded-xl bg-warn-soft px-4 py-3 text-sm">
           {w}
         </p>
       ))}
 
-      {graph.dates.raw.length ? (
-        <p className="text-sm text-muted">
-          <span className="font-medium text-ink">Dates noticed: </span>
-          {graph.dates.start ?? graph.dates.raw[0]}
-          {graph.dates.end ? ` to ${graph.dates.end}` : ""}
-        </p>
-      ) : null}
+      <Step n={1} title="Your plan at a glance" open>
+        <dl className="grid gap-3 text-sm sm:grid-cols-3">
+          <div>
+            <dt className="text-muted">Plan start</dt>
+            <dd className="font-medium">{graph.dates.start ?? "Not found"}</dd>
+          </div>
+          <div>
+            <dt className="text-muted">Reassessment / end</dt>
+            <dd className="font-medium">{graph.dates.end ?? "Not found"}</dd>
+          </div>
+          <div>
+            <dt className="text-muted">Who pays the bills</dt>
+            <dd>
+              <Badge tone={mgmt.tone}>{mgmt.label}</Badge>
+            </dd>
+          </div>
+        </dl>
+        {total > 0 ? (
+          <div className="space-y-2">
+            <p className="text-sm">
+              <span className="text-muted">Total we found: </span>
+              <span className="font-semibold tabular-nums">{money(total)}</span>
+            </p>
+            {[...byPot.entries()].map(([pot, amt]) => (
+              <div key={pot}>
+                <div className="flex justify-between text-sm">
+                  <span>{POT_NAME[pot]}</span>
+                  <span className="tabular-nums">{money(amt)}</span>
+                </div>
+                <div className="mt-1 h-2 overflow-hidden rounded-full bg-paper-2">
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${Math.round((amt / total) * 100)}%` }} />
+                </div>
+              </div>
+            ))}
+            <ul className="mt-2 space-y-1 text-xs text-muted">
+              {graph.lines.map((l) => (
+                <li key={`${l.path}-${l.item}-${l.amountText}`}>
+                  {ITEM_NAME[l.item] ?? l.label} · {l.amountText} ·{" "}
+                  {l.lock === "unknown" ? "stated or flexible not shown — check your letter" : l.lock}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="text-sm text-muted">We could not read the amounts. Check the funding table in your letter or the my NDIS app.</p>
+        )}
+        <p className="text-xs text-muted">Wrong? Your letter and the my NDIS app are always right. This is a reading aid.</p>
+      </Step>
 
-      {graph.goals.length ? (
-        <Card>
-          <p className="text-sm font-medium">Goals from the letter</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
-            {graph.goals.map((g) => (
-              <li key={g}>{g}</li>
+      <Step n={2} title="Goals and the supports that match them">
+        {map.matches.length ? (
+          <ul className="space-y-3">
+            {map.matches.map((m) => (
+              <li key={m.goal} className="rounded-xl border border-line p-3">
+                <p className="text-sm font-medium">{m.goal}</p>
+                {m.supports.length ? (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {m.supports.map((s) => (
+                      <Badge key={`${s.key}-${s.label}`} tone="ok">
+                        {s.label}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-2 text-sm text-alert">No support clearly matches this goal. Ask your coordinator or raise it at review.</p>
+                )}
+              </li>
             ))}
           </ul>
-        </Card>
-      ) : null}
+        ) : (
+          <p className="text-sm text-muted">We could not find goals in this file. Add them yourself in the Goals tab.</p>
+        )}
+        {map.orphans.length ? (
+          <p className="text-sm">
+            <span className="font-medium">Not linked to a goal yet: </span>
+            {map.orphans.map((o) => o.label).join(", ")}. At review, the NDIA asks how each support helps a goal — write one line for each.
+          </p>
+        ) : null}
+        <p className="text-xs text-muted">Matched by keywords. You know your life best — change anything that is wrong.</p>
+      </Step>
 
-      {graph.lines.length ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {graph.lines.map((line) => (
-            <Card key={`${line.path}-${line.item}-${line.amountText}`} className="flex gap-3">
-              <img src="/brand/story-wallet.jpg" alt="" width={56} height={56} className="size-14 rounded-xl object-cover" />
-              <div>
-                <p className="text-xs capitalize text-muted">
-                  {line.pot} · {line.item.replace(/_/g, " ")}
-                </p>
-                <p className="mt-1 text-lg font-semibold tabular-nums">{line.amountText}</p>
-                <p className="mt-1 text-xs text-muted">
-                  {line.lock === "unknown" ? "Stated or flexible not clear on this line." : `Looks ${line.lock}.`}
-                </p>
-              </div>
-            </Card>
+      <Step n={3} title="What each part of the plan means">
+        <PlanStructureDiagram read={read} />
+        <div className="space-y-2">
+          {pieces.map((p) => (
+            <details key={p.id} className="rounded-xl border border-line px-3 py-2">
+              <summary className="cursor-pointer text-sm font-medium">{p.title}</summary>
+              <p className="mt-2 text-sm">{p.easy}</p>
+              <p className="mt-2 text-sm text-primary-deep">{p.howToUse}</p>
+              {p.id === "goals" && graph.goals.length ? (
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">
+                  {graph.goals.map((g) => (
+                    <li key={g}>{g}</li>
+                  ))}
+                </ul>
+              ) : p.found ? (
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-xs text-muted">Show your plan’s wording</summary>
+                  <p className="mt-1 rounded-lg bg-paper-2 px-3 py-2 text-xs text-muted">{tidyExcerpt(p.found)}</p>
+                </details>
+              ) : null}
+            </details>
           ))}
         </div>
-      ) : read.money.length ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {read.money.map((m) => (
-            <Card key={`${m.label}-${m.amount}`} className="flex gap-3">
-              <img src="/brand/story-wallet.jpg" alt="" width={56} height={56} className="size-14 rounded-xl object-cover" />
-              <div>
-                <p className="text-xs text-muted">{m.label}</p>
-                <p className="mt-1 text-lg font-semibold tabular-nums">{m.amount}</p>
-                {"note" in m && m.note ? <p className="mt-1 text-xs text-muted">{m.note}</p> : null}
-              </div>
-            </Card>
-          ))}
-        </div>
-      ) : null}
+      </Step>
 
-      <p className="text-xs text-muted">{graph.disclaimer}</p>
-
-      <div className="space-y-4">
-        <p className="text-sm font-medium">Sections we found in your file</p>
-        {(found.length ? found : read.pieces).map((p) => (
-          <article key={p.id} className="overflow-hidden rounded-2xl border border-line bg-card">
-            <div className="flex flex-col sm:flex-row">
-              <img src={p.image} alt="" className="h-36 w-full object-cover sm:h-auto sm:w-40" />
-              <div className="p-4">
-                <h3 className="font-semibold">{p.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed">{p.easy}</p>
-                {p.details?.length ? (
-                  <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
-                    {p.details.map((d) => (
-                      <li key={d}>{d}</li>
-                    ))}
-                  </ul>
-                ) : null}
-                <p className="mt-3 text-sm text-primary-deep">{p.howToUse}</p>
-                {p.found ? (
-                  <p className="mt-3 rounded-lg bg-paper-2 px-3 py-2 text-xs text-muted">From the plan: {p.found}</p>
-                ) : null}
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-
-      {extra.length && found.length ? (
-        <div className="space-y-3">
-          <p className="text-sm font-medium">Also useful — even if the heading was not clear</p>
-          {extra.map((p) => (
-            <article key={p.id} className="flex gap-3 rounded-2xl border border-dashed border-line bg-card p-4">
-              <img src={p.image} alt="" width={64} height={64} className="size-16 shrink-0 rounded-xl object-cover" />
-              <div>
-                <h3 className="font-semibold">{p.title}</h3>
-                <p className="mt-1 text-sm leading-relaxed">{p.easy}</p>
-                <p className="mt-2 text-sm text-primary-deep">{p.howToUse}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      ) : null}
-
-      <Card>
-        <p className="flex items-center gap-2 font-semibold">
-          <Sparkles className="size-4 text-primary" />
-          Learn to self-manage this funding
-        </p>
-        <ol className="mt-4 space-y-4">
-          {read.lessons.map((l) => (
-            <li key={l.n} className="flex gap-3">
-              <img
-                src={l.image || "/brand/story-path.jpg"}
-                alt=""
-                width={56}
-                height={56}
-                className="size-14 shrink-0 rounded-xl object-cover"
-              />
-              <div className="text-sm">
-                <p className="font-medium">
-                  {l.n}. {l.title}
-                </p>
-                <p className="mt-1 text-muted">{l.body}</p>
-              </div>
-            </li>
+      <Step n={4} title="How to start: your first 30 days">
+        <ol className="list-decimal space-y-1 pl-5 text-sm">
+          {THIRTY_DAYS.map((t) => (
+            <li key={t}>{t}</li>
           ))}
         </ol>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Button variant="secondary" asChild>
+        <ul className="space-y-1 text-sm text-muted">
+          {read.lessons.map((l) => (
+            <li key={l.n}>
+              <span className="font-medium text-ink">{l.title}.</span> {l.body}
+            </li>
+          ))}
+        </ul>
+      </Step>
+
+      <Step n={5} title="Who you can use">
+        <div className="rounded-xl bg-primary-soft/50 px-3 py-2">
+          <p className="text-sm font-medium">{who.title}</p>
+          <p className="mt-1 text-sm">{who.body}</p>
+        </div>
+        <ul className="space-y-1 text-sm">
+          {PROVIDER_TYPES.map((t) => (
+            <li key={t.pot}>
+              <span className="font-medium">{t.pot}:</span> {t.who}
+            </li>
+          ))}
+        </ul>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="secondary" asChild>
+            <Link to="/plan" search={{ tab: "people" }}>
+              Save providers
+            </Link>
+          </Button>
+          <Button size="sm" variant="ghost" asChild>
             <Link to="/funding">Funding categories</Link>
           </Button>
-          <Button variant="ghost" asChild>
-            <Link to="/budget">Budget helper</Link>
-          </Button>
         </div>
-      </Card>
+      </Step>
+
+      <p className="text-xs text-muted">{graph.disclaimer}</p>
     </section>
   );
 }

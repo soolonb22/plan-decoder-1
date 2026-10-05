@@ -4,6 +4,7 @@ import {
   sectionText,
   type PlanSection,
 } from "./plan-section-map";
+import { cleanGoals, dateValue, type PlanDates } from "./plan-clean";
 
 export const PLAN_GRAPH_VERSION = 1 as const;
 
@@ -52,6 +53,7 @@ type ReadLike = {
   fileName?: string;
   management?: string;
   dates?: string[];
+  planDates?: PlanDates;
   money?: {
     label: string;
     amount: string;
@@ -109,22 +111,26 @@ function managedFrom(text: string, fallback: PlanGraph["management"]): PlanGraph
   return fallback;
 }
 
-function pickDates(raw: string[]): PlanGraph["dates"] {
+function pickDates(raw: string[], known?: PlanDates): PlanGraph["dates"] {
   const unique = [...new Set(raw.map((d) => d.trim()).filter(Boolean))];
+  if (known && (known.start || known.end)) {
+    return { raw: unique.slice(0, 8), start: known.start, end: known.end };
+  }
+  // Older saved readings: sort so the range is never backwards (bug: "2026 to 2023").
+  const sorted = unique
+    .map((d) => ({ d, v: dateValue(d) }))
+    .filter((x): x is { d: string; v: number } => x.v != null)
+    .sort((a, b) => a.v - b.v);
   return {
     raw: unique.slice(0, 8),
-    start: unique[0] ?? null,
-    end: unique.length > 1 ? unique[1] : null,
+    start: sorted[0]?.d ?? null,
+    end: sorted.length > 1 ? sorted[sorted.length - 1].d : null,
   };
 }
 
 function goalLines(sections: PlanSection[] | undefined): string[] {
   if (!sections?.length) return [];
-  return sectionText(sections, "goals")
-    .split("\n")
-    .map((s) => s.trim())
-    .filter((s) => s.length > 8 && !/^your goals$/i.test(s))
-    .slice(0, 12);
+  return cleanGoals(sectionText(sections, "goals"), 12);
 }
 
 function confidenceOf(flags: string[], lineCount: number, sectionCount: number): PlanGraph["confidence"] {
@@ -171,7 +177,7 @@ export function toPlanGraph(read: ReadLike): PlanGraph {
     source: sourceOf(read.fileName ?? ""),
     fileName: read.fileName || "plan",
     management: fallbackMgmt,
-    dates: pickDates(read.dates ?? []),
+    dates: pickDates(read.dates ?? [], read.planDates),
     goals: goalLines(read.sections),
     lines,
     flags,
