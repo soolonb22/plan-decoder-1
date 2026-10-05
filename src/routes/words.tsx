@@ -13,6 +13,7 @@ import { EmptyState, MembershipGate, PageHeader } from "@/components/layout/page
 import { DraftWithOllie } from "@/components/draft-with-ollie";
 import { RoomTabs } from "@/components/room-tabs";
 import { doorById, doorFrom, type DoorId } from "@/lib/doors";
+import { ART_APPLY_VIDEO, ELIGIBILITY_VIDEO, FUNDING_VIDEO, YoutubeEmbed } from "@/components/youtube-embed";
 
 const TABS = [
   { id: "everyday", label: "Everyday" },
@@ -48,9 +49,18 @@ function WordsPage() {
     <div>
       <PageHeader
         title={chosen ? chosen.label : "Say it in your words"}
-        lede="Fill the blanks with your own facts. The sentence is yours. It is not an assessment and it does not predict funding."
+        lede="You watched the explainer. Now fill the blanks with your own facts. The sentence is yours. It is not an assessment and it does not predict funding."
         picture="/brand/story-words.jpg"
       />
+      {tab === "everyday" && door === "applying" ? (
+        <YoutubeEmbed id={ELIGIBILITY_VIDEO.id} title={ELIGIBILITY_VIDEO.title} credit={ELIGIBILITY_VIDEO.credit} />
+      ) : null}
+      {tab === "everyday" && door === "planning" ? (
+        <YoutubeEmbed id={FUNDING_VIDEO.id} title={FUNDING_VIDEO.title} credit={FUNDING_VIDEO.credit} />
+      ) : null}
+      {tab === "everyday" && door === "reassessment" ? (
+        <YoutubeEmbed id={ART_APPLY_VIDEO.id} title={ART_APPLY_VIDEO.title} credit={ART_APPLY_VIDEO.credit} />
+      ) : null}
       {tab === "everyday" ? <LanguagePanel door={door} /> : null}
       {tab !== "everyday" ? <RoomTabs to="/words" tab={tab} items={[...TABS]} label="Words" /> : null}
       {tab === "clinical" ? (

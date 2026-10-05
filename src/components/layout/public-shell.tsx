@@ -21,7 +21,7 @@ export function PublicShell({ children }: { children: ReactNode }) {
             <OllieMark className="size-9" />
             <span className="leading-tight">
               <span className="block font-bold text-primary-deep">Plan Decoder</span>
-              <span className="block text-[0.7rem] font-medium text-muted">A calm place to start</span>
+              <span className="block text-[0.7rem] font-medium text-muted">Watch, then say it</span>
             </span>
           </Link>
           <nav className="flex min-w-0 flex-1 flex-wrap gap-1" aria-label="Public">
